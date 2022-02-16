@@ -1,10 +1,6 @@
-= RISC-V docs-spec-template
+= RISC-V Platform Security Model Specification
 
-This repository is used to prime GitHub repos for the RISC-V organization which will be used 
-to create specifications.  
-
-**If you are reading this in a specification repo, please update the title for this section and 
-provide your introduction to your repository.**
+This repository holds specifications which defines a platform security model for RISC-V platforms.  
 
 = License
 
