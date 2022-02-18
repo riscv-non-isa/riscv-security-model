@@ -1,5 +1,5 @@
-HEADER_SOURCE := header.adoc
-PDF_RESULT := example-spec.pdf
+HEADER_SOURCE := ./src/header.adoc
+PDF_RESULT := riscv-platform-security-model.pdf
 
 all: build
 
@@ -11,11 +11,11 @@ build:
     --attribute=pdf-fontsdir=docs-resources/fonts \
     --attribute=pdf-style=docs-resources/themes/riscv-pdf.yml \
     --failure-level=ERROR \
-    --require=asciidoctor-bibtex \
-    --require=asciidoctor-diagram \
-    --require=asciidoctor-mathematical \
+		--require=asciidoctor-bibtex \
+		--require=asciidoctor-diagram \
+		--require=asciidoctor-mathematical \
     --out-file=$(PDF_RESULT) \
     $(HEADER_SOURCE)
 
 clean:
-	rm example-spec.pdf
+	rm $(PDF_RESULT)

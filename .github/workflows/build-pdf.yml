@@ -53,9 +53,10 @@ jobs:
       run: |
         PATH=${PATH}:${BUNDLE_BIN}:$(npm bin) \
         make
+      working-directory: ./specification
     - name: Archive PDF result
       uses: actions/upload-artifact@v2
       with:
-        name: example-spec.pdf
-        path: example-spec.pdf
+        name: riscv-platform-security-model.pdf
+        path: ./specification/riscv-platform-security-model.pdf
         retention-days: 7
