@@ -1,0 +1,36 @@
+[appendix]
+== Zero Trust Principles
+
+[cols="1,3,5,5",stripes=even,options="header"]
+|===
+| *#*                                                                                                                                 | *Principle*                                                                                                                         | *Description*                                                                                                                       | *Example*
+| 1                                                                                                                                   | Verify Explicitly                                                                                                                   | Verify every access explicitly without any trust assumptions                                                                        | Data packet from any sender needs to be authenticated before using it to ensure non-repudiation
+|
+
+2                                                                                                                                   | Least Privilege                                                                                                                     | A subject should be given only those privileges that it needs to complete its task                                                  | An entity having access to unauthorized resources, can lead to security vulnerabilities such as data leakage
+|
+
+3                                                                                                                                   | Assume Breach                                                                                                                       | Assume everything eventually gets broken                                                                                            | A rogue peripheral attached, or a malware installed in a system can lead to system compromise
+|
+
+4                                                                                                                                   | Fail Securely                                                                                                                       | Ensure that error conditions don’t leave secrets around                                                                             | Any secrets left in the memory after a reboot can lead to data leakage
+|
+
+5                                                                                                                                   | Complete Mediation                                                                                                                  | Unless a subject is given explicit access to an object, it should be denied access to that object                                   | Caching of access privilege information, when reused without being updated dynamically can lead to unauthorized access to resources
+|
+
+6                                                                                                                                   | Separation of Duty                                                                                                                  | Every agent in a system has only a single purpose                                                                                   | Augmenting the functionality of an entity with unrelated features or bug fixes can lead to creation of backdoors
+|
+
+7                                                                                                                                   | Least Common                                                                                                                        | Access mechanisms should not be shared                                                                                              | Every entity should have their own custom access permissions to avoid unauthorized access
+|
+
+8                                                                                                                                   | Secure Weak Link                                                                                                                    | Protect the weakest link in the chain                                                                                               | A decryption key stored in unprotected memory can lead to loss of data confidentiality and availability
+|
+
+9                                                                                                                                   | Defense in Depth                                                                                                                    | Build multiple layers/ walls of security                                                                                            | If a system has only a single layer of defense mechanism, and if it is bypassed, it can lead to system compromise
+|
+
+10                                                                                                                                  | Simplicity                                                                                                                          | Keep it simple                                                                                                                      | Complexity can lead to vulnerabilities
+
+|===

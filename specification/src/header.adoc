@@ -8,6 +8,7 @@
 :doctype: book
 :preface-title: Preamble
 :colophon:
+:chapter-signifier: Section
 :appendix-caption: Appendix
 :imagesdir: ../images
 :title-logo-image: image:risc-v_logo.svg[pdfwidth=3.25in,align=center]
@@ -58,12 +59,24 @@ https://creativecommons.org/licenses/by/4.0/.
 Copyright 2022 by RISC-V International.
 
 [preface]
-
 include::contributors.adoc[]
 
+
 include::intro.adoc[]
-include::security-model.adoc[]
-include::chapter2.adoc[]
+
+include::zero_trust.adoc[]
+include::threat_model.adoc[]
+include::security_model.adoc[]
+include::security_ecosystem.adoc[]
+include::discovery.adoc[]
+include::standards.adoc[]
+//include::chapter2.adoc[]
+
+//Appendix
+include::zero_trust_principles.adoc[]
+include::references.adoc[]
+
 //the index must precede the bibliography
 include::index.adoc[]
+
 include::bibliography.adoc[]

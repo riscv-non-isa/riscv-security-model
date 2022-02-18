@@ -1,4 +1,0 @@
-[[security-model]]
-== Overview
-
-Security needs to be an intrinsic part of the hardware, software, and firmware and no longer an afterthought or add-on feature. This document provides a holistic view of the threat model, security analysis, security requirements/ recommendations enabling anyone building a RISC-V platform.

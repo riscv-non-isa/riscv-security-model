@@ -1,0 +1,45 @@
+[[zero_trust]]
+
+== Zero Trust
+
+=== What is Zero Trust?
+
+Zero Trust, the term coined in 2010 by Forrester Research ^[2]^ , refers to a proactive and pervasive approach to network security designed to minimize uncertainty. It shifts the paradigm from trust-based on physical connectivity or proximity to a new model that involves always authenticating and verifying every access. This new model assumes breach and verifies each request as though it originated from an uncontrolled network. Regardless of where the request originates or what resource it accesses, the Zero Trust model teaches us to "never trust, always verify." This model for an enterprise spans from device/ user identity, devices, data, and applications to the network infrastructure that needs to be secured end-to-end to attain Zero Trust.
+
+.Figure: Zero Trust Security for an Enterprise _[3]_
+image:img_1.png[]
+
+
+=== Principles of Zero Trust
+
+We can draw an analogy between the networking world of things to the platforms/ chipsets (SoC) that are developed for mobile phones, laptops, wearables/ IoT, and data centers, such that in the first case endpoint devices are communicating with each other while in the latter case various platform components and chipset components are communicating with each other to perform a computation and similarly various software layers are communicating with each other to execute a function/ application for the user.
+
+. Verify explicitly
+  ** Hardware: The source of a data packet from a peripheral bus on the platform or an internal bus/ NoC within a chip needs to be authenticated first before consuming it. We are used to the paradigm of trusting anything that is attached to a hardware bus, and recent sophisticated physical attacks are proving us wrong. Data protection with authentication, confidentiality, integrity, and replay protection shall be provided.
+  ** Software: An inter-VM message coming from one VM to another needs to be verified for authenticity of the source before granting access to any resources.
+. Use least-privilege access
+  ** Hardware: Minimize the privileges any hardware block has. In hardware, it’s often appealing to give additional privileges to agents just in case. For example, the PMU firmware has no need to access TRNG/ PUF registers, but granting access to PMU  and a compromised firmware might steal secrets. Hardware programming must be reportable to be able to validate that the least privileges are enforced. Alternate modes of access to the same resource should be avoided when possible, for example special modes should be visibly reported.
+  ** Software: Limit the access of a software module to what it needs to perform its task at a given time. Paradigms such as Just-In-Time (JIT - not the JIT language model) and Just-Enough-Access (JEA) shall help mitigate risks.
+. Assume breach
+  ** Hardware: Never assume security, but assume breach of trust is imminent and build defenses to mitigate it. A peripheral with compromised firmware could be plugged into the system anytime, and before it hijacks control, detection, and quarantine actions need to be taken.
+  ** Software: Function calls and API invocations are key methods to execute gadgets to deviate program control flow. Attacks such as ROP/ JOP, control flow bending are classic cases of not verifying the parameters passed in function calls or memory (stack/ heap) corruption, etc. Hardware support for protecting the control-flow integrity can enforce deterministic properties on code execution.
+. Fail safely
+  ** Hardware: Ensure that error conditions don't leave secrets around. Configuration or runtime error conditions or unexpected configuration changes must not leave sensitive data unprotected or disclose sensitive information via error management. Hardware elements should provide privileged software with appropriate mechanisms to manage state changes to enforce safe failures without data leakage. The classic anti-pattern in hardware is the so-called cold-boot attack, where secrets are left in memory after a reboot. Certain new memory devices have been invented to detect temperature variations and erase secrets automatically. ML algorithms also detect such attacks to take preventive measures, for example on a drone that was just shot down, will detect freefall and then erase critical secrets such as keys from the root-of-trust engine.
+  ** Software: Borrowing concepts from functional safety (IEC 61508, ISO 26262, ISO 21434), a failure or fault could be detected and then bring the system to a safe/ secure state and avoid catastrophe.
+. Complete mediation
+  ** Hardware: Check every single access to confirm legitimacy. In hardware, this might mean making memory accesses go through appropriate memory management checks from the path from application to memory and back. Some CPUs and bus-masters even have unique IDs or fingerprints or tags that are sent along with every transaction on the bus for anyone to check legitimacy and non-repudiation.
+  ** Software: The use of software isolation mechanisms in hardware offer mediation of access from software entities (guest OSes and applications) to peripherals, as well as from additional bus masters to the memory of other components.
+. Separation of duty
+  ** Hardware: Every agent on the system has a single purpose, for example, a PMU only does power management and a debug controller only manages to debug ports. Since hardware real-estate is expensive, it is often appealing to overload an agent with multiple duties. This complicates validating and reasoning about the security posture. Isolation techniques can help to guarantee strict separation while saving real estate.
+  ** Software: The addition of a new privileged mode (hypervisor) enables the software (VMMs) to use privilege levels to separate duties and isolate failures for VMs.
+. Least common mechanism
+  ** Hardware: Separate out security functions from others. It is a common design pattern to have a shared bus that transports sideband messages across designs given the expense of on-die wires. If that same bus carries non-secrets and secrets, it is an attack point. All shared resources should logically be separated to avoid sharing mechanisms from being misused as covert or side channels.
+  ** Software: The addition of a new privileged mode (hypervisor) is an example of one way to enable the separation and segregation of security-critical tasks from non-critical ones.
+. Protect the weakest link
+  ** Hardware: Protect the design’s weakest part. Hardware debug and monitoring features often require access to all assets of the design, and can hence access sensitive data. Often debug functionality is at odds with security mechanisms that try to restrict or minimize access to the data. Appropriate security mechanisms must be employed to debug available in isolated portions when activated.
+  ** Software: The D-mode (debug mode) software is the component with the highest level of privileges in a RISC-V platform. We could consider the debug mode to be restricted and not have the highest level of privilege ( refer to debug spec requirement from security section 3.12).
+. Defense-in-depth
+  ** Hardware: Provide appropriate checkpoints in the system that can contain attacks when a component is found vulnerable and have a system-level approach for security. This can mean blocking access to a resource even if it seems like it should be open. For example, secrets shall be protected by requiring additional authentication and authorization to validate access modes e.g. debug. Validation of parameters even if the operation was protected (e.g. via authentication mechanisms).
+  ** Software: A few new RISC-V features implement multiple walls inside the CPU and from the CPU to the SoC/platform - 1) Smepmp blocks access from Machine-mode software to unprivileged/ less-privileged components. 2) New privileged hypervisor mode adds a new privileged component that manages and restricts access from VMs. 3) Software isolation frameworks. 4) Mechanisms for uncore blocks (e.g. other masters), e.g. the usage of/access to a DMA by the software.
+. Simplicity
+  ** Invent simpler architectures. Simpler mechanisms are harder to come up with, but easier to implement, validate and secure. Example: reduction of the size of Trusted Computing Base (TCB), which is an important security objective.
