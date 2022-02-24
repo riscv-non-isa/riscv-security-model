@@ -6,8 +6,8 @@
 
 Zero Trust, the term coined in 2010 by Forrester Research ^[2]^ , refers to a proactive and pervasive approach to network security designed to minimize uncertainty. It shifts the paradigm from trust-based on physical connectivity or proximity to a new model that involves always authenticating and verifying every access. This new model assumes breach and verifies each request as though it originated from an uncontrolled network. Regardless of where the request originates or what resource it accesses, the Zero Trust model teaches us to "never trust, always verify." This model for an enterprise spans from device/ user identity, devices, data, and applications to the network infrastructure that needs to be secured end-to-end to attain Zero Trust.
 
-.Figure: Zero Trust Security for an Enterprise _[3]_
-image:img_1.png[]
+.Zero Trust Security for an Enterprise _[3]_
+image::img_1.png[]
 
 
 === Principles of Zero Trust

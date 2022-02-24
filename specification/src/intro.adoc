@@ -1,7 +1,6 @@
 == Introduction
 
 Security needs to be an intrinsic part of the hardware, software, and firmware and no longer an afterthought or add-on feature. This document provides a holistic view of the threat model, security analysis, security requirements/ recommendations enabling anyone building a RISC-V platform.
-:toc: macro
 
 
 === Guiding Principles
@@ -28,8 +27,8 @@ For further details please refer to <<zero_trust>>.
 
 This diagram below represents a generic device model having an application processor, other IPs, etc. on the left side and root-of-trust on the right side that is isolated from each other. The only communication between the two domains is via a security mailbox.
 
-.Figure: Device Model
-image:img_0.png[]
+.Device Model
+image::img_0.png[]
 
 
 The root-of-trust consists of the following elements:

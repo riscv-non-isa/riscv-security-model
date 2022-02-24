@@ -23,20 +23,18 @@ Hardware RoTs can either be further classified into two types
 
 
 
-.Figure: Hardware Root-of-Trust _[10]_
-image:img_2.png[]
+.Hardware Root-of-Trust _[10]_
+image::img_2.png[]
 
 
-
-* Software-based RoT is specifically designed for IoT devices that are already shipped, where installing RoT software that could leverage existing hardware blocks such as cache memory for generating unique identity, while the rest of operations are performed in software.
 
 
 === Device Lifecycle
 
-A security lifecycle defines the security state of a device through its lifetime, where each state of the device defines the security properties to be in effect in that state. The below security life cycle model is borrowed from OpenTitan’s life cycle model acts as a good reference for implementing product-specific security life cycle whether we use an integrated RoT or discrete RoT such as OpenTitan or TPM module or Secure Elements.
+A security lifecycle defines the security state of a device through its lifetime, where each state of the device defines the security properties to be in effect in that state. The below security life cycle model is borrowed from OpenTitan's life cycle model acts as a good reference for implementing product-specific security life cycle whether we use an integrated RoT or discrete RoT such as OpenTitan or TPM module or Secure Elements.
 
-.Figure: Device Security Lifecycle _[11]_
-image:img_3.png[]
+.Device Security Lifecycle _[11]_
+image::img_3.png[]
 
 
 
@@ -46,8 +44,8 @@ image:img_3.png[]
 ==== Secure Boot
 
 
-.Figure: Secure Boot _[22]_
-image:img_4.png[]
+.Secure Boot _[22]_
+image::img_4.png[]
 
 
 
@@ -57,14 +55,14 @@ image:img_4.png[]
 
 ==== Device Attestation
 
-The health of the platform shall be remotely verifiable by measuring the firmware’s integrity.
+The health of the platform shall be remotely verifiable by measuring the firmware's integrity.
 
 
 
 ==== Software Update
 
-.Figure: Software Update Overview _[23]_
-image:img_5.png[]
+.Software Update Overview _[23]_
+image::img_5.png[]
 
 
 
