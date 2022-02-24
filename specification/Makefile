@@ -13,7 +13,6 @@ build:
     --failure-level=ERROR \
 		--require=asciidoctor-bibtex \
 		--require=asciidoctor-diagram \
-		--require=asciidoctor-mathematical \
     --out-file=$(PDF_RESULT) \
     $(HEADER_SOURCE)
 
