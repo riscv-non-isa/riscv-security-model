@@ -1,4 +1,3 @@
-[[header]]
 :description: RISC-V Platform Security Model Specification
 :company: RISC-V.org
 :revdate: 2/2022
@@ -38,7 +37,7 @@ endif::[]
 :xrefstyle: short
 
 = RISC-V Platform Security Model Specification
-RISC-V Security Committee
+:author: RISC-V Security Committee
 
 // Preamble
 [WARNING]
@@ -61,6 +60,8 @@ Copyright 2022 by RISC-V International.
 [preface]
 include::contributors.adoc[]
 
+// table of contents
+toc::[]
 
 include::intro.adoc[]
 
