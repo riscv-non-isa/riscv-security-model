@@ -1,30 +1,31 @@
-[[header]]
-:description: RISC-V Example Specification Document (Zexmpl)
+:description: RISC-V Platform Security Model Specification
 :company: RISC-V.org
-:revdate: 1/2022
-:revnumber: 1.0
-:revremark: This document is in development. Assume everything can change. See http://riscv.org/spec-state for details.
+:revdate: 2/2022
+:revnumber: 0.1
+:revremark: This document is in development. Assume everything can change.
 :url-riscv: http://riscv.org
 :doctype: book
 :preface-title: Preamble
 :colophon:
+:chapter-signifier: Section
 :appendix-caption: Appendix
-:imagesdir: images
+:imagesdir: ../images
 :title-logo-image: image:risc-v_logo.svg[pdfwidth=3.25in,align=center]
 // Settings:
 :experimental:
 :reproducible:
 // needs to be changed? bug discussion started
 //:WaveDromEditorApp: app/wavedrom-editor.app
-:imagesoutdir: images
-:bibtex-file: example.bib
+:imagesoutdir: ../images
+:bibtex-file: src/example.bib
 :bibtex-order: alphabetical
 :bibtex-style: apa
 :icons: font
 :lang: en
 :listing-caption: Listing
 :sectnums:
-:toc: left
+//:toc: left
+:toc: macro
 :toclevels: 4
 :source-highlighter: pygments
 ifdef::backend-pdf[]
@@ -36,22 +37,22 @@ endif::[]
 :footnote:
 :xrefstyle: short
 
-= RISC-V Example Specification Document (Zexmpl)
-Author 1; Author 2; RISC-V Task Group
+= RISC-V Platform Security Model Specification
+:author: RISC-V Security Committee
 
 // Preamble
 [WARNING]
 .This document is in the link:http://riscv.org/spec-state[Development state]
 ====
-Assume everything can change. This draft specification will change before 
-being accepted as standard, so implementations made to this draft 
+Assume everything can change. This draft specification will change before
+being accepted as standard, so implementations made to this draft
 specification will likely not conform to the future standard.
 ====
 
 [preface]
 == Copyright and license information
-This specification is licensed under the Creative Commons 
-Attribution 4.0 International License (CC-BY 4.0). The full 
+This specification is licensed under the Creative Commons
+Attribution 4.0 International License (CC-BY 4.0). The full
 license text is available at
 https://creativecommons.org/licenses/by/4.0/.
 
@@ -60,8 +61,23 @@ Copyright 2022 by RISC-V International.
 [preface]
 include::contributors.adoc[]
 
+toc::[]
+
 include::intro.adoc[]
-include::chapter2.adoc[]
+
+include::zero_trust.adoc[]
+include::threat_model.adoc[]
+include::security_model.adoc[]
+include::security_ecosystem.adoc[]
+include::discovery.adoc[]
+include::standards.adoc[]
+//include::chapter2.adoc[]
+
+//Appendix
+include::zero_trust_principles.adoc[]
+include::references.adoc[]
+
 //the index must precede the bibliography
 include::index.adoc[]
+
 include::bibliography.adoc[]

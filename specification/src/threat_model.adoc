@@ -1,0 +1,319 @@
+[[threat_model]]
+
+== Threat Model
+
+=== Pointer Safety
+
+[cols="1,3", grid=none, frame=none]
+|===
+|Asset:	|			Pointers
+|
+Location:		|	Memory
+|
+Description:	|		Pointers stored in programs to store addresses
+|
+Security Property:	|	Integrity
+|
+Threat:		|		Tamper
+|
+Entry Point of Threat:	|	Misusing pointers to access unauthorized memory, manipulating stack, heap regions, executing data pointers, use after free, out of range access, etc
+|
+Impact of Vulnerability: |	Memory misuse
+|
+Severity CVSS v3 Rating: |	HIGH: 7.5
+
+ 				CVSS v3.1 Vector
+
+        AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N
+
+        (https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
+|
+Mitigation/Security Requirement:	| Extending pointer virtual address width or using unused bits if any of pointer virtual address to hold type, permissions, and tag inserted by malloc function and checked during page, walk to prevent memory misuse
+
+|===
+
+=== Stack Safety
+
+[cols="1,3", grid=none, frame=none]
+|===
+
+|Asset:			|	Stack
+|
+Location:	|		Memory/ CPU Registers
+|
+Description: |			System Stack
+|
+Security Property:	|	Integrity
+|
+Threat:		|		Tamper
+|
+Entry Point of Threat:	|	Return Oriented Programming (ROP) attack using stack smashing by either buffer overrun or injecting code into the stack
+|
+Impact of Vulnerability:	| Program control-flow hijack
+|
+Severity CVSS v3 Rating:|	HIGH: 7.5
+
+ 				CVSS v3.1 Vector
+
+ 				AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N
+
+(https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
+|
+Mitigation/Security Requirement: |	Use shadow stack to compare return addresses for control-flow transfer instructions if a mismatch is detected then raise an exception to the kernel to handle it
+
+|===
+
+=== Call/ Jump Safety
+
+[cols="1,3", grid=none, frame=none]
+|===
+
+|Asset:	|			Call/ Jump Targets
+|
+Location:	|		Memory/ CPU Registers
+|
+Description:	|		Indirect call/ jump target addresses
+|
+Security Property:	|	Integrity
+|
+Threat:		|		Tamper
+|
+Entry Point of Threat:	|	Call/ Jump Oriented Programming (COP/ JOP) attack using ata tampering to perform indirect call/ jump to invalid locations
+|
+Impact of Vulnerability:|	Program control-flow hijack
+|
+Severity CVSS v3 Rating:	| HIGH: 7.5
+
+ 				CVSS v3.1 Vector
+
+ 				AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N
+
+(https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
+|
+Mitigation/Security Requirement:	| Track indirect call/jump instructions and permit only valid call/jump locations of the code
+
+|===
+
+=== Code/ Data Confidentiality
+
+[cols="1,3", grid=none, frame=none]
+|===
+
+|Asset:	|			Code/ Data
+|
+Location:	|		Memory/ CPU Registers
+|
+Description:	|		Software Code and Data
+|
+Security Property:	|	Confidentiality
+|
+Threat:	|			Disclosure
+|
+Entry Point of Threat:	|	Vulnerable OS/ VMM can be exploited with privilege escalation o tamper code/ data of an application or hosted software
+|
+Impact of Vulnerability:	| Compromised confidentiality of secrets
+|
+Severity CVSS v3 Rating: |	HIGH: 7.5
+
+ 				CVSS v3.1 Vector
+
+ 				AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N
+
+(https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
+|
+Mitigation/Security Requirement:	| Encrypt code/ data via hardware mechanisms with hardware enerated keys invisible to OS/ VMM
+
+|===
+
+=== Code/ Data Integrity
+
+[cols="1,3", grid=none, frame=none]
+|===
+
+|Asset:	|			Code/ Data
+|
+Location:	|		Memory/ CPU Registers
+|
+Description:	|		Software Code and Data
+|
+Security Property:	|	Integrity
+|
+Threat:	|			Tamper
+|
+Entry Point of Threat:	|	Vulnerable OS/ VMM can be exploited with privilege escalation to tamper code/ data of an application or hosted software
+|
+Impact of Vulnerability:	| Compromised integrity of interesting assets, eg: code
+|
+Severity CVSS v3 Rating: |	HIGH: 7.5
+
+ 				CVSS v3.1 Vector
+
+ 				AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:N
+
+(https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
+|
+Mitigation/Security Requirement: |	Integrity check (is a threat protection mechanism that checks the drivers and system files on your device for signs of corruption) of code/ data by hardware that is attested by the hardware which can be verified locally/ remotely. Integrity checking should/shall be a permanently running mechanism.
+
+|===
+
+=== Timing Side-Channel Safety
+
+[cols="1,3", grid=none, frame=none]
+|===
+
+|Asset:		|		Any secret (see section 5.14)
+|
+Location:	|		Cache, TLB, Memory
+|
+Description:	|		Leakage
+|
+Security Property:	|	Confidentiality
+|
+Threat:		|		Disclosure
+|
+Entry Point of Threat:	|	Covert channel - Spy & Trojan attacking the victim
+|
+Impact of Vulnerability: |	Disclosure of secret
+|
+Severity CVSS v3 Rating:	| HIGH: 6.2
+
+ 				CVSS v3.1 Vector
+
+ 				AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N
+
+(https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
+|
+Mitigation/Security Requirement: |	Timing protection (temporal partitioning) to prevent interference that affects observable timing behavior. The new fence.T ISA extension proposed for RISC-V for temporal partitioning prevents any interference between security domains, each such microarchitectural state must be reset to a state that is independent of execution history before a context switch to a different thread/ process.
+
+|===
+
+
+=== Hardware Supply Chain Safety
+
+[cols="1,3", grid=none, frame=none]
+|===
+
+|Asset:		|		Hardware IP
+|
+Location:		|	Design (GDSII)
+|
+Description:	|		IP theft, Counterfeiting, Overproduction
+|
+Security Property:	|	Confidentiality
+|
+Threat:	|			Disclosure
+|
+Entry Point of Threat:	|	Design in GDSII form
+|
+Impact of Vulnerability:	| Loss of IP, Loss of revenue
+|
+Severity CVSS v3 Rating: |	HIGH: 4.6
+
+ 				CVSS v3.1 Vector
+
+ 				https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:P/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N&version=3.1[AV:P/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N]
+
+(https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
+|
+Mitigation/Security Requirement:	| Logic locking is one of the new emerging technology that enables the hardware to lock the IP/ SoC using a password only known to the design house and can only be unlocked after the parts come back to the design house. Without this password, the IP/ SoC is literally defunct or unusable.
+
+|===
+
+
+
+=== Software Supply Chain Safety
+
+[cols="1,3", grid=none, frame=none]
+|===
+
+|Asset:		|		Software IP
+|
+Location:	|		Software/ Application binary
+|
+Description:	|		Cloning, Tampering
+|
+Security Property:	|	Confidentiality, Integrity
+|
+Threat:	|			Disclosure, Tamper
+|
+Entry Point of Threat:	|	Build tools, build servers, release servers, etc
+|
+Impact of Vulnerability: |	Loss of IP, Loss of revenue
+|
+Severity CVSS v3 Rating:	| HIGH: 4.6
+
+ 				CVSS v3.1 Vector
+
+ 				https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:P/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N&version=3.1[AV:P/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N]
+
+(https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
+|
+Mitigation/Security Requirement:	| Encryption, Attestation, and protection of code signing certificates, build tool attestation, etc
+
+|===
+
+
+
+=== Peripheral/ IP Authentication
+
+[cols="1,3", grid=none, frame=none]
+|===
+
+|Asset:		|		Peripherals/ IPs
+|
+Location:	|		SoC/ Platform
+|
+Description:	|		Fake/ rogue Peripheral/ IP communicating with the victim
+|
+Security Property:	|	Integrity, Availability
+|
+Threat:	|			Disclosure, Tamper
+|
+Entry Point of Threat:	|	Procurement channels
+|
+Impact of Vulnerability:	| Insecure products
+|
+Severity CVSS v3 Rating:	| HIGH: 5.2
+
+ 				CVSS v3.1 Vector
+
+ 				https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:P/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N&version=3.1[AV:P/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:]L
+
+(https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
+|
+Mitigation/Security Requirement:	| Peripheral/ IP mutual authentication. Recent developments in the industry to address this concern include opencompute.org, dmtf.org, and pce.org where they propose peripheral extensions to enable mutual authentication and encrypted communication among N parties on the platform. This could be extended to even to the IP level inside the SoC, which needs careful evaluation to make sure the trade-offs for PPA$ are worth the additional security it offers for the particular product.
+
+|===
+
+
+
+=== Non-CPU IPs/ Peripherals outside TEE
+
+[cols="1,3", grid=none, frame=none]
+|===
+
+|Asset:		|		Peripherals/ IPs
+|
+Location:	|		SoC/ Platform
+|
+Description:	|		Non-CPU IPs & Peripherals are outside scopes of TEE and hence the code & data do not get any security guarantees from the TEE, and so are unprotected
+|
+Security Property:	|	Confidentiality, Integrity, Availability
+|
+Threat:		|		Disclosure, Tamper, DoS
+|
+Entry Point of Threat:	|	Untrusted OS/ VMM
+|
+Impact of Vulnerability:	| Weak security to code/ data
+|
+Severity CVSS v3 Rating:	| HIGH: 7.2
+
+ 				CVSS v3.1 Vector
+
+ 				https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:P/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N&version=3.1[AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:]H
+
+(https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
+|
+Mitigation/Security Requirement:	| TEEs need to be extended to include non-CPU IPs such as GPU, etc., and peripheral devices into the enclave.
+
+|===
