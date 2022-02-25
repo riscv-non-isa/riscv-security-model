@@ -24,7 +24,8 @@
 :lang: en
 :listing-caption: Listing
 :sectnums:
-:toc: left
+//:toc: left
+:toc: macro
 :toclevels: 4
 :source-highlighter: pygments
 ifdef::backend-pdf[]
@@ -60,7 +61,6 @@ Copyright 2022 by RISC-V International.
 [preface]
 include::contributors.adoc[]
 
-// table of contents
 toc::[]
 
 include::intro.adoc[]
