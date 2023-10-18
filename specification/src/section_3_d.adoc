@@ -1,0 +1,9 @@
+[[section_3_d]]
+
+=== Runtime Integrity [Deepak Gupta?]
+
+====  Control Flow Integrity [Deepak]
+
+==== Memory Safety
+===== Memory Tagging
+===== Capabilities/CHERI SIG [Carl Shaw]

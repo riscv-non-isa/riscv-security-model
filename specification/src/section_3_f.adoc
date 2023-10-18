@@ -1,0 +1,7 @@
+[[section_3_f]]
+
+=== Side-channel Attack Resistance  [Luis Fiolhais]
+
+==== Entropy defenses (LWC, PQC)
+
+==== Flushing defenses (fences)

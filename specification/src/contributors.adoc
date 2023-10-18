@@ -1,14 +1,8 @@
 == Contributors
 
-This RISC-V specification has been contributed to directly or indirectly by:
-
-[%hardbreaks]
-* Andrew Dellow
-* Dong Du
-* Colin O'Flynn
-* Munir Geden 
-* Yann Loisel
-* Manuel Offenberg
-* Ravi Sahita
-* Suresh Sugumar
-* Steve Wallach
+This RISC-V specification has been contributed to directly or indirectly by (in
+alphabetical order): Ali Zhang, Andy Dellow, Carl Shaw, Colin O'Flynn,
+Dean Liberty, Dong Du, Deepak Gupta, Colin O'Flynn, Guerney Hunt, Luis Fiolhais,
+Manuel Offenberg, Markku Juhani Saarinen, Munir Geden, Mark Hill, Nicholas Wood,
+Paul Elliott, Ravi Sahita, Samuel Ortiz, Steve Wallach, Suresh Sugumar,
+Terry Wang, Victor Lu, Ved Shanbhogue, Yann Loisel

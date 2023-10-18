@@ -1,0 +1,5 @@
+[[chapter_2_section_2h]]
+
+=== Device Data Protection
+==== Peripheral/ IP Authentication
+==== Device Data confidentiality and integrity

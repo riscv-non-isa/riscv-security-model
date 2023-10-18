@@ -1,0 +1,14 @@
+[[section_3_c]]
+
+=== Isolation and Trusted Execution [Ravi Sahita]
+
+==== Isolation Framework  [Nicholas Wood, Ravi, Nick]
+
+==== Trusted Execution Capability [Nicholas Wood]
+
+==== Confidential Computing [Nicholas Wood, Ravi Sahita]
+
+==== Software Fault Isolation (Compartmentalization)
+===== CHERI SIG [Carl Shaw]
+===== SFI and HFI overview/reference to work [Shravan]
+===== Light-weight Isolation (M/S mode)

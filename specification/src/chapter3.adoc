@@ -1,0 +1,63 @@
+[[chapter3]]
+
+== Platform Security Model
+
+//This section must cover the following security model description
+// Platform Root-of-Trust [Paul Elliot, Yann Loisel]
+//Platform Unique Identity
+//Cryptographically-Secure Entropy Source (TRNG) [Markku-JS]
+// RTM, RTR, RTU
+//DICE
+//Key Management
+//Sealed Storage
+include::section_3_a.adoc[]
+
+//This section must cover the following security model description
+//Device Lifecycle [Yann Loisel, Terry Wang]
+//Device Provisioning
+//Debug
+//Ownership Transfer
+//Authorized Firmware Execution
+//-Secure Boot
+//-Verified Boot
+//Device Attestation [Samuel O]
+//Firmware Provisioning and Updates
+//Firmware Anti-rollback
+include::section_3_b.adoc[]
+
+//This section must cover the following security model description
+//Isolation and Trusted Execution [Ravi Sahita]
+//Isolation Framework  [Nicholas Wood, Ravi, Nick]
+//Trusted Execution Capability [Nicholas Wood]
+//Confidential Computing [Nicholas Wood, Ravi Sahita]
+//Software Fault Isolation (Compartmentalization)
+//-CHERI SIG [Carl Shaw]
+//-SFI and HFI overview/reference to work [Shravan]
+//-Light-weight Isolation (M/S mode)
+include::section_3_c.adoc[]
+
+//This section must cover the following security model description
+//Runtime Integrity [Deepak Gupta?]
+//Control Flow Integrity [Deepak]
+//Memory Safety
+//-Memory Tagging
+//-Capabilities/CHERI SIG [Carl Shaw]
+include::section_3_d.adoc[]
+
+//This section must cover the following security model description
+//Cryptographic ISA Extensions/ Accelerators [Markku-JS]
+//Zkr/bit-manip/scalar/vector/PQC
+//HE schemes?
+include::section_3_e.adoc[]
+
+//This section must cover the following security model description
+//Side-channel Attack Resistance  [Luis Fiolhais]
+//Entropy defenses (LWC, PQC)
+//Flushing defenses (fences)
+include::section_3_f.adoc[]
+
+//This section must cover the following security model description
+//Physical Adversary Attack Resistance [Paul Elliott]
+//Supply-chain Attack Resistance [Paul Elliott]
+//Discovery & Config Schema
+include::section_3_g.adoc[]

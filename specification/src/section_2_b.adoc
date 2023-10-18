@@ -1,0 +1,9 @@
+[[chapter_2_section_2b]]
+
+//threat model chapter 2 section 2b
+=== Software Protection
+
+==== Pointer/Object Safety
+==== Stack Safety (CFI)
+==== Call/ Jump Safety (CFI)
+==== Compartmentalization

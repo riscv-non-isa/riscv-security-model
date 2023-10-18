@@ -1,0 +1,16 @@
+[[chapter1]]
+
+== Introduction
+
+=== GLOSSARY/TAXONOMY
+
+=== Guiding Principles
+==== Intrinsic Security
+==== Principles of Zero Trust [Victor Lu]
+
+=== Generic Architecture/Framework
+
+=== Security Goals
+
+=== Adversary Model
+

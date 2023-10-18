@@ -1,0 +1,5 @@
+[[chapter_2_section_2g]]
+
+=== Supply Chain Protection
+==== Hardware Supply Chain Safety
+==== Software Supply Chain Safety

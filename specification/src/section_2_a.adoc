@@ -1,0 +1,8 @@
+[[chapter_2_section_2a]]
+=== Platform Integrity and Protection
+
+==== Secure Boot
+==== Verified Boot
+==== Attestation
+==== Debug
+==== RAS, QoS and Performance Monitoring

@@ -1,0 +1,13 @@
+[[chapter_2_section_2e]]
+
+=== Logical (Software) Attacks
+
+==== Approaches
+===== Non-invasive
+===== Software Remote
+
+==== Types
+===== Row hammer attacks & row press
+===== Power, Voltage attacks [Paul Elliott]
+===== Glitching, Fault injection [Paul Elliott]
+===== Others?
