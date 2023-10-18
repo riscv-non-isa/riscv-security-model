@@ -1,62 +1,64 @@
-# This workflow installs dependencies for PDF generation, generates the PDF,
-# and uploads the PDF as an artifact.
+name: Create Specification Document
 
-name: Build Document PDF
-
+# The workflow is triggered by pull request, push to main, and manual dispatch.
 on:
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: 'Tag as a pre-release?'
+        required: false
+        type: boolean
+        default: true
+      draft:
+        description: 'Create release as a draft?'
+        required: false
+        type: boolean
+        default: false
+  pull_request:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      APT_PACKAGES_FILE: ${{ github.workspace }}/dependencies/apt_packages.txt
-      BUNDLE_GEMFILE: ${{ github.workspace }}/dependencies/Gemfile
-      BUNDLE_BIN: ${{ github.workspace }}/bin
-      NPM_PACKAGE_FOLDER: ${{ github.workspace }}/dependencies
     steps:
+    # Step 1: Checkout the repository
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
-        submodules: 'true'
-    - name: Install Ubuntu packages
-      run: |
-        sudo apt-get update
-        grep -vE '^#' ${APT_PACKAGES_FILE} | xargs sudo apt-get install --yes --no-install-recommends
-    # Ruby for asciidoctor
-    - name: Setup Ruby and Gemfile content
-      uses: ruby/setup-ruby@v1
+        submodules: 'recursive'
+
+    # Step 2: Pull the latest RISC-V Docs container image
+    - name: Pull Container
+      run: docker pull riscvintl/riscv-docs-base-container-image:latest
+
+    # Step 3: Build Files
+    - name: Build Files
+      run: cd ./specification && make
+      env:
+        VERSION: v${{ github.event.inputs.version }}
+        REVMARK: ${{ github.event.inputs.revision_mark }}
+
+    # Step 4: Upload the built PDF files as a single artifact
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3
       with:
-        ruby-version: "2.6"
-        bundler-cache: true
-    # Node.js for wavedrom
-    - uses: actions/cache@v2
+        name: Build Artifacts
+        path: ${{ github.workspace }}/*.pdf
+        retention-days: 30
+
+    # Create Release
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-    - name: Install Node.js dependencies
-      run: npm install ${NPM_PACKAGE_FOLDER}
-    - name: Generate PDF
-      run: |
-        PATH=${PATH}:${BUNDLE_BIN}:$(npm bin) \
-        make
-      working-directory: ./specification
-    - name: Archive PDF result
-      uses: actions/upload-artifact@v2
-      with:
-        name: riscv-platform-security-model.pdf
-        path: ./specification/riscv-platform-security-model.pdf
-        retention-days: 7
+        files: ${{ github.workspace }}/*.pdf
+        tag_name: v${{ github.sha }}
+        name: Release ${{ github.event.inputs.version }}
+        draft: ${{ github.event.inputs.draft }}
+        prerelease: ${{ github.event.inputs.prerelease }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GHTOKEN }}
+      if: github.event_name == 'workflow_dispatch' 
+      # This condition ensures this step only runs for workflow_dispatch events.
