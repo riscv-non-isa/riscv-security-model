@@ -32,7 +32,18 @@ to infer what data was transmitted in a communication channel.
 = Power Side-Channel Attacks
 Power side-channel attacks, in the logical domain, are defined by the usage of
 high-resolution power readers, available in the microarchitecture, to infer
-what data was transmitted in a communication channel.
+what data was transmitted in a communication channel. This counter may be
+updated on every microarchitectural, thus providing a information on what kind
+of instructions a victim is executing. Some architectures share the same power
+counter across all harts, privilege levels, and security domains within the
+same physical core, or even within the same platform. Therefore, an OS will
+not context switch this architectural register and the power information will
+be available to an attacker.
+
+Another way to exploit power side-channels is to use power architectural
+registers to undervolt, overvolt, or increase the clock frequency of a phsycial
+core in a platform to inject hardware faults. These hardware faults, in turn,
+provide information for an attacker to infer what a victim is computing.
 
 = Memory Controller
 
