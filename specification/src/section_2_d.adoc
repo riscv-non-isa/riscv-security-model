@@ -2,6 +2,47 @@
 
 === Logical Side-channels [Luis Fiolhais, Yann Loisel]
 
-==== Spatial timing channel Safety
-==== Temporal Side-Channel Safety
-==== Covert channels
+This section tackles logical side-channels attacks in a computing system. They
+are differentiated from Physical Side-Channels as they don’t require physical
+access to the computing system. However, similarly to physical side-channels,
+logical side-channels occur when instructions defined in the ISA have
+side-effects that are not defined by the ISA. These side-effects
+can be exploited by a malicious user to recover information from a past or
+concurrent execution of a victim.
+
+This section interprets logical side-channel attacks in two broad categories:
+*Architectural Type Attacks* which require the victim to commit instructions
+in order for the attacker to recover information; and *Non-Architectural Type
+Attacks* which don't require the victim to commit instructions. Regardless of
+the means used to transfer information between an attacker and a victim, the
+goal of the attacker is to obtain the victim's information through a
+non-inter-process communication explcitly defined by the execution
+environment.
+
+== Architectural Type Attacks
+Architectural attack types require instructions to be commited by the victim's
+hart in order for an attacker to recover information. The committed instructions
+will change the non-architectural state such that the attacker can recover
+information the victim was/is operating on.
+
+= Timing Side-Channel Attacks
+Timing side-channel attacks are defined by the usage of a high-resolution timer
+to infer what data was transmitted in a communication channel.
+
+= Power Side-Channel Attacks
+Power side-channel attacks, in the logical domain, are defined by the usage of
+high-resolution power readers, available in the microarchitecture, to infer
+what data was transmitted in a communication channel.
+
+= Memory Controller
+
+== Non-Architectural Type Attacks
+The previous attack type requires a victim to perform modifications to
+the architectural state in order to complete an attack. However, some
+instructions don’t have to be committed to modify the non-architectural state.
+
+= Transient-Execution Attacks
+Transient-Execution Attacks (TEA).
+
+= Memory Controller
+
