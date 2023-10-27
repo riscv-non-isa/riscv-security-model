@@ -42,6 +42,14 @@ the victim is operating on. There are other available methods such as: the
 latency of the memory controller, interrupt handling, and functional unit
 contention in multi-harted physical cores.
 
+= Performance Counter Side-Channel Attacks
+Traditionally, harts offer high-resolution performance counters, in the
+architectural state, to help programmers optimize their code. These counters
+can be programmed to keep track of architectural and non-architectural events.
+If these counters are available to both a victim and an attacker. An attacker
+will be able to read the events created by the victim and infer what data it
+was processing on. These counters range from cycle counters, to multi-level
+cache misses, and mispredictions.
 
 = Power Side-Channel Attacks
 Power side-channel attacks, in the logical domain, are defined by the usage of
@@ -59,8 +67,6 @@ registers to undervolt, overvolt, or increase the clock frequency of a phsycial
 core in a platform to inject hardware faults. These hardware faults, in turn,
 provide information for an attacker to infer what a victim is computing.
 
-= Memory Controller
-
 == Non-Architectural Type Attacks
 The previous attack type requires a victim to perform modifications to
 the architectural state in order to complete an attack. However, some
@@ -68,6 +74,4 @@ instructions don’t have to be committed to modify the non-architectural state.
 
 = Transient-Execution Attacks
 Transient-Execution Attacks (TEA).
-
-= Memory Controller
 
