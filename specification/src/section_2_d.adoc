@@ -27,7 +27,21 @@ information the victim was/is operating on.
 
 = Timing Side-Channel Attacks
 Timing side-channel attacks are defined by the usage of a high-resolution timer
-to infer what data was transmitted in a communication channel.
+to infer what data was transmitted in a communication channel. The timer
+can be provided by the platform or it can be created by the attacker. In this
+scenario, the attacker will change the non-architectural state such that the
+victim will have a different execution time. Depending on the execution time
+the attacker can infer what data the victim was processing. Timing
+side-channels can be created in multiple ways. The simplest way is to time
+the victim before and after execution, giving it different inputs. If the
+victim has a non-constant time runtime with different input, the attacker can
+infer the victim's data. However, the most popular way is to change the state
+of the cache hierarchy in particular ways such that the attacker can infer what
+memory addresses the victim used, and, from that information, infer what data
+the victim is operating on. There are other available methods such as: the
+latency of the memory controller, interrupt handling, and functional unit
+contention in multi-harted physical cores.
+
 
 = Power Side-Channel Attacks
 Power side-channel attacks, in the logical domain, are defined by the usage of
