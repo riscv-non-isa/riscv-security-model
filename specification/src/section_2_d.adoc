@@ -6,7 +6,7 @@ This section tackles logical side-channels attacks in a computing system. They
 are differentiated from Physical Side-Channels as they don’t require physical
 access to the computing system. However, similarly to physical side-channels,
 logical side-channels occur when instructions defined in the ISA have
-side-effects that are not defined by the ISA. These side-effects
+side-effects that may not be defined by the ISA. These side-effects
 can be exploited by a malicious user to recover information from a past or
 concurrent execution of a victim.
 
