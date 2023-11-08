@@ -8,7 +8,9 @@ access to the computing system. However, similarly to physical side-channels,
 logical side-channels occur when instructions defined in the ISA have
 side-effects that may not be defined by the ISA. These side-effects
 can be exploited by a malicious user to recover information from a past or
-concurrent execution of a victim.
+concurrent execution of a victim. Often these side-effect occur due to the
+difference between the intuitive programmer model the programmer uses and the
+specification of the architectural model and the non-architectural model.
 
 This section interprets logical side-channel attacks in two broad categories:
 *Architectural Type Attacks* which require the victim to commit instructions
