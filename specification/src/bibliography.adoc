@@ -4,3 +4,71 @@
 * [[[R1,1]]] The RISC-V Instruction Set Manual Volume II: Privileged
 Architecture Document Version 20211203
 (https://drive.google.com/file/d/1EMip5dZlnypTk7pt4WWUKmtjUKTOkBqh/view[link])
+
+// Logical Side-Channels
+* [[[gerlach-sp23]]] Gerlach, Lukas, et al.
+"A Security RISC: Microarchitectural Attacks on Hardware RISC-V CPUs."
+44th IEEE Symposium on Security and Privacy. 2023.
+
+* [[[canella-sec19]]] Canella, Claudio, et al.
+"A systematic evaluation of transient execution attacks and defenses."
+28th USENIX Security Symposium (USENIX Security 19). 2019.
+
+* [[[schwarz-netspectre]]] Schwarz, Michael, et al.
+"Netspectre: Read arbitrary memory over network."
+Computer Security–ESORICS 2019: 24th European Symposium on Research in Computer Security,
+Luxembourg, September 23–27, 2019, Proceedings, Part I 24.
+Springer International Publishing, 2019.
+
+* [[[gruss-flush+flush]]] Gruss, Daniel, et al.
+"Flush+ flush: A fast and stealthy cache attack."
+Detection of Intrusions and Malware, and Vulnerability Assessment: 13th International Conference,
+DIMVA 2016, San Sebastián, Spain, July 7-8, 2016, Proceedings 13. Springer International Publishing, 2016.
+
+* [[[yarom-flush+reload]]] Yarom, Yuval, and Katrina Falkner.
+"{FLUSH+ RELOAD}: A high resolution, low noise, l3 cache {Side-Channel} attack."
+23rd USENIX security symposium (USENIX security 14). 2014.
+
+* [[[liu-prime+probe]]] Liu, Fangfei, et al.
+"Last-level cache side-channel attacks are practical."
+2015 IEEE symposium on security and privacy. IEEE, 2015.
+
+* [[[qiu-voltjockey]]] Qiu, Pengfei, et al.
+"VoltJockey: Breaching TrustZone by software-controlled voltage manipulation over multi-core frequencies."
+Proceedings of the 2019 ACM SIGSAC Conference on Computer and Communications Security. 2019.
+
+* [[[kenjar-voltpwn]]] Kenjar, Zijo, et al.
+"{V0LTpwn}: Attacking x86 processor integrity from software."
+29th USENIX Security Symposium (USENIX Security 20). 2020.
+
+* [[[kocher-spectre]]] Kocher, Paul, et al.
+"Spectre attacks: Exploiting speculative execution."
+Communications of the ACM 63.7 (2020): 93-101.
+
+* [[[lipp-meltdown]]]] Lipp, Moritz, et al.
+"Meltdown."
+arXiv preprint arXiv:1801.01207 (2018).
+
+* [[[bhattacharyya-smotherspectre]]] Bhattacharyya, Atri, et al.
+"Smotherspectre: exploiting speculative execution through port contention."
+Proceedings of the 2019 ACM SIGSAC Conference on Computer and Communications Security. 2019.
+
+* [[[pessl-drama]]] Pessl, Peter, et al.
+"{DRAMA}: Exploiting {DRAM} Addressing for {Cross-CPU} Attacks."
+25th USENIX security symposium (USENIX security 16). 2016.
+
+* [[[cook-isca22]]] Cook, Jack, et al.
+"There's always a bigger fish: a clarifying analysis of a machine-learning-assisted side-channel attack."
+Proceedings of the 49th Annual International Symposium on Computer Architecture. 2022.
+
+* [[[kogler-collider+power]]] Kogler, Andreas, et al.
+"{Collide+Power}: Leaking Inaccessible Data with Software-based Power Side Channels."
+32nd USENIX Security Symposium (USENIX Security 23). 2023.
+
+* [[[lipp-platypus]]] Lipp, Moritz, et al.
+"PLATYPUS: Software-based power side-channel attacks on x86."
+2021 IEEE Symposium on Security and Privacy (SP). IEEE, 2021.
+
+* [[[gopal-non-constant-sqmul]]] Gopal, Vinodh, et al.
+"Fast and constant-time implementation of modular exponentiation."
+Embedded Systems and Communications Security, Niagara Falls, NY, US (2009).

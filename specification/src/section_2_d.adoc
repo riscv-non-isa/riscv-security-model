@@ -42,16 +42,17 @@ to infer what data was transmitted in a communication channel. The timer
 can be provided by the platform or it can be created by the attacker. In this
 scenario, the attacker will change the non-architectural state such that the
 victim will have a different execution time. Depending on the execution time
-the attacker can infer what data the victim was processing. Timing
+the attacker can infer what data the victim was processing<<gopal-non-constant-sqmul,>>. Timing
 side-channels can be created in multiple ways. The simplest way is to time
 the victim before and after execution, giving it different inputs. If the
 victim has a non-constant time runtime with different input, the attacker can
-infer the victim's data. However, the most popular way is to change the state
+infer the victim's data<<gruss-flush+flush,yarom-flush+reload,liu-prime+probe>>.
+However, the most popular way is to change the state
 of the cache hierarchy in particular ways such that the attacker can infer what
 memory addresses the victim used, and, from that information, infer what data
 the victim is operating on. There are other available methods such as: the
-latency of the memory controller, interrupt handling, and functional unit
-contention in multi-harted physical cores.
+latency of the memory controller<<pessl-drama>>, interrupt handling<<cook-isca22>>,
+and functional unit contention in multi-harted physical cores<<bhattacharyya-smotherspectre>>.
 
 = Performance Counter Side-Channel Attacks
 Traditionally, harts offer high-resolution performance counters, in the
@@ -60,7 +61,7 @@ can be programmed to keep track of architectural and non-architectural events.
 If these counters are available to both a victim and an attacker. An attacker
 will be able to read the events created by the victim and infer what data it
 was processing on. These counters range from cycle counters, to multi-level
-cache misses, and mispredictions.
+cache misses, and mispredictions<<gerlach-sp23>>.
 
 = Power Side-Channel Attacks
 Power side-channel attacks, in the logical domain, are defined by the usage of
@@ -71,12 +72,13 @@ of instructions a victim is executing. Some architectures share the same power
 counter across all harts, privilege levels, and security domains within the
 same physical core, or even within the same platform. Therefore, an OS will
 not context switch this architectural register and the power information will
-be available to an attacker.
+be available to an attacker<<kogler-collider+power,lipp-platypus>>.
 
 Another way to exploit power side-channels is to use power architectural
 registers to undervolt, overvolt, or increase the clock frequency of a phsycial
 core in a platform to inject hardware faults. These hardware faults, in turn,
-provide information for an attacker to infer what a victim is computing.
+provide information for an attacker to infer what a victim is
+computing<<qiu-voltjockey,kenjar-voltpwn>>.
 
 == Non-Architectural Type Attacks
 The previous attack type requires a victim to perform modifications to
@@ -95,8 +97,8 @@ Within the transient window, the victim must access and transfer data to the att
 a non-inter-process communication channel.
 The simplest method to create a transient window is to perform a load that misses in the TLB,
 and keeps missing while walking the page table, and is followed by a cache hierarchy miss using
-the physical address. The missing scenario can be created by the attacker as
-the cache hierarchy is traditionally shared between all physical cores.
+the physical address<<kocher-spectre>>. The missing scenario can be created by the attacker as
+the cache hierarchy is traditionally physically shared between all physical cores.
 Since the amount of data transferred within the transient window depends on its size, the
 attacker has a desire to extend it.
 
@@ -109,9 +111,9 @@ the size of the ROB and the latency of the pointer chasing. However, there are o
 create a transient window that can result in the same or higher latency. For example, if a part
 of a physical core is strongly power-gated, e.g., traditionally the vector unit, disabling and
 enabling the power-gating on vector unit may have a higher latency than a sequence of TLB and cache
-hierarchy misses. Even though this text presents two examples of creating and extending a transient
-window they are not the only two in existence. Generally, the size and creation of the transient
-window depend on the targeted microarchitecture.
+hierarchy misses<<schwarz-netspectre>>. Even though this text presents two examples of creating and
+extending a transient window they are not the only two in existence. Generally, the size and
+creation of the transient window depend on the targeted microarchitecture.
 
 All of the previous described attack subtypes (timing, performance, and power) may be
 deployed in non-architectural attacks. In timing side-channel attacks, an attacker can, for
@@ -122,5 +124,8 @@ committed instructions. In power side-channel attacks, the used power counter is
 of committed instructions. Non-Architectural attacks are very powerful tool for an attacker as
 they rely on implementation details of a platform and, as a result, are very difficult to detect
 in software (the architectural state). They provide a stealthy approach to transfer information
-across processes in any execution environment.
+across processes in any execution environment. Of the non-architectural attacks, the most popular
+types are: Spectre<<kocher-spectre>>, which exploits speculation mechanisms to control the
+access to data within the transient window; and Meltdown<<lipp-meltdown>>, which exploits data
+forwarding on excepting instructions within the transient window<<canella-sec19>>.
 
