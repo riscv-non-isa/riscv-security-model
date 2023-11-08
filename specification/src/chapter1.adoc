@@ -2,15 +2,6 @@
 
 == Introduction
 
-=== GLOSSARY/TAXONOMY
+=== Requirements and tracking
 
-=== Guiding Principles
-==== Intrinsic Security
-==== Principles of Zero Trust [Victor Lu]
-
-=== Generic Architecture/Framework
-
-=== Security Goals
-
-=== Adversary Model
-
+=== Relationship to external specifications
