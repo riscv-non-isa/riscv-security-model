@@ -1,7 +1,0 @@
-[[section_3_g]]
-
-=== Physical Adversary Attack Resistance [Paul Elliott]
-
-=== Supply-chain Attack Resistance [Paul Elliott]
-
-=== Discovery & Config Schema

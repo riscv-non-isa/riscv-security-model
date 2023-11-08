@@ -1,64 +1,10 @@
 [[chapter2]]
 
-==  Threat Model
+==  Risc-V security model overview
 
-[NOTE]
-====
-We want the threat model to be complete even if RVI may not propose mitigations
-for all cases
-====
+=== Refence model and taxonomy
 
-//This section must cover the following threat description
-//*** Platform Integrity and Protection ***
-//Secure Boot
-//Verified Boot
-//Attestation
-//Debug
-//RAS, QoS and Performance Monitoring
-include::section_2_a.adoc[]
+=== Adversarial model
 
-//This section must cover the following threat description
-//*** Software Protection ***
-//Pointer/Object Safety
-//Stack Safety (CFI)
-//Call/ Jump Safety (CFI)
-//Compartmentalization
-include::section_2_b.adoc[]
+=== Security objectives
 
-//This section must cover the following threat description
-//*** Data Protection ***
-//Code/ Data Confidentiality
-//Code/ Data Integrity
-//Code/Data Replay Protection
-include::section_2_c.adoc[]
-
-//This section must cover the following threat description
-//*** Logical Side-channels *** [Luis Fiolhais, Yann Loisel]
-//Spatial timing channel Safety
-//Temporal Side-Channel Safety
-//Covert channels
-include::section_2_d.adoc[]
-
-//This section must cover the following threat description
-//*** Logical (Software) Attacks ***
-//Approaches
-// Types
-include::section_2_e.adoc[]
-
-//This section must cover the following threat description
-//*** Physical (Access) Attacks ***
-//Approaches
-//Types
-include::section_2_f.adoc[]
-
-//This section must cover the following threat description
-//*** Supply Chain Protection ***
-//Hardware Supply Chain Safety
-//Software Supply Chain Safety
-include::section_2_g.adoc[]
-
-//This section must cover the following threat description
-//*** Device Data Protection ***
-//Peripheral/ IP Authentication
-//Device Data confidentiality and integrity
-include::section_2_h.adoc[]
