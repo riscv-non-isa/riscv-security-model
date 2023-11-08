@@ -104,3 +104,14 @@ hierarchy misses. Even though this text presents two examples of creating and ex
 window they are not the only two in existence. Generally, the size and creation of the transient
 window depend on the targeted microarchitecture.
 
+All of the previous described attack subtypes (timing, performance, and power) may be
+deployed in non-architectural attacks. In timing side-channel attacks, an attacker can, for
+example, change the state of the cache hierarchy, that the victim will inherit, to have measurable
+timing differences when the victim executes. In performance counter side-channel attacks,
+the contents of the counters for non-architectural events are still updated regardless of
+committed instructions. In power side-channel attacks, the used power counter is updated regardless
+of committed instructions. Non-Architectural attacks are very powerful tool for an attacker as
+they rely on implementation details of a platform and, as a result, are very difficult to detect
+in software (the architectural state). They provide a stealthy approach to transfer information
+across processes in any execution environment.
+
