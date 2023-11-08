@@ -12,6 +12,15 @@ concurrent execution of a victim. Often these side-effect occur due to the
 difference between the intuitive programmer model the programmer uses and the
 specification of the architectural model and the non-architectural model.
 
+There are two entities in logical side-channel attacks, a victim and an attacker,
+which share the same physical computing resources. The victim and the attacker
+are two different processes in a execution environment that provides virtual
+memory isolation using different virtual memory maps for each process. Both
+entities can be executing concurrently in the same physical core or in different
+physical cores, or the attacker is executing immediately after the victim completes
+execution. In all logical side-channels, the victim is a cooperating entity in
+the attack either willingly or not.
+
 This section interprets logical side-channel attacks in two broad categories:
 *Architectural Type Attacks* which require the victim to commit instructions
 in order for the attacker to recover information; and *Non-Architectural Type
