@@ -73,7 +73,34 @@ provide information for an attacker to infer what a victim is computing.
 The previous attack type requires a victim to perform modifications to
 the architectural state in order to complete an attack. However, some
 instructions don’t have to be committed to modify the non-architectural state.
+These type of attacks are referred to in the state-of-the-art as Transient-Execution
+Attacks (TEA). The observation is that, in TEAs, even though the victim doesn't
+have to commit instructions, their execution provide a side-effect that can be measured
+by the attacker. Instructions that have measurable side-effects when executed are called
+*transient instructions*.
 
-= Transient-Execution Attacks
-Transient-Execution Attacks (TEA).
+The standard operational model of this attack type requires the
+victim to stall the commit stage due to a sequence of high-latency operations.
+The timing window created by stalling commit stage is referred to as the *transient window*.
+Within the transient window, the victim must access and transfer data to the attacker through
+a non-inter-process communication channel.
+The simplest method to create a transient window is to perform a load that misses in the TLB,
+and keeps missing while walking the page table, and is followed by a cache hierarchy miss using
+the physical address. The missing scenario can be created by the attacker as
+the cache hierarchy is traditionally shared between all physical cores.
+Since the amount of data transferred within the transient window depends on its size, the
+attacker has a desire to extend it.
+
+To maximize the size of the transient window, the victim can execute and commit loads that will
+also miss the TLB and the cache hierarchy that depend on the previous load with the same
+properties. In theory, this kind of transient window can be extended to an arbitrary
+large latency chosen by the attacker as it depends on the state of the cache hierarchy. The number
+of transient instructions executed by the victim, while the commit stage is stalled, will depend on
+the size of the ROB and the latency of the pointer chasing. However, there are other methods to
+create a transient window that can result in the same or higher latency. For example, if a part
+of a physical core is strongly power-gated, e.g., traditionally the vector unit, disabling and
+enabling the power-gating on vector unit may have a higher latency than a sequence of TLB and cache
+hierarchy misses. Even though this text presents two examples of creating and extending a transient
+window they are not the only two in existence. Generally, the size and creation of the transient
+window depend on the targeted microarchitecture.
 
