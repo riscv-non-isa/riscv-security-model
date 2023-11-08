@@ -1,3 +1,62 @@
 [[chapter4]]
 
-== Security Ecosystem
+== Use case examples
+
+=== Basic non-virtualized system
+
+==== Overview
+
+==== Isolation model
+
+==== Device access control
+
+==== Sealing
+
+==== Attestation
+
+
+=== Basic virtualized system
+
+==== Overview
+
+==== Isolation model
+
+==== Device access control
+
+==== Sealing
+
+==== Attestation
+
+
+=== Global Platforms TEE
+
+==== Overview
+
+==== Isolation model
+
+==== Device access control
+
+==== Sealing
+
+==== Attestation
+
+
+=== Confidential compute system (Cove)
+==== Overview
+
+==== Isolation model
+
+==== Device access control
+
+==== Trusted device assignment
+
+==== Sealing
+
+==== Attestation
+
+
+=== Additional examples
+
+(Variations on the above)
+
+Android pKVM

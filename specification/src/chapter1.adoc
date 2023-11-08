@@ -1,7 +1,72 @@
+
 [[chapter1]]
 
 == Introduction
 
+This specifications provides guidelines for how Risc-V systems can use Risc-V security building blocks to build secure systems for different use cases.
+
+It does this through a few example uses cases based on commonly used profiles. This is not intended to be exhaustive, it is expected that the principles described in the chosen example are general enough to be applicable to other use cases as well. But the examples may be extended over time as required.
+
 === Requirements and tracking
 
-=== Relationship to external specifications
+Where this specification makes formal recommendations, those are captured as trackable requirements using the following format:
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| The `CAT` is a category prefix that logically groups the requirements and is followed by 3 digits - `NNN` - assigning a numeric ID to the requirement. +
+The requirements use the key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" that are to be interpreted as described in https://www.ietf.org/rfc/rfc2119.txt[RFC 2119] when, and only when, they appear in all capitals, as shown here. When these words are not capitalized, they have their normal English meanings.             
+|===
+
+A requirement or a group of requirements may be followed by non-normative text providing context or justification for the requirement. The non-normative text may also be used to reference sources that are the origin of the requirement.
+
+Trackable requirements are intended for ease of reference across dependant specifications. 
+
+=== Relationship to external profiles
+
+For the purpose of this specification, external profiles apply to existing ecosystems or segments, but do not generally mandate implementations or architectures. This specification does not aim to establish new profiles. Its main purpose is to provide guidelines for how Risc-V security building blocks can be used to build Risc-V products which can comply with existing profiles.
+
+Some profiles cover some or all of:
+
+* Security reference architectures and taxonomy
+* Hardware and software security requirements
+* Interfaces and programming models
+* Protection profiles and certification programmes
+* Reference firmware/software
+
+Other profiles are focussed on processes and methodology.
+
+Examples of external profiles include:
+
+[width=100%]
+[%header, cols="5,15"]
+|===
+| Profile     
+| Description
+
+| Global Platforms (GP)
+| Trusted execution environments(TEE) and trusted firmware for mobile, connected clients, and IoT +
+Secure element (SE) for tamper resistant storage of and operations on cryptographic secrets +
+https://globalplatform.org/
+
+| Trusted computing group (TCG)
+| Trusted platform module (TPM) and Device identifier composition engine (DICE) for trusted platforms
+https://trustedcomputinggroup.org/
+
+
+| Confidential computing consortium
+| Common principles and protocols for protecting data in use (confidential compute) +
+https://confidentialcomputing.io/
+
+| NIST 
+| Widely used US standards for security processes, protocols and algorithms. Examples for the purposes of this specification: +
+NISTIR 8259 - IoT device cybersecurity capability + 
+SP800-207 - Zero Trust Architecture +
+https://www.nist.gov/
+|===
+
+This is not an exhaustive list. It is provided by way of example. 

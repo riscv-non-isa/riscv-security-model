@@ -1,7 +1,0 @@
-[[chapter_2_section_2d]]
-
-=== Logical Side-channels [Luis Fiolhais, Yann Loisel]
-
-==== Spatial timing channel Safety
-==== Temporal Side-Channel Safety
-==== Covert channels

@@ -1,0 +1,7 @@
+[[chapter5]]
+
+== Cryptography
+
+<use models enabled by crypto ISA extensions>
+
+<crypto guidelines>

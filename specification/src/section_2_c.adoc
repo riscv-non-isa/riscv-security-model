@@ -1,6 +1,0 @@
-[[chapter_2_section_2c]]
-=== Data Protection
-
-==== Code/ Data Confidentiality
-==== Code/ Data Integrity
-==== Code/Data Replay Protection
