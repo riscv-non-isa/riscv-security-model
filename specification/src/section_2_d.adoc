@@ -53,6 +53,22 @@ memory addresses the victim used, and, from that information, infer what data
 the victim is operating on. There are other available methods such as: the
 latency of the memory controller<<pessl-drama>>, interrupt handling<<cook-isca22>>,
 and functional unit contention in multi-harted physical cores<<bhattacharyya-smotherspectre>>.
+Listing <<timing_side_channel_example>> provides an example of a timing side-channel attack where
+secret is leaked depending on the function being executed as the time measured will be
+different.
+
+[[timing_side_channel_example]]
+[source,c]
+.Timing Side-Channel Example
+----
+uint64_t start = time();
+if (secret) {
+    high_latency_op();
+} else {
+    low_latency_op();
+}
+uint64_t end = time() - start;
+----
 
 = Performance Counter Side-Channel Attacks
 Traditionally, harts offer high-resolution performance counters, in the
@@ -61,7 +77,26 @@ can be programmed to keep track of architectural and non-architectural events.
 If these counters are available to both a victim and an attacker. An attacker
 will be able to read the events created by the victim and infer what data it
 was processing on. These counters range from cycle counters, to multi-level
-cache misses, and mispredictions<<gerlach-sp23>>.
+cache misses, and mispredictions<<gerlach-sp23>>. Listing
+<<performance_counter_side_channel_example>> shows an example of a performance
+counter side-channel attack where the value of secret is leaked depending on the
+number of instruction committed.
+
+[[performance_counter_side_channel_example]]
+[source,c]
+.Performance Counter Side-Channel Example
+----
+// Consider that the time for the execution of op_A is the same as the
+// execution of op_C and op_B.
+uint64_t start = get_instret();
+if (secret) {
+    op_A(); // 15 instructions
+} else {
+    op_B(); // 20 instructions
+    op_C(); // 10 instructions
+}
+uint64_t end = get_instret() - start;
+----
 
 = Power Side-Channel Attacks
 Power side-channel attacks, in the logical domain, are defined by the usage of
@@ -73,6 +108,22 @@ counter across all harts, privilege levels, and security domains within the
 same physical core, or even within the same platform. Therefore, an OS will
 not context switch this architectural register and the power information will
 be available to an attacker<<kogler-collider+power,lipp-platypus>>.
+Listing <<power_side_channel_attack_example>> shows an example of a power
+side-channel attack where the value of secret is leaked by the amount of energy
+consumed when executing each function.
+
+[[power_side_channel_attack_example]]
+[source,c]
+.Power Side-Channel Example
+----
+uint64_t start = get_energy();
+if (secret) {
+    scalar_op();
+} else {
+    vector_op();
+}
+uint64_t end = get_energy() - start;
+----
 
 Another way to exploit power side-channels is to use power architectural
 registers to undervolt, overvolt, or increase the clock frequency of a phsycial
@@ -128,4 +179,48 @@ across processes in any execution environment. Of the non-architectural attacks,
 types are: Spectre<<kocher-spectre>>, which exploits speculation mechanisms to control the
 access to data within the transient window; and Meltdown<<lipp-meltdown>>, which exploits data
 forwarding on excepting instructions within the transient window<<canella-sec19>>.
+Listings <<spectre-pht-example>> and <<meltdown-us-example>> shows examples for a Spectre-PHT
+attack and Meltdown-US attacks.
 
+[[spectre-pht-example]]
+[source,c]
+.Spectre-PHT Example
+----
+// Spectre-PHT Example
+#define BUF_LEN 1024
+
+const uint8_t tmp1[BUF_LEN];
+const uint8_t secret[256];
+const uint8_t tmp2[BUF_LEN * 64];
+
+void spectre(uint32_t x) { // x is malicious and greater than BUF_LEN
+    if (x < BUF_LEN) { // assume this branch is always mispredicted not-taken
+        // tmp1[x] is an out of bounds access of tmp1 which
+        // means that the secret will actually be loaded.
+        // The secret is encoded into the address generated in tmp2.
+        // The leaked data by tmp1 can be recovered by a cache side-channel attack.
+        return tmp2[tmp1[x] << 6];
+    }
+}
+----
+
+[[meltdown-us-example]]
+[source,c]
+.Meltdown-US Example
+----
+// Meltdown-US Example using Spectre-PHT to hide the exception
+
+// This exploit only works if the privilege checking of the kernel_address
+// load is not done before the load is dispatched to the memory subsystem.
+#define BUF_LEN 1024
+const uint8_t tmp2[BUF_LEN * 64];
+
+void meltdown(uint32_t x, user_t user) {
+    if (is_root(user)) { // assume this branch is always mispredicted not-taken
+        uint32_t tmp = kernel_address[x];
+        // The secret is encoded into the address generated in tmp2.
+        // The leaked data can be recovered by a cache side-channel attack.
+        return tmp2[tmp << 6];
+    }
+}
+----
