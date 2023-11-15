@@ -6,6 +6,8 @@
 
 ==== Overview
 
+==== Secure and Verified Boot
+
 ==== Isolation model
 
 ==== Device access control
@@ -41,10 +43,14 @@
 ==== Attestation
 
 
-=== Confidential compute system (Cove)
+=== Confidential computing on RISC-V (CoVE)
 ==== Overview
 
+==== Measured Boot
+
 ==== Isolation model
+
+==== Physical threat protection
 
 ==== Device access control
 
@@ -53,6 +59,8 @@
 ==== Sealing
 
 ==== Attestation
+
+==== Debug, QoS and Performance Monitoring
 
 
 === Additional examples

@@ -3,9 +3,9 @@
 
 == Introduction
 
-This specifications provides guidelines for how Risc-V systems can use Risc-V security building blocks to build secure systems for different use cases.
+This specifications provides guidelines for how RISC-V systems can use RISC-V security building blocks to build secure systems for different use cases.
 
-It does this through a few example uses cases based on commonly used profiles. This is not intended to be exhaustive, it is expected that the principles described in the chosen example are general enough to be applicable to other use cases as well. But the examples may be extended over time as required.
+The guidelines are listed through a few example uses cases based on commonly used profiles. The guidelines are not intended to be exhaustive; it is expected that the principles described in the chosen examples are general enough to be applicable to other use cases as well. The examples may be extended over time as required.
 
 === Requirements and tracking
 
@@ -28,7 +28,7 @@ Trackable requirements are intended for ease of reference across dependant speci
 
 === Relationship to external profiles
 
-For the purpose of this specification, external profiles apply to existing ecosystems or segments, but do not generally mandate implementations or architectures. This specification does not aim to establish new profiles. Its main purpose is to provide guidelines for how Risc-V security building blocks can be used to build Risc-V products which can comply with existing profiles.
+For the purpose of this specification, external profiles apply to existing ecosystems or segments, but do not generally mandate implementations or architectures. This specification does not aim to establish new profiles. Its main purpose is to provide guidelines for how RISC-V security building blocks can be used to build RISC-V products which can comply with existing profiles.
 
 Some profiles cover some or all of:
 

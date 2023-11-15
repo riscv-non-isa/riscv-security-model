@@ -1,6 +1,11 @@
 [[chapter3]]
 
-== Risc-V security building blocks
+== RISC-V security building blocks
+=== Root of trust
+RTM for measurement, reporting and updates
+Device Lifecycle management
+Layered attestation
+Authorized Debug
 
 === Isolation
 
@@ -22,8 +27,19 @@ Cheri/Capstone
 
 ==== Lightweight isolation
 
+==== Compartmentalization
+
 ==== System level isolation
 
 WorldGuard
 
 ==== Cryptography enhancements
+
+==== Cryptographic Data Protection 
+
+=== Side-channel considerations [Luis Fiolhais]
+Spatial timing channels and defense approaches
+Temporal side channels and defense approaches
+
+=== Supply chain considerations [Paul Elliott]
+
