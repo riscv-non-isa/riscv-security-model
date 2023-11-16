@@ -10,14 +10,14 @@ Defines a set of generic hardware and software subsystems used in examples and u
 * Adversarial model +
 Defines common attack types on secure systems, and identifies Risc-V extensions which can aid mitigation.
 
-* Ecosystem security objectives
+* Ecosystem security objectives +
 Defines common security features and functional guidelines, used to establish trustworthy devices in an ecosystem.
 
 === Reference model
 
 [caption="Figure {counter:image}: ", reftext="Figure {image}"]
 [title= "Generic security reference model"]
-image::img_ch1_reference-model.png[]
+image::img_ch2_reference-model.png[]
 
 The figure above outlines a generic security reference model. It is not intended to describe any particular implementation. It only defines a common taxonomy for the purpose of this document. 
 
@@ -156,6 +156,8 @@ This specification is primarily concerned with ISA level mitigations against log
 
 Physical or remote attacks in general need to be addressed at system, protocol or governance level, and may require additional non-ISA mitigations. However, some ISA level mitigations can also help provide some mitigation against physical or remote attacks and this is indicated in the tables below.
 
+The required level of protection can vary depending on use case. For example, a HW RoT may have stronger requirements on physical resistance than other parts of an SoC.
+
 Finally, this specification does not attempt to rate attacks by severity, or by adversary skill level. Ratings tend to depend on use case specific threat models and requirements. 
 
 ==== Logical
@@ -185,8 +187,8 @@ a| * Risc-V privilege levels
 | Chained +
 Logical
 | Attacks on speculative execution implementations. For example https://meltdownattack.com/[Spectre and Meltdown]
-| 
-| Fence.t
+| Most of these attacks except Spectre v1 are specific to a particular micro architecture, and Risc-V systems are expected not to be vulnerable. 
+| Fence.t could mitigate against Spectre v1.
 
 | CAT_NNN
 | Interface abuse
@@ -241,9 +243,11 @@ a| * Implement robust power management and radiation control
 | Direct +
 Logical or physical
 a| *Row-hammer type software attacks to manipulate nearby memory cells
-* Using NVDIMM, interposers, or physical probing to read, record, or replay physical memory +
+* Using NVDIMM, interposers, or physical probing to read, record, or replay physical memory
+* Physical attacks on hardware shielded locations to extract hardware provisioned assets
 a| * Implement robust memory error detection, cryptographic memory protection, or physical tamper resistance
-* Supervisor domain ID, privilege level, or MTT attributes, could be used to derive memory encryption contexts at domain or workload granularity.
+* Supervisor domain ID, privilege level, or MTT attributes, could be used to derive memory encryption contexts at domain or workload granularity
+* Provide a degree of tamper resistance
 
 | CAT_NNN
 | Boot attacks
@@ -308,20 +312,24 @@ NOTE: Add state diagram?
 | A secure system MUST manage a security lifecycle. 
 |===
 
+[caption="Figure {counter:image}: ", reftext="Figure {image}"]
+[title= "Generic security lifecycle"]
+image::img_ch2_security-lifecycle.png[]
+
 A security lifecycle reflects the trustworthiness of a system during its lifetime. A typical security lifecycle includes at least the following states:
 
 * Manufacture - The system may not yet be fully locked down and has no hardware provisioned assets
 * Security provisioning - The process of provisioning hardware provisioned assets +
-Security provisioning could be performed in multiple stages through a supply chain and may require additional sub-states.
+Depending on ecosystem requirement, security provisioning could be performed in multiple stages through a supply chain and may require additional sub-states. These types of application specific extensions are out of scope of this specification.
 * Secured - the system is fully locked down and has all its hardware provisioned assets +
-Additional application specific provisioning stages can take place in this state - for example network onboarding and device activation, or user identity management.
-* Trusted debug - part of the system is in a debug state +
+Additional application specific provisioning stages can take place in this state - for example network onboarding and device activation, or user identity management. This is out of scope of this specification.
+* Recoverable debug - part of the system is in a debug state +
 At least trusted security services or a hardware root of trust are not compromised, and hardware provisioned secrets remain protected. +
 This state is both attestable and recoverable. For example, debug is enabled for a security domain without compromising another security domain or any trusted security services.
 * Terminated - any system change which could expose hardware provisioned assets +
-Typically hardware provisioned assets are made inaccessible and revoked before entering this state. This also protects any derived assets such as attestation and sealing keys.
+Typically hardware provisioned assets are made permanently inaccessible and revoked before entering this state. This also protects any derived assets such as attestation and sealing keys.
 
-A system could support re-provisioning following repair from a terminated state. This is equivalent to starting over from the security provisioning state and creates a new instance.
+A system could support re-provisioning from a terminated state, for example following repair. This is equivalent to starting over from the security provisioning state and creates a new instance with a new secure identifier.
 
 [width=100%]
 [%header, cols="5,20"]
