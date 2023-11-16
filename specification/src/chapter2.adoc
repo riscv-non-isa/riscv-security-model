@@ -2,9 +2,541 @@
 
 ==  Risc-V security model overview
 
-=== Refence model and taxonomy
+The aim of this chapter is to define common taxonomies and principles for secure systems, used in the rest of this and other Risc V specifications. It is divided into the following sections:
+
+* Reference model +
+Defines a set of generic hardware and software subsystems used in examples and use cases to describe secure systems.
+
+* Adversarial model +
+Defines common attack types on secure systems, and identifies Risc-V extensions which can aid mitigation.
+
+* Ecosystem security objectives
+Defines common security features and functional guidelines, used to establish trustworthy devices in an ecosystem.
+
+=== Reference model
+
+[caption="Figure {counter:image}: ", reftext="Figure {image}"]
+[title= "Generic security reference model"]
+image::img_ch1_reference-model.png[]
+
+The figure above outlines a generic security reference model. It is not intended to describe any particular implementation. It only defines a common taxonomy for the purpose of this document. 
+
+==== Software components
+
+*Trusted security services*
+
+_Trusted security services_ consist of firmware trusted by all other software on a hart providing a minimal shared trusted base needed for a secure system, representing a minimal _trusted compute base (TCB)_. For example:
+
+* Boot
+* Security lifecycle management
+* Security provisioning
+* Root key management for sealing and attestation
+
+NOTE: Some of this functionality can be further hardened using a dedicated HW RoT.
+
+*Application security services*
+
+_Application security services_ are responsible for providing application or ecosystem specific security capabilities to other software on the hart. For example: 
+
+* Secure storage
+* Application key storage and cryptographic services
+* Secure clients for firmware updates or attestation
+* User identity management and biometrics
+* Payment clients, DRM clients
+
+*Security platform*
+
+The term _Security platform_ is used in this document to describe the combination of trusted and application security services.
+
+*Runtime environment*
+
+The _runtime environment_ is typically an operating system or a hypervisor hosting _user workloads_ or _guest workloads_. 
+
+==== System components
+
+*Trusted subsystems*
+
+A trusted subsystem is a dedicated compute environment with its own private resources, isolated from all other parts of the system. For example:
+
+* Hardware RoT, or Secure Element
+* Power manager
+* Hardware SIM or TPM 
+* A trusted media path
+
+*Hardware root of trust*
+
+On systems with complex hardware and software, it is good practice to move sensitive hardware provisioned assets, and some trusted security processes, to a dedicated _Hardware root of trust_ (HW RoT). This protects those assets and processes, minimizing exposure from the rest of the system.
+
+For the purpose of this document, the hardware root of trust is a dedicated trusted subsystem with a special role for the security platform. For example, it can typically load firmware for other trusted subsystems at boot, and control external debug access for the rest of the system.
+
+NOTE: It is common for secure systems to support multiple trust chains and multiple roots of trust. For example, a TPM can be a root of trust for UEFI boot flows within the runtime environment, and a SIM can be a root of trust for user identity management within application security services. They are usually dedicated trusted subsystems with their own specifications and certification processes. +
+ +
+For the purpose of this document, these can be treated as secondary roots of trust. The HW RoT governs the security platform itself and acts as a primary root of trust on the system. 
+
+*Hardware shielded locations*
+
+_Hardware shielded locations_ represent protected storage used for storing hardware provisioned assets.
+
+Protections typically include:
+
+* Access restricted to a hardware root of trust, or to trusted security services
+* A degree of tamper resistance
+
+Examples of hardware provisioned assets include:
+
+* Security platform root keys
+* Security platform identities
+* Boot keys
+
+Examples of typical implementations of hardware shielded locations include:
+
+* On-chip OTP memory, or locked section of on-chip flash
+* Secure element, either on-chip or cryptographically bound
+
+*Invasive subsystems*
+
+_Invasive subsystems_ include any system component or feature capable of breaking security guarantees. Examples include:
+
+* External debug and trace
+* Boundary scan
+* RAS (reliability, availability, serviceability)
+
+*Root devices*
+
+Any device used exclusively by trusted security services. For example:
+
+* Power manager
+* Hardware shielded locations, or a hardware root of trust
+
+*Application security devices*
+
+Any device used exclusively by application security services. For example:
+
+* SIM and Biometrics
+* Secure media path
+
+*User devices*
+
+Any device that can be used by the runtime environment and its workloads. For example:
+
+* Communications and storage
+* Accelerators
+
+==== Risc-V ISA and non-ISA extensions
+
+Risc-V defines a number of security related extensions. These will be discussed in more detail later in this document. 
 
 === Adversarial model
 
-=== Security objectives
+For the purpose of this specification, the main goal of an adversary is to gain unauthorized access to _resources_ - memory, memory mapped devices, and execution state. For example, to access sensitive assets, to gain privileges, or to affect the control flow of a victim.
 
+In general, adversaries capable of mounting the following broad classes of attacks should be considered by system designers:
+
+* Logical +
+The attacker and the victim are both processes on the same system.
+
+* Physical +
+The victim is a process on a system, and the attacker has physical access to the same system. For example: probing, interposers, glitching, and disassembly.
+
+* Remote +
+The victim is a process on a system, and the attacker does not have physical or logical access to the system. For example, radiation or power fluctuations, or protocol level attacks on connected services.
+
+Attacks can be direct or indirect:
+
+* Direct +
+An adversary gains direct access to a resource belonging to the victim. For example: direct access to a memory location or execution state, or direct control of the control flow of a victim.
+
+* Indirect +
+An adversary can access or modify the content of a resource by a side channel. For example: by analyzing timing patterns of an operation by a victim to reveal information about data used in that operation, or launching row-hammer style memory attacks to affect the contents of memory owned by the victim.
+
+* Chained +
+An adversary is able to chain together multiple direct and indirect attacks to achieve a goal. For example, use a software interface exploit to affect a call stack, and use that to take redirect the control flow of a victim.
+
+This specification is primarily concerned with ISA level mitigations against logical attacks.
+
+Physical or remote attacks in general need to be addressed at system, protocol or governance level, and may require additional non-ISA mitigations. However, some ISA level mitigations can also help provide some mitigation against physical or remote attacks and this is indicated in the tables below.
+
+Finally, this specification does not attempt to rate attacks by severity, or by adversary skill level. Ratings tend to depend on use case specific threat models and requirements. 
+
+==== Logical
+
+[width=100%]
+[%header, cols="5,5,5,10,15,10"]
+|===
+| ID#
+| Attack   
+| Type  
+| Description
+| Risc-V mitigations 
+| Planned mitigations
+
+| CAT_NNN
+| Unrestricted unauthorized access 
+| Direct +
+Logical
+| Unauthorized access to resources - memory, memory mapped devices, or execution state.
+a| * Risc-V privilege levels
+* Risc-V isolation
+* Risc-V virtualization
+| 
+
+| CAT_NNN
+| Transient execution attacks
+| Chained +
+Logical
+| Attacks on speculative execution implementations. For example https://meltdownattack.com/[Spectre and Meltdown]
+| 
+| Fence.t
+
+| CAT_NNN
+| Interface abuse
+| Chained +
+Logical
+| Abusing interfaces across privilege or isolation boundaries, for example to elevate privilege or to gain unauthorized access to resources.
+a| * Risc V privilege levels
+* Risc-V isolation
+| High assurance cryptography
+
+| CAT_NNN
+| Event counting  
+| Direct +
+Logical
+| For example, timing processes across privilege or isolation boundaries to derive information about confidential assets.
+a| * Data-independent timing instructions
+* Performance counters restricted by privilege and isolation boundaries (sscofpmf, smcntrpmf)
+|
+
+| CAT_NNN
+| Redirect control flow
+| Chained +
+Logical
+| Unauthorized manipulation of call stacks and jump targets to redirect a control flow to code controlled by an attacker. 
+a| * Shadow stacks
+* Landing pads
+|
+
+|===
+
+==== Physical and remote
+
+[width=100%]
+[%header, cols="5,10,10,15,15"]
+|===
+| ID#
+| Attack     
+| Type 
+| Description
+| Risc V recommendations 
+
+| CAT_NNN
+| Analysis of physical leakage
+| Direct or indirect +
+Physical or remote
+| For example, observing radiation, power line patterns, or temperature.  
+a| * Implement robust power management and radiation control
+* Support data-independent timing instructions 
+
+| CAT_NNN
+| Physical memory manipulation
+| Direct +
+Logical or physical
+a| *Row-hammer type software attacks to manipulate nearby memory cells
+* Using NVDIMM, interposers, or physical probing to read, record, or replay physical memory +
+a| * Implement robust memory error detection, cryptographic memory protection, or physical tamper resistance
+* Supervisor domain ID, privilege level, or MTT attributes, could be used to derive memory encryption contexts at domain or workload granularity.
+
+| CAT_NNN
+| Boot attacks
+| Chained +
+Logical or physical
+a| * Glitching to bypass secure boot
+* Retrieving residual confidential memory after a system reset
+a| * Implement robust power management
+* Implement cryptographic memory protection with at least boot freshness
+
+| CAT_NNN
+| Subverting supply chains
+| Remote
+| Infiltration or collusion to subvert security provisioning chains, software supply chains and signing processes, hardware supply chains, attestation processes
+| Deploy appropriate governance, accreditation, and certification processes for an ecosystem.
+
+|===
+
+=== Ecosystem security objectives
+
+Ecosystem security objectives identify a set of common features and mechanisms that secure systems should support to enforce and establish trust in an ecosystem. 
+
+These features are defined here at a functional level only. Technical requirements are typically use case specific and defined by external certification programmes. 
+
+In some cases Risc-V non-ISA specifications can provide guidance or protocols. This is discussed more in use case examples later in this specification.
+
+==== Secure identity
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| A security platform MUST be securely identifiable
+|===
+
+Identifies the immutable part of the security platform - immutable hardware, configurations, and firmware. Immutable components cannot change after completed security provisioning (see also security lifecycle management).
+
+A _secure identity_ is one capable of generating a cryptographic signature which can be verified by a remote party. Usually an asymmetric key pair, but sometimes symmetric signing schemes can be used). It is typically used as part of an attestation process. 
+
+Its scope and uniqueness depends on use case. For example:
+
+* Unique to a system
+* Shared among multiple systems with the same immutable security properties (group based anonymization)
+* Anonymized using an attestation protocol supporting a third party anonymization service
+
+It can be directly provisioned, or derived from other provisioned secrets.
+
+==== Security lifecycle
+
+NOTE: Add state diagram?
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| A secure system MUST manage a security lifecycle. 
+|===
+
+A security lifecycle reflects the trustworthiness of a system during its lifetime. A typical security lifecycle includes at least the following states:
+
+* Manufacture - The system may not yet be fully locked down and has no hardware provisioned assets
+* Security provisioning - The process of provisioning hardware provisioned assets +
+Security provisioning could be performed in multiple stages through a supply chain and may require additional sub-states.
+* Secured - the system is fully locked down and has all its hardware provisioned assets +
+Additional application specific provisioning stages can take place in this state - for example network onboarding and device activation, or user identity management.
+* Trusted debug - part of the system is in a debug state +
+At least trusted security services or a hardware root of trust are not compromised, and hardware provisioned secrets remain protected. +
+This state is both attestable and recoverable. For example, debug is enabled for a security domain without compromising another security domain or any trusted security services.
+* Terminated - any system change which could expose hardware provisioned assets +
+Typically hardware provisioned assets are made inaccessible and revoked before entering this state. This also protects any derived assets such as attestation and sealing keys.
+
+A system could support re-provisioning following repair from a terminated state. This is equivalent to starting over from the security provisioning state and creates a new instance.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| Hardware provisioned assets MUST only be accessible while the system is in a secured or a trusted debug state.
+
+| CAT_NNN
+| Derived assets MUST only be available if a component is in secured state.
+|===
+
+A derived asset in this context is any asset derived from hardware provisioned assets and used to secure a component. For example attestation keys or sealing keys for a supervisor domain. 
+
+==== Attestable services
+
+For the purpose of this specification a confidential service can be any isolated component on a system. For example, a hosted confidential workload, or an isolated application security service.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| A confidential service, and all software and hardware components it depends on, MUST be attestable. 
+|===
+
+Attestation allows a remote reliant party to determine the trustworthiness of a confidential service before submitting assets to it. 
+
+* Verify the security state of a confidential service
+* Verify the security state of all software and hardware that service depends on
+* Establish an attested secure connection to the service 
+
+==== Authorized software 
+
+Running unauthorized software can compromise the security state of the system. Two complementary processes can be used to authorize software:
+
+* Measuring 
+* Verification
+
+A measurement is a cryptographic fingerprint of the launch state of a software component, such as a running hash of its memory contents and launch state.
+
+Verification compares an actual measurement to an expected measurement from a signed authorization by a trusted signer. Verification requires a provisioned or securely discovered list of trusted signer(s). Depending on use case, a signed authorization can be part of a software image. Or it can be delivered or discovered separately as part of an authorization protocol.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| All isolated software that has to be trusted by other software on the same system MUST be measured and verified.
+|===
+
+Verification ensures only software from trusted parties is installed.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| All isolated software that provides services to remote reliant parties MUST be at least measured.
+|===
+
+Software that is at least measured can be attested by remote reliant parties. To ensure supply chain integrity it is recommended that it is also verified locally before installation.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| Software authorization MUST be rooted in immutable boot code.
+|===
+
+Immutable boot code forms part of the immutable hardware security platform identified by the hardware security platform identity and is the start of a local trust chain on a system. It is typically ROM code, or locked on-chip flash.
+
+If a system implements a hardware root of trust, then the HW root of trust hosts the immutable boot code. Otherwise the immutable boot code is typically the first code that executes on an application processor immediately after reset. 
+
+==== Secure updates
+
+Over time, any non-immutable component may need updates to address vulnerabilities or functionality improvements. An update can concern software/firmware, microcode, or any other updatable element on a system.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| All software on a system which is not immutable MUST be updatable.
+|===
+
+Immutable software includes at least immutable boot code. Some trusted subsystems can also include immutable software to meet specific security certification requirements defined by a governing body. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| An update of a software component SHOULD restart all other dependant software components.
+|===
+
+A software update changes the attested security state of the affected component, and can affect whether the system is still considered trustworthy or not by a reliant party. A restart forces re-attestation of dependent components, and also re-assesses access to derived assets such as sealing keys depending on the new security state following the update. 
+
+Alternatively, support for live updates may be part of the already attested trust contract between the reliant party and the system, in which case forced re-attestation may not be required.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| An update of trusted security services MUST only take effect following a system reset.
+|===
+
+System security services provide fundamental security guarantees to the rest of the system ans require a full system reset to re-assess the security state following an update. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| Updates MUST be monotonic
+
+| CAT_NNN
+| Updates SHOULD be robust against update failures
+|===
+
+As a security principle and good practice it should not be possible to roll back to previous versions once an update has been locally accepted, as earlier versions may be carrying known vulnerabilities. For example using derived anti-rollback counters (counter tree) rooted in a hardware monotonic counter.
+
+A system can still support recovery mechanisms, with suitable governance, in the case of update failures. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Updates and update messages MUST only be received from trusted sources.
+
+|===
+
+==== Isolation
+Complex systems include software components from different supply chains, and complex integration chains with different roles and actors. These supply chains and integration actors often share mutual distrust:
+
+* Developed, certified, deployed and attested independently
+* Protected from errors in, or abuse from, other components
+* Protected from debugging of other components
+* Contain assets which should not be available to other components
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| Isolated software components MUST be supported
+|===
+
+An isolated component has private memory and private execution contexts not accessible to other components. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| Devices MUST not access memory belonging to an isolated component without permission
+|===
+
+Isolation can also extend to other features, such interrupts and debug. Isolation is discussed in more detail later in this document.
+
+==== Data sealing
+
+Sealing is the process of protecting confidential data on a system.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| Sealed data MUST only be accessible to an isolated component
+
+|===
+
+Local sealing typically involves deriving sealing keys from a hardware unique key provisioned at manufacture. The derivation can take the security lifecycle state into account to ensure sealed production data is not accessible if the system or a component are not in a secured state. Locally sealed data is typically only available on a local system.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| Valid local sealing keys SHOULD only be generated in secured state.
+
+| CAT_NNN
+| Valid local sealing keys MAY be generated in a trusted debug state for unaffected software components.
+|===
+
+Remote sealing typically involves an isolated component contacting a remote provisioning system to be attested and to receive access credentials. Remote sealing can enable more complex sealing policies, such as access to shared data across multiple instances of a hosted confidential service. Remote sealing credentials can in turn be sealed and cached locally, or requested following any restart of the service.
