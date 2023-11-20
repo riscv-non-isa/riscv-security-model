@@ -2,7 +2,7 @@
 
 ==  Risc-V security model overview
 
-The aim of this chapter is to define common taxonomies and principles for secure systems, used in the rest of this and other Risc V specifications. It is divided into the following sections:
+The aim of this chapter is to define common taxonomies and principles for secure systems, used in this and other Risc V specifications. It is divided into the following sections:
 
 * Reference model +
 Defines a set of generic hardware and software subsystems used in examples and use cases to describe secure systems.
@@ -11,7 +11,7 @@ Defines a set of generic hardware and software subsystems used in examples and u
 Defines common attack types on secure systems, and identifies Risc-V extensions which can aid mitigation.
 
 * Ecosystem security objectives +
-Defines common security features and functional guidelines, used to establish trustworthy devices in an ecosystem.
+Defines common ecosystem level security features and protocols used to establish trustworthy devices in an ecosystem. The purpose of this section is to establish taxonomy and common properties. Actual implementations and protocols will vary depending on use case and ecosystem specific requirements.
 
 === Reference model
 
@@ -173,10 +173,10 @@ Finally, this specification does not attempt to rate attacks by severity, or by 
 | Planned mitigations
 
 | CAT_NNN
-| Unrestricted unauthorized access 
+| Unrestricted access 
 | Direct +
 Logical
-| Unauthorized access to resources - memory, memory mapped devices, or execution state.
+| Direct access to unauthroized resources in normal operation.
 a| * Risc-V privilege levels
 * Risc-V isolation
 * Risc-V virtualization
@@ -186,8 +186,11 @@ a| * Risc-V privilege levels
 | Transient execution attacks
 | Chained +
 Logical
-| Attacks on speculative execution implementations. For example https://meltdownattack.com/[Spectre and Meltdown]
-| Most of these attacks except Spectre v1 are specific to a particular micro architecture, and Risc-V systems are expected not to be vulnerable. 
+| Attacks on speculative execution implementations. 
+| Most of these attacks except Spectre v1 are specific to particular micro architectures, and Risc-V systems are expected not to be vulnerable. +
+For example: +
+https://meltdownattack.com/[Spectre and meltdown papers] +
+https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20Security%20Center,Speculative%20Processor%20Vulnerability[developer.arm.com speculative vulnerability]
 | Fence.t could mitigate against Spectre v1.
 
 | CAT_NNN
