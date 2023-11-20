@@ -190,6 +190,7 @@ Logical
 | Most of these attacks except Spectre v1 are specific to particular micro architectures, and Risc-V systems are expected not to be vulnerable. +
 For example: +
 https://meltdownattack.com/[Spectre and meltdown papers] +
++ 
 https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20Security%20Center,Speculative%20Processor%20Vulnerability[developer.arm.com speculative vulnerability]
 | Fence.t could mitigate against Spectre v1.
 
@@ -271,7 +272,7 @@ a| * Implement robust power management
 
 === Ecosystem security objectives
 
-Ecosystem security objectives identify a set of common features and mechanisms that secure systems should support to enforce and establish trust in an ecosystem. 
+Ecosystem security objectives identify a set of common features and mechanisms that can be used to enforce and establish trust in an ecosystem. 
 
 These features are defined here at a functional level only. Technical requirements are typically use case specific and defined by external certification programmes. 
 
@@ -299,7 +300,7 @@ Its scope and uniqueness depends on use case. For example:
 * Shared among multiple systems with the same immutable security properties (group based anonymization)
 * Anonymized using an attestation protocol supporting a third party anonymization service
 
-It can be directly provisioned, or derived from other provisioned secrets.
+It can be directly hardware provisioned, or derived from other hardware provisioned assets.
 
 ==== Security lifecycle
 
@@ -366,8 +367,39 @@ For the purpose of this specification a confidential service can be any isolated
 Attestation allows a remote reliant party to determine the trustworthiness of a confidential service before submitting assets to it. 
 
 * Verify the security state of a confidential service
-* Verify the security state of all software and hardware that service depends on
-* Establish an attested secure connection to the service 
+* Verify the security state of all software and hardware a conidential service depends on
+* Establish an attested secure connection to a confidential service 
+
+Attestation can be direct or layered. 
+
+* Direct +
+The whole system can be defined by a single security platform attestation. For example, can be used in vertically integrated connected IoT devices and edge devices.
+* Layered +
+Enables parts of the attestation process to be delegated to lower privileged components. For example, in a confidential compute use case a security platform attestation can be generated at boot, and individual attestations for confidential workloads can be generated separately at runtime.
+
+Direct and layered attestation are discussed in more detail in use case examples later in this specification.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| A security platform attestation MUST be signed by a HW RoT, if present, or by trusted security services
+
+| CAT_NNN
+| A security platform attestation MUST be signed using a hardware provisioned secure identity
+
+| CAT_NNN
+| A layered attestation MAY be signed by lower privileged software, itself attested by a security platform attestation
+
+| CAT_NNN
+| A layered attestation MUST be signed by a secure identity cryptographically bound (for example, hash locked) to a fresh security platform attestation
+
+|===
+
+NOTE: Care needs to be taken in attestation interface design. For example, software interfaces should only support either direct attestation or layered attestation workflows, never both, to prevent impersonation.
 
 ==== Authorized software 
 
