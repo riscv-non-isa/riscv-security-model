@@ -2,7 +2,7 @@
 
 ==  Risc-V security model overview
 
-The aim of this chapter is to define common taxonomies and principles for secure systems, used in this and other Risc V specifications. It is divided into the following sections:
+The aim of this chapter is to define common taxonomies and principles for secure systems as used in the rest of this and other Risc V specifications. It is divided into the following sections:
 
 * Reference model +
 Defines a set of generic hardware and software subsystems used in examples and use cases to describe secure systems.
@@ -11,7 +11,7 @@ Defines a set of generic hardware and software subsystems used in examples and u
 Defines common attack types on secure systems, and identifies Risc-V extensions which can aid mitigation.
 
 * Ecosystem security objectives +
-Defines common ecosystem level security features and protocols used to establish trustworthy devices in an ecosystem. The purpose of this section is to establish taxonomy and common properties. Actual implementations and protocols will vary depending on use case and ecosystem specific requirements.
+Defines common security features and functional guidelines, used to deploy trustworthy devices in an ecosystem.
 
 === Reference model
 
@@ -23,7 +23,7 @@ The figure above outlines a generic security reference model. It is not intended
 
 ==== Software components
 
-*Trusted security services*
+===== Trusted security services
 
 _Trusted security services_ consist of firmware trusted by all other software on a hart providing a minimal shared trusted base needed for a secure system, representing a minimal _trusted compute base (TCB)_. For example:
 
@@ -34,7 +34,7 @@ _Trusted security services_ consist of firmware trusted by all other software on
 
 NOTE: Some of this functionality can be further hardened using a dedicated HW RoT.
 
-*Application security services*
+===== Application security services
 
 _Application security services_ are responsible for providing application or ecosystem specific security capabilities to other software on the hart. For example: 
 
@@ -44,17 +44,17 @@ _Application security services_ are responsible for providing application or eco
 * User identity management and biometrics
 * Payment clients, DRM clients
 
-*Security platform*
+===== Security platform
 
 The term _Security platform_ is used in this document to describe the combination of trusted and application security services.
 
-*Runtime environment*
+===== Runtime environment
 
 The _runtime environment_ is typically an operating system or a hypervisor hosting _user workloads_ or _guest workloads_. 
 
 ==== System components
 
-*Trusted subsystems*
+===== Trusted subsystems
 
 A trusted subsystem is a dedicated compute environment with its own private resources, isolated from all other parts of the system. For example:
 
@@ -63,7 +63,7 @@ A trusted subsystem is a dedicated compute environment with its own private reso
 * Hardware SIM or TPM 
 * A trusted media path
 
-*Hardware root of trust*
+===== Hardware root of trust
 
 On systems with complex hardware and software, it is good practice to move sensitive hardware provisioned assets, and some trusted security processes, to a dedicated _Hardware root of trust_ (HW RoT). This protects those assets and processes, minimizing exposure from the rest of the system.
 
@@ -73,7 +73,7 @@ NOTE: It is common for secure systems to support multiple trust chains and multi
  +
 For the purpose of this document, these can be treated as secondary roots of trust. The HW RoT governs the security platform itself and acts as a primary root of trust on the system. 
 
-*Hardware shielded locations*
+===== Hardware shielded locations
 
 _Hardware shielded locations_ represent protected storage used for storing hardware provisioned assets.
 
@@ -93,7 +93,7 @@ Examples of typical implementations of hardware shielded locations include:
 * On-chip OTP memory, or locked section of on-chip flash
 * Secure element, either on-chip or cryptographically bound
 
-*Invasive subsystems*
+===== Invasive subsystems
 
 _Invasive subsystems_ include any system component or feature capable of breaking security guarantees. Examples include:
 
@@ -101,21 +101,21 @@ _Invasive subsystems_ include any system component or feature capable of breakin
 * Boundary scan
 * RAS (reliability, availability, serviceability)
 
-*Root devices*
+===== Root devices
 
 Any device used exclusively by trusted security services. For example:
 
 * Power manager
 * Hardware shielded locations, or a hardware root of trust
 
-*Application security devices*
+===== Application security devices
 
 Any device used exclusively by application security services. For example:
 
 * SIM and Biometrics
 * Secure media path
 
-*User devices*
+===== User devices
 
 Any device that can be used by the runtime environment and its workloads. For example:
 
@@ -190,8 +190,8 @@ Logical
 | Most of these attacks except Spectre v1 are specific to particular micro architectures, and Risc-V systems are expected not to be vulnerable. +
 For example: +
 https://meltdownattack.com/[Spectre and meltdown papers] +
-+ 
-https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20Security%20Center,Speculative%20Processor%20Vulnerability[developer.arm.com speculative vulnerability]
+ https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html[Intel security guidance] +
+https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20Security%20Center,Speculative%20Processor%20Vulnerability[Arm speculative vulnerability]
 | Fence.t could mitigate against Spectre v1.
 
 | CAT_NNN
@@ -246,7 +246,7 @@ a| * Implement robust power management and radiation control
 | Physical memory manipulation
 | Direct +
 Logical or physical
-a| *Row-hammer type software attacks to manipulate nearby memory cells
+a| * Row-hammer type software attacks to manipulate nearby memory cells
 * Using NVDIMM, interposers, or physical probing to read, record, or replay physical memory
 * Physical attacks on hardware shielded locations to extract hardware provisioned assets
 a| * Implement robust memory error detection, cryptographic memory protection, or physical tamper resistance
@@ -320,7 +320,11 @@ NOTE: Add state diagram?
 [title= "Generic security lifecycle"]
 image::img_ch2_security-lifecycle.png[]
 
-A security lifecycle reflects the trustworthiness of a system during its lifetime. A typical security lifecycle includes at least the following states:
+A security lifecycle reflects the trustworthiness of a system during its lifetime and reflects the lifecycle state of hardware provisioned assets. 
+
+It can be extended as indicated below to cover additional security provisioning steps such as device onboarding, device activiation, user management, and RMA processes. These are use case or ecosystem specific and out of scope of this specification.
+
+For the purpose of this specification, a minimum security lifecycle includes at least the following states:
 
 * Manufacture - The system may not yet be fully locked down and has no hardware provisioned assets
 * Security provisioning - The process of provisioning hardware provisioned assets +
@@ -342,13 +346,13 @@ A system could support re-provisioning from a terminated state, for example foll
 | Requirement
 
 | CAT_NNN  
-| Hardware provisioned assets MUST only be accessible while the system is in a secured or a trusted debug state.
+| Hardware provisioned assets MUST only be accessible while the system is in secured state, or a recoverable debug state.
 
 | CAT_NNN
 | Derived assets MUST only be available if a component is in secured state.
 |===
 
-A derived asset in this context is any asset derived from hardware provisioned assets and used to secure a component. For example attestation keys or sealing keys for a supervisor domain. 
+A derived asset in this context is any asset derived from hardware provisioned assets. For example attestation keys, or sealing keys for a supervisor domain. 
 
 ==== Attestable services
 
@@ -375,7 +379,7 @@ Attestation can be direct or layered.
 * Direct +
 The whole system can be defined by a single security platform attestation. For example, can be used in vertically integrated connected IoT devices and edge devices.
 * Layered +
-Enables parts of the attestation process to be delegated to lower privileged components. For example, in a confidential compute use case a security platform attestation can be generated at boot, and individual attestations for confidential workloads can be generated separately at runtime.
+Enables parts of the attestation process to be delegated to lower privileged components.
 
 Direct and layered attestation are discussed in more detail in use case examples later in this specification.
 
@@ -389,7 +393,7 @@ Direct and layered attestation are discussed in more detail in use case examples
 | A security platform attestation MUST be signed by a HW RoT, if present, or by trusted security services
 
 | CAT_NNN
-| A security platform attestation MUST be signed using a hardware provisioned secure identity
+| A security platform attestation MUST be signed using a hardware provisioned (directly or derived) secure identity
 
 | CAT_NNN
 | A layered attestation MAY be signed by lower privileged software, itself attested by a security platform attestation
@@ -476,9 +480,9 @@ Immutable software includes at least immutable boot code. Some trusted subsystem
 | An update of a software component SHOULD restart all other dependant software components.
 |===
 
-A software update changes the attested security state of the affected component, and can affect whether the system is still considered trustworthy or not by a reliant party. A restart forces re-attestation of dependent components, and also re-assesses access to derived assets such as sealing keys depending on the new security state following the update. 
+A software update changes the attested security state of the affected component, and can affect whether the system is still considered trustworthy or not by a reliant party. A restart forces determination of a fresh attested state following the update. 
 
-Alternatively, support for live updates may be part of the already attested trust contract between the reliant party and the system, in which case forced re-attestation may not be required.
+Alternatively, support for live updates may be part of the already attested trust contract between the reliant party and the system, given suitable governance. In which case a restart may not be required.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -490,7 +494,7 @@ Alternatively, support for live updates may be part of the already attested trus
 | An update of trusted security services MUST only take effect following a system reset.
 |===
 
-System security services provide fundamental security guarantees to the rest of the system ans require a full system reset to re-assess the security state following an update. 
+System security services provide fundamental security guarantees to the rest of the system and require a full system reset to re-assess the security state following an update. 
 
 [width=100%]
 [%header, cols="5,20"]
@@ -528,6 +532,8 @@ Complex systems include software components from different supply chains, and co
 * Protected from debugging of other components
 * Contain assets which should not be available to other components
 
+Use cases later in this specification provide examples of Risc-V isolation models.
+
 [width=100%]
 [%header, cols="5,20"]
 |===
@@ -535,7 +541,7 @@ Complex systems include software components from different supply chains, and co
 | Requirement
 
 | CAT_NNN  
-| Isolated software components MUST be supported
+| Isolated software components SHOULD be supported
 |===
 
 An isolated component has private memory and private execution contexts not accessible to other components. 
@@ -550,7 +556,7 @@ An isolated component has private memory and private execution contexts not acce
 | Devices MUST not access memory belonging to an isolated component without permission
 |===
 
-Isolation can also extend to other features, such interrupts and debug. Isolation is discussed in more detail later in this document.
+Isolation can also extend to other features, such as interrupts and debug. 
 
 ==== Data sealing
 
@@ -567,7 +573,19 @@ Sealing is the process of protecting confidential data on a system.
 
 |===
 
-Local sealing typically involves deriving sealing keys from a hardware unique key provisioned at manufacture. The derivation can take the security lifecycle state into account to ensure sealed production data is not accessible if the system or a component are not in a secured state. Locally sealed data is typically only available on a local system.
+Sealing can be:
+
+* Local + 
+Local sealing binds assets to a local device (hardware unique sealing). 
+* Remote +
+Remote sealing binds assets to credentials provided by a remote provisioning service following successful attestation.
+
+Local sealing can be:
+
+* Direct +
+Direct sealing binds assets to sealing keys derived by trusted security services, or a HW RoT.
+* Layered +
+ Layered sealing enables delegation of some sealing key derivations to lower privileged software.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -582,4 +600,4 @@ Local sealing typically involves deriving sealing keys from a hardware unique ke
 | Valid local sealing keys MAY be generated in a trusted debug state for unaffected software components.
 |===
 
-Remote sealing typically involves an isolated component contacting a remote provisioning system to be attested and to receive access credentials. Remote sealing can enable more complex sealing policies, such as access to shared data across multiple instances of a hosted confidential service. Remote sealing credentials can in turn be sealed and cached locally, or requested following any restart of the service.
+Sealing is discussed further in use cases examples later in this document.
