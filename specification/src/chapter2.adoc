@@ -304,8 +304,6 @@ It can be directly hardware provisioned, or derived from other hardware provisio
 
 ==== Security lifecycle
 
-NOTE: Add state diagram?
-
 [width=100%]
 [%header, cols="5,20"]
 |===
