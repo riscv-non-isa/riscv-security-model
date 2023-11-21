@@ -1,45 +1,313 @@
 [[chapter3]]
 
 == RISC-V security building blocks
-=== Root of trust
-RTM for measurement, reporting and updates
-Device Lifecycle management
-Layered attestation
-Authorized Debug
+
+This chapter outlines brief descriptions of Risc-V security building blocks discussed in this specification, together with general guidelines and links to technical specifications.
+
+See also the reference use cases chapter of this specification for common examples of how Risc-V security building blocks can be combined. 
 
 === Isolation
 
-=== Runtime integrity
+Isolation enable separation of software components executing on a Hart, as well as device assignment. Risc-V enables:
+
+* Privilege based isolation
+* Physical memory access control (hart and device initiated accesses)
+* Virtual memory management (hart and device virtualization)
+* Hypervisor extension 
+* Supervisor domains 
+
+==== Privilege levels
+
+https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged ISA]
+
+Standard privilege levels - Machine mode (M), Supervisor mode (S), and User mode (U) - enable separation of more privileged software from less privileged software.
+
+==== Hypervisor extension
+
+https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged ISA]
+
+Hypervisor extension supports standard supervisor level hypervisors. It extends S mode into Hypervisor supervisor mode (HS), and a virtual supervisor mode (VS) for guests. It also extends U mode into standard user mode (U) and virtual user mode (VU).
+
+Isolation of guests is typically enforced using MMU and virtual memory management.  Memory translation is in effect in VS and VU modes, but not in standard U mode. 
+
+Alternatively sPMP can be used instead of MMU to support static partition hypervisors, for example on systems with hard and deterministic real time requirements. 
+
+MMU, PMP/ePMP, and sPMP are discussed later in this chapter.
+
+==== PMP and ePMP
+
+https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged ISA]
+
+_Physical memory protection (PMP)_ enables M-mode to control physical memory access for supervisor or HS mode. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| PMP configurations MUST only be directly accessible to machine mode
+|===
+
+Individual access controlled regions can be locked until the next system reset to create temporal isolation boundaries, such as protecting immutable boot code. 
+
+ePMP extends PMP protection by allowing machine mode to restrict its own access to memory allocated to lower privilege levels. This can be used to mitigate against privilege escalation attacks, for example.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| If PMP is supported then ePMP MUST be supported.
+|===
+
+==== sPMP
+
+https://github.com/riscv/riscv-spmp
+
+_Supervisor PMP (sPMP)_ enables supervisor mode to control physical memory access for U mode.
+
+sPMP allows supervisor mode to restrict its own access to memory allocated to lower privilege levels. This can be used to mitigate against privilege escalation attacks, for example.
+
+When combined with H-extension, sPMP can be nested so that the hypervisor can control memory allocations to its guests, and each guest can control its own memory allocations to its workloads.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| PMP/ePMP MUST be used to protect M-mode from lower privilege levels.
+|===
+
+==== MMU
+
+https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged ISA]
+
+_Memory management unit (MMU)_ enables memory virtualization for:
+
+* Isolating an OS from workloads on a system without H-extension (one-stage translation)
+* Isolating a hypervisor from a guest, and a guest from workloads, on a system with H-extension (two-stage translation)
+ 
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| PMP/ePMP MUST be used to protect M-mode from lower privilege levels.
+|===
+
+==== Supervisor domains
+
+https://github.com/riscv/riscv-smmtt
+
+Supervisor domains allow software components on the same hart to be developed, certified, deployed and attested independently of each other.
+
+A supervisor domain is a compartment above M-mode, physically isolated - memory, execution state, and devices - from other supervisor domains regardless of privilege level (above M-mode). Isolation and context switching between supervisor domains are managed by M-mode firmware. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| PMP/ePMP MUST be used to protect machine mode from any supervisor domain.
+
+| CAT_NN
+| Either PMP/ePMP or MTT MUST be used to enforce physical memory isolation boundaries for supervisor domains.
+
+|===
+
+PMP can be used for more static and deterministic use cases.
+
+MTT can be used where more fine grained dynamic resource management across supervisor domain boundaries is required.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+
+| ID#     
+| Requirement
+
+| CAT_NNN
+| A system supporting supervisor domains MUST support supervisor domain extensions for interrupts and performance counters, and SHOULD support supervisor domain extensions for external debug.
+
+|===
+
+Interrupts: https://github.com/riscv/riscv-smmtt +
+External debug: https://github.com/riscv-non-isa/riscv-external-debug-security +
+Performance counters: 
+
+These extensions enable management of interrupts, external debug, and performance counters across supervisor domain boundaries:
+
+* External debug can be enabled for one supervisor domain without affecting other supervisor domains
+* M-mode firmware manage interrupt routing and preemption across supervisor domain boundaries
+* M-mode firmware can ensure that performance counters cannot be used by software in one supervisor domain to measure operations in other supervisor domains 
+
+==== MTT
+
+https://github.com/riscv/riscv-smmtt
+
+The _memory tracking table (MTT)_ is a memory structure managed by machine mode, tracking memory ownership across supervisor domains. It is designed to enable fine grained dynamic memory management across supervisor domain boundaries, with policy typically set by a hypervisor in a hosting domain responsible for resource management.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| PMP/ePMP MUST be used to protect M-mode from lower privilege levels
+
+| CAT_NNN  
+| MTT configurations MUST only be directly accessible to machine mode
+|===
+
+==== IOPMP
+
+https://github.com/riscv-non-isa/iopmp-spec
+
+IOPMP is a system level component providing physical memory access control for device initiated transactions, complementing PMP and sPMP rules. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| A system which supports PMP/ePMP, or sPMP, MUST implement IOPMP for device access control.
+
+| CAT_NNN
+| IOPMP configurations MUST only be directly accessible to machine mode.
+|===
+
+
+==== IOMTT
+
+https://github.com/riscv/riscv-smmtt
+
+IOMTT is a system level component providing physical memory access control for device initiated transactions, complementing MTT rules.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| A system which supports MTT MUST implement IOMTT for device initiated access control.
+
+| CAT_NNN
+| IOMTT configurations MUST only be directly accessible to machine mode.
+
+| CAT_NNN
+| A system which implements IOMTT MUST also implement IOPMP to protect device initiated accesses to M-mode memory.
+
+|===
+
+==== IOMMU
+
+https://github.com/riscv-non-isa/riscv-iommu
+
+IOMMU is a system level component providing virtual memory access for device initiated transactions, complementing MMU translation rules.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Systems supporting MMU SHOULD also support IOMMU
+
+| CAT_NNN  
+| Systems supporting IOMMU MUST also support IOPMP, an MAY support IOMTT, to enforce physical memory access control for device initiated transactions.
+
+|===
+
+=== Software enforced memory tagging
+
+https://github.com/riscv/riscv-j-extension
+
+_Memory tagging (MT)_, or pointer masking, is a technique which can improve the memory safety of an application. A part of the effective address of a pointer can be masked off, and used as a tag indicating intended ownership or state of a pointer. The tag can be used to track accesses across different regions, as well as protecting against pointer misuse such as "use after free".
+
+With software based memory tagging the access rules encoded in tags are enforced by software (compiler).
+
+See also hardware enforced memory tagging below.
 
 === Control flow integrity
 
-=== Memory safety
+https://github.com/riscv/riscv-cfi
+
+Control-flow Integrity (CFI) capabilities help defend against Return-Oriented Programming (ROP) and Call/Jump-Oriented Programming (COP/JOP) style control-flow subversion attacks, where an attacker attempts to modify return addresses or call addresses to redirect a victim to code controlled by the attacker.
+
+Risc-V provides two defenses:
+
+* Shadow stacks - protect return addresses on call stacks
+* Landing pads - protect target addresses in jumps and branches
 
 === Cryptography
+
+https://github.com/riscv/riscv-crypto
+
+Risc-V includes ISA extensions in the following cryptographic areas:
+
+* Scalar cryptography 
+* Vector cryptography
+* Entropy source (scalar)
+
+Risc-V cryptographic extensions are aimed at supporting efficient acceleration of cryptographic operations at ISA level. This can both help reduce the TCB of an isolated component, and avoid hardware bottlenecks (for example, system level cryptographic subsystems).
+
+The entropy source extension provides an ISA level interface to a hardware entropy source. Entropy source requirements can depend on use case or ecosystem specific requirements and Risc-V does not provide any entropy source technical specification. But the entropy source ISA specification does contain general recommendations and references.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Risc-V systems SHOULD support either scalar or vector cryptographic ISA extensions
+
+| CAT_NNN  
+| The entropy source ISA extension MUST be supported if either scalar or vector cryptographic ISA extensions are supported. 
+
+|===
+
+It is not necessary to support both scalar and vector operations, as a scalar operation can be viewed as a vector of size 1.
 
 === Roadmap
 
 ==== Capability based architecture
 
-Cheri/Capstone
+* Cheri
+* Capstone
 
-==== Memory safety
+==== Hardware enforced memory tagging
+
+Hardware enforced memory tagging extends software based memory tagging (see above) by moving enforcement of tagged rules to hardware.
+
+==== HFI
+
+_Hardware-assisted fault isolation (HFI)_ aims to provide lightweight in-process isolation to mitigate against errors in one process compromising other processes within the same workload. 
 
 ==== Lightweight isolation
 
-==== Compartmentalization
+* TBD
 
 ==== System level isolation
 
-WorldGuard
+* WorldGuard
 
 ==== Cryptography enhancements
 
-==== Cryptographic Data Protection 
-
-=== Side-channel considerations [Luis Fiolhais]
-Spatial timing channels and defense approaches
-Temporal side channels and defense approaches
-
-=== Supply chain considerations [Paul Elliott]
-
+* PQ
+* High assurance computing (HAC) 
