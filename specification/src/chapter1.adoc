@@ -49,25 +49,25 @@ Examples of external profiles include:
 | Description
 
 | Global Platforms (GP)
-| Trusted execution environments(TEE) and trusted firmware for mobile, connected clients, and IoT +
-Secure element (SE) for tamper resistant storage of and operations on cryptographic secrets +
-SESIP certification +
+| Trusted execution environments(TEE) and trusted firmware for mobile, connected clients, and IoT. +
+Secure element (SE) for tamper resistant storage of and operations on cryptographic secrets. +
+SESIP certification. +
 https://globalplatform.org/
 
 | Platform Security Architecture (PSA) 
-| Platform security requirements for connected devices +
-PSA Certified +
+| Platform security requirements for connected devices. +
+PSA Certified. +
 https://www.psacertified.org/
 
 
 | Trusted computing group (TCG)
-| Trusted platform module (TPM) and Device identifier composition engine (DICE) for trusted platforms
-| TCG certification
+| Trusted platform module (TPM) and Device identifier composition engine (DICE) for trusted platforms. +
+TCG certification. +
 https://trustedcomputinggroup.org/
 
 
 | Confidential computing consortium
-| Common principles and protocols for protecting data in use (confidential compute) +
+| Common principles and protocols for protecting data in use (confidential compute). +
 https://confidentialcomputing.io/
 
 | NIST 
