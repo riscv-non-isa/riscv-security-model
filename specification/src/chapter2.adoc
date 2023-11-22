@@ -405,14 +405,7 @@ NOTE: Care needs to be taken in attestation interface design. For example, softw
 
 ==== Authorized software 
 
-Running unauthorized software can compromise the security state of the system. Two complementary processes can be used to authorize software:
-
-* Measuring 
-* Verification
-
-A measurement is a cryptographic fingerprint of the launch state of a software component, such as a running hash of its memory contents and launch state.
-
-Verification compares an actual measurement to an expected measurement from a signed authorization by a trusted signer. Verification requires a provisioned or securely discovered list of trusted signer(s). Depending on use case, a signed authorization can be part of a software image. Or it can be delivered or discovered separately as part of an authorization protocol.
+Running unauthorized software can compromise the security state of the system. 
 
 [width=100%]
 [%header, cols="5,20"]
@@ -421,10 +414,39 @@ Verification compares an actual measurement to an expected measurement from a si
 | Requirement
 
 | CAT_NNN  
-| All isolated software that has to be trusted by other software on the same system MUST be measured and verified.
+| A system in secured state MUST only load authorized software.
 |===
 
-Verification ensures only software from trusted parties is installed.
+This means the system can only access valid derived assets, such as sealing keys, if it is running authorized software. 
+
+Two complementary processes can be used to authorize software:
+
+* Measuring +
+A measurement is a cryptographic fingerprint, such as a running hash of memory contents and launch state.
+* Verification +
+Verification is a process of establishing that a measurement is correct (expected)
+
+NOTE: Measurements can be calculated at boot (boot state), and sometimes also dynamically at runtime (runtime state). Measuring runtime state can be used as a robustness feature to mitigate against unauthorized runtime changes of static code segments. It is out of scope of this specification, though the principles discussed below can still be applied. 
+
+Verification can be:
+
+* Local +
+A measurement is verified locally on the device.
+* Remote +
+A measurement is verified by a remote provisioning service, or a remote reliant party.
+
+Verification can be:
+
+* Direct +
+The measurement is directly compared with an expected measurement from a signed authorization.
+* Indirect +
+The measurement is included in derivation of other assets, for example sealing keys, binding assets to a boot state.
+
+Direct verification requires access to a hardware provisioned, or securely discovered, list of trusted signers for verification of trusted authorizations. 
+
+Following updates, indirect verification requires a local secure migration process, or a secure provisioning process,  for migrating assets bound to boot state.
+
+A boot process is typically layered allowing software to be measured and verified in stages. Different measurement and verification policies can be employed at different stages. This is discussed further in use case examples later in this specification.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -433,10 +455,13 @@ Verification ensures only software from trusted parties is installed.
 | Requirement
 
 | CAT_NNN  
-| All isolated software that provides services to remote reliant parties MUST be at least measured.
+| A security platform MUST be measured.
+
+| CAT_NNN
+| A security platform MUST be verified, either locally or remotely, before launching services which depend on the security platform.
 |===
 
-Software that is at least measured can be attested by remote reliant parties. To ensure supply chain integrity it is recommended that it is also verified locally before installation.
+Verification ensures the system has loaded authorized software and is in a secured state.  
 
 [width=100%]
 [%header, cols="5,20"]
@@ -445,12 +470,21 @@ Software that is at least measured can be attested by remote reliant parties. To
 | Requirement
 
 | CAT_NNN  
-| Software authorization MUST be rooted in immutable boot code.
+| The source of a local authorization MUST be verified.
 |===
 
-Immutable boot code forms part of the immutable hardware security platform identified by the hardware security platform identity and is the start of a local trust chain on a system. It is typically ROM code, or locked on-chip flash.
+For example, a hardware provisioned or securely discovered list of trusted signers.
 
-If a system implements a hardware root of trust, then the HW root of trust hosts the immutable boot code. Otherwise the immutable boot code is typically the first code that executes on an application processor immediately after reset. 
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+| CAT_NNN  
+| Local verification MUST be rooted in immutable boot code.
+|===
+
+For example, ROM or locked flash, or rooted in a HW RoT itself rooted in immutable boot code.
 
 ==== Secure updates
 
