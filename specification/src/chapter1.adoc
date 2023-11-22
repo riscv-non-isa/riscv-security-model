@@ -67,7 +67,7 @@ https://trustedcomputinggroup.org/
 
 
 | Confidential computing consortium
-| Common principles and protocols for protecting data in use (confidential compute). +
+| Common principles and protocols for protecting data in use (confidential computing). +
 https://confidentialcomputing.io/
 
 | NIST 
