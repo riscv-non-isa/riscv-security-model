@@ -169,8 +169,8 @@ Finally, this specification does not attempt to rate attacks by severity, or by 
 | Attack   
 | Type  
 | Description
-| Risc-V mitigations 
-| Planned mitigations
+| Current RISC-V mitigations 
+| Planned RISC-V mitigations
 
 | CAT_NNN
 | Unrestricted access 
@@ -179,7 +179,7 @@ Logical
 | Direct access to unauthroized resources in normal operation.
 a| * Risc-V privilege levels
 * Risc-V isolation
-* Risc-V virtualization
+* RISC-V hardware virtualization (H extension)
 | 
 
 | CAT_NNN
@@ -187,7 +187,7 @@ a| * Risc-V privilege levels
 | Chained +
 Logical
 | Attacks on speculative execution implementations. 
-| Most of these attacks except Spectre v1 are specific to particular micro architectures, and Risc-V systems are expected not to be vulnerable. +
+| Known (documented) attacks except Spectre v1 are specific to particular micro-architectures, and RISC-V systems are not expected to be vulnerable to those. This is an evolving area of research. +
 For example: +
 https://meltdownattack.com/[Spectre and meltdown papers] +
  https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html[Intel security guidance] +
@@ -217,8 +217,8 @@ a| * Data-independent timing instructions
 | Chained +
 Logical
 | Unauthorized manipulation of call stacks and jump targets to redirect a control flow to code controlled by an attacker. 
-a| * Shadow stacks
-* Landing pads
+a| * Shadow stacks (Zicfiss)
+* Landing pads (Zicfilp)
 |
 
 |===
@@ -232,7 +232,7 @@ a| * Shadow stacks
 | Attack     
 | Type 
 | Description
-| Risc V recommendations 
+| RISC-V recommendations 
 
 | CAT_NNN
 | Analysis of physical leakage
@@ -240,7 +240,7 @@ a| * Shadow stacks
 Physical or remote
 | For example, observing radiation, power line patterns, or temperature.  
 a| * Implement robust power management and radiation control
-* Support data-independent timing instructions 
+* Data Independent Execution Latency (Zkt, Zvkt)
 
 | CAT_NNN
 | Physical memory manipulation
@@ -276,7 +276,7 @@ Ecosystem security objectives identify a set of common features and mechanisms t
 
 These features are defined here at a functional level only. Technical requirements are typically use case specific and defined by external certification programmes. 
 
-In some cases Risc-V non-ISA specifications can provide guidance or protocols. This is discussed more in use case examples later in this specification.
+In some cases RISC-V non-ISA specifications can provide guidance or protocols. This is discussed more in use case examples later in this specification.
 
 ==== Secure identity
 
@@ -304,8 +304,6 @@ It can be directly hardware provisioned, or derived from other hardware provisio
 
 ==== Security lifecycle
 
-NOTE: Add state diagram?
-
 [width=100%]
 [%header, cols="5,20"]
 |===
@@ -330,7 +328,7 @@ For the purpose of this specification, a minimum security lifecycle includes at 
 * Security provisioning - The process of provisioning hardware provisioned assets +
 Depending on ecosystem requirement, security provisioning could be performed in multiple stages through a supply chain and may require additional sub-states. These types of application specific extensions are out of scope of this specification.
 * Secured - the system is fully locked down and has all its hardware provisioned assets +
-Additional application specific provisioning stages can take place in this state - for example network onboarding and device activation, or user identity management. This is out of scope of this specification.
+Additional application specific provisioning stages can take place in this state - for example network onboarding and device activation, TSS/App/Device attestation or user identity management. This is out of scope of this specification.
 * Recoverable debug - part of the system is in a debug state +
 At least trusted security services or a hardware root of trust are not compromised, and hardware provisioned secrets remain protected. +
 This state is both attestable and recoverable. For example, debug is enabled for a security domain without compromising another security domain or any trusted security services.
@@ -566,7 +564,7 @@ Complex systems include software components from different supply chains, and co
 * Protected from debugging of other components
 * Contain assets which should not be available to other components
 
-Use cases later in this specification provide examples of Risc-V isolation models.
+Use cases later in this specification provide examples of RISC-V isolation models.
 
 [width=100%]
 [%header, cols="5,20"]
