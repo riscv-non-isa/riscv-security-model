@@ -19,112 +19,104 @@ Defines common security features and functional guidelines, used to deploy trust
 [title= "Generic security reference model"]
 image::img_ch2_reference-model.png[]
 
-The figure above outlines a generic security reference model. It is not intended to describe any particular implementation. It only defines a common taxonomy for the purpose of this document. 
+The figure above outlines a generic security reference model. It is not intended to describe any particular implementation and only aims to define a common taxonomy for the purpose of this and other Risc-V specifications.
 
-==== Software components
+Most systems are made up of different software components, often from different supply chains, each managing _assets_ that need to be protected. 
 
-===== Trusted security services
+Examples of assets include:
 
-_Trusted security services_ consist of firmware trusted by all other software on a hart providing a minimal shared trusted base needed for a secure system, representing a minimal _trusted compute base (TCB)_. For example:
+* Cryptographic keys and credentials
+* User data
+* Proprietary models
+* Secret algorithms
 
-* Boot
+Assets can be protected by _isolation_. Isolation separates different software components on a Hart to protect _resources_:
+
+* Memory
+* Execution state
+
+Examples of isolation mechanisms include:
+
+* Privilege based isolation +
+More privileged software is able to enforce security guarantees for less privileged software.
+* Physical memory isolation +
+More privileged software controls memory access for less privileged software.
+* Domain isolation +
+Separates resources so that a domain cannot access or modify resources assigned to a different domain without consent, regardless of privilege level.
+* Virtualization +
+Virtualization creates and manages _virtual resources_ - compute, memory, devices - independent of actual physical hardware. A system, or individual domains, can be virtualized.
+
+Isolation reduces dependencies between components, and reduces the amount of software that needs to be trusted, with the aim of minimizing the amount of software that needs to be trusted by a _workload_ - the _trusted compute base (TCB)_ of the workload.
+
+The minimum amount of software that always has to be trusted on any system is its _root of trust (RoT)_. A RoT includes fundamental security services, for example:
+
+* Boot and attestation
 * Security lifecycle management
+* Key derivations and sealing
 * Security provisioning
-* Root key management for sealing and attestation
 
-NOTE: Some of this functionality can be further hardened using a dedicated HW RoT.
+Depending on use case and ecosystem requirements, a RoT can be: 
 
-===== Application security services
+* Hart firmware (FW RoT)
+* A dedicated trusted subsystem (HW RoT), supporting a FW RoT 
 
-_Application security services_ are responsible for providing application or ecosystem specific security capabilities to other software on the hart. For example: 
+Using a HW RoT moves critical functions and assets off a Hart to a dedicated trusted subsystem, which can provide stronger protection against physical or logical attack than a complex Hart.
 
-* Secure storage
-* Application key storage and cryptographic services
-* Secure clients for firmware updates or attestation
-* User identity management and biometrics
-* Payment clients, DRM clients
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
 
-===== Security platform
+| CAT_NNN  
+| A FW RoT SHOULD be the only software in machine mode (M).
+|===
 
-The term _Security platform_ is used in this document to describe the combination of trusted and application security services.
+NOTE: In this document, the terms "FW RoT" and "HW RoT" will be used as defined above. The term "RoT" on its own can be used where a rule or a rational applies to either model.
 
-===== Runtime environment
-
-The _runtime environment_ is typically an operating system or a hypervisor hosting _user workloads_ or _guest workloads_. 
-
-==== System components
-
-===== Trusted subsystems
-
-A trusted subsystem is a dedicated compute environment with its own private resources, isolated from all other parts of the system. For example:
-
-* Hardware RoT, or Secure Element
-* Power manager
-* Hardware SIM or TPM 
-* A trusted media path
-
-===== Hardware root of trust
-
-On systems with complex hardware and software, it is good practice to move sensitive hardware provisioned assets, and some trusted security processes, to a dedicated _Hardware root of trust_ (HW RoT). This protects those assets and processes, minimizing exposure from the rest of the system.
-
-For the purpose of this document, the hardware root of trust is a dedicated trusted subsystem with a special role for the security platform. For example, it can typically load firmware for other trusted subsystems at boot, and control external debug access for the rest of the system.
-
-NOTE: It is common for secure systems to support multiple trust chains and multiple roots of trust. For example, a TPM can be a root of trust for UEFI boot flows within the runtime environment, and a SIM can be a root of trust for user identity management within application security services. They are usually dedicated trusted subsystems with their own specifications and certification processes. +
+NOTE: It is common for secure systems to support multiple trust chains and multiple roots of trust. For example, a TPM can be a root of trust for UEFI boot flows within a runtime environment, and a SIM can be a root of trust for user identity management within application security services. They are usually dedicated trusted subsystems with their own specifications and certification processes. +
  +
-For the purpose of this document, these can be treated as secondary roots of trust. The HW RoT governs the security platform itself and acts as a primary root of trust on the system. 
+For the purpose of this document, these can be treated as secondary roots of trust. The HW RoT governs the security platform itself and acts as a primary root of trust on the system.  
 
-===== Hardware shielded locations
+The full set of software a workload must trust is its _trusted compute base (TCB)_. A TCB can include other software. For example:
 
-_Hardware shielded locations_ represent protected storage used for storing hardware provisioned assets.
+* On a vertically integrated embedded system: An operating system
+* On a virtualized system: A hypervisor and a guest operating system
+* In a data centre: A hypervisor and a guest OS, as well as other hosting services such as orchestration and server provisioning software 
 
-Protections typically include:
+On complex systems the TCB can grow large and get difficult to certify and attest.
 
-* Access restricted to a hardware root of trust, or to trusted security services
-* A degree of tamper resistance
+Domain isolation enables confidential workloads to be separated from complex hosting software, including other workloads. The TCB of a confidential workload can be reduced to a domain security manager in a confidential domain, and the RoT, while allowing the main runtime environment in a separate hosting domain to remain in control of resource management. 
 
-Examples of hardware provisioned assets include:
+Domain isolation use cases include:
 
-* Security platform root keys
-* Security platform identities
-* Boot keys
+* Platform security services - for example: secure storage, user identity management, payment clients, DRM clients
+* Hosted confidential third party workloads
 
-Examples of typical implementations of hardware shielded locations include:
+Isolation policy needs to extend to devices:
 
-* On-chip OTP memory, or locked section of on-chip flash
-* Secure element, either on-chip or cryptographically bound
+* Physical memory access control for device initiated transactions
+* Virtual memory translation for virtualized device transactions
+* Interrupt management across privilege and domain boundaries
 
-===== Invasive subsystems
+These policies can be enforced by system level hardware, controlled by Hart firmware.
 
-_Invasive subsystems_ include any system component or feature capable of breaking security guarantees. Examples include:
+Finally, _invasive subsystems_ include any system or hart feature which could break security guarantees, either directly or indirectly. For example:
 
-* External debug and trace
-* Boundary scan
-* RAS (reliability, availability, serviceability)
+* External debug
+* Event counters and performance monitoring
+* Power and timing management
+* RAS (_reliability, accessibility, serviceability_)
 
-===== Root devices
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
 
-Any device used exclusively by trusted security services. For example:
-
-* Power manager
-* Hardware shielded locations, or a hardware root of trust
-
-===== Application security devices
-
-Any device used exclusively by application security services. For example:
-
-* SIM and Biometrics
-* Secure media path
-
-===== User devices
-
-Any device that can be used by the runtime environment and its workloads. For example:
-
-* Communications and storage
-* Accelerators
-
-==== Risc-V ISA and non-ISA extensions
-
-Risc-V defines a number of security related extensions. These will be discussed in more detail later in this document. 
+| CAT_NNN  
+| Invasive subsystems MUST be controlled, or moderated, by a RoT.
+|===
 
 === Adversarial model
 
