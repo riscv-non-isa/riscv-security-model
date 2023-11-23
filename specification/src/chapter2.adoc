@@ -415,9 +415,8 @@ Running unauthorized software can compromise the security state of the system.
 
 | CAT_NNN  
 | A system in secured state MUST only load authorized software.
-|===
 
-This means the system can only access valid derived assets, such as sealing keys, if it is running authorized software. 
+|===
 
 Two complementary processes can be used to authorize software:
 
@@ -425,6 +424,8 @@ Two complementary processes can be used to authorize software:
 A measurement is a cryptographic fingerprint, such as a running hash of memory contents and launch state.
 * Verification +
 Verification is a process of establishing that a measurement is correct (expected)
+
+A boot process is typically layered, allowing software to be measured and verified in stages. Different measurement and verification policies can be employed at different stages. This is discussed further in use case examples later in this specification. The properties discussed below still apply to each stage.
 
 NOTE: Measurements can be calculated at boot (boot state), and sometimes also dynamically at runtime (runtime state). Measuring runtime state can be used as a robustness feature to mitigate against unauthorized runtime changes of static code segments. It is out of scope of this specification, though the principles discussed below can still be applied. 
 
@@ -440,13 +441,11 @@ Verification can be:
 * Direct +
 The measurement is directly compared with an expected measurement from a signed authorization.
 * Indirect +
-The measurement is included in derivation of other assets, for example sealing keys, binding assets to a boot state.
+The measurement is included in derivations of other assets, for example sealing keys binding assets to a boot state.
 
 Direct verification requires access to a hardware provisioned, or securely discovered, list of trusted signers for verification of trusted authorizations. 
 
-Following updates, indirect verification requires a local secure migration process, or a secure provisioning process,  for migrating assets bound to boot state.
-
-A boot process is typically layered allowing software to be measured and verified in stages. Different measurement and verification policies can be employed at different stages. This is discussed further in use case examples later in this specification.
+Following updates, indirect verification requires a local secure migration process, or a secure remote provisioning process for access credentials,  for migrating assets bound to boot state.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -468,39 +467,15 @@ Verification ensures the system has loaded authorized software and is in a secur
 |===
 | ID#     
 | Requirement
-
-| CAT_NNN  
-| The source of a local authorization MUST be verified.
-|===
-
-For example, a hardware provisioned or securely discovered list of trusted signers.
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#     
-| Requirement
 | CAT_NNN  
 | Local verification MUST be rooted in immutable boot code.
 |===
 
 For example, ROM or locked flash, or rooted in a HW RoT itself rooted in immutable boot code.
 
-==== Secure updates
+==== System updates
 
-Over time, any non-immutable component may need updates to address vulnerabilities or functionality improvements. An update can concern software/firmware, microcode, or any other updatable element on a system.
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#     
-| Requirement
-
-| CAT_NNN  
-| All software on a system which is not immutable MUST be updatable.
-|===
-
-Immutable software includes at least immutable boot code. Some trusted subsystems can also include immutable software to meet specific security certification requirements defined by a governing body. 
+Over time, any non-immutable component may need updates to address vulnerabilities or functionality improvements. A system update can concern software, firmware, microcode, or any other updatable component on a system.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -509,12 +484,12 @@ Immutable software includes at least immutable boot code. Some trusted subsystem
 | Requirement
 
 | CAT_NNN  
-| An update of a software component SHOULD restart all other dependant software components.
+| All components on a system which are not immutable MUST be updatable.
 |===
 
-A software update changes the attested security state of the affected component, and can affect whether the system is still considered trustworthy or not by a reliant party. A restart forces determination of a fresh attested state following the update. 
+Immutable components include at least immutable boot code. Some trusted subsystems can also include immutable software to meet specific security certification requirements. 
 
-Alternatively, support for live updates may be part of the already attested trust contract between the reliant party and the system, given suitable governance. In which case a restart may not be required.
+System updates are typically layered so that updates can target only parts of a system and not a whole system. The properties discussed below still apply to any system update. 
 
 [width=100%]
 [%header, cols="5,20"]
@@ -523,10 +498,17 @@ Alternatively, support for live updates may be part of the already attested trus
 | Requirement
 
 | CAT_NNN  
-| An update of trusted security services MUST only take effect following a system reset.
+| A system update MUST be measured and verified before launch.
 |===
 
-System security services provide fundamental security guarantees to the rest of the system and require a full system reset to re-assess the security state following an update. 
+See <<_authorized_software>>.
+
+A system update can be:
+
+* Deferred +
+The update can only be effected after a restart of at least the affected component, and all of its dependents.
+* Live +
+The update can be effected without restarting any dependent components.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -535,15 +517,34 @@ System security services provide fundamental security guarantees to the rest of 
 | Requirement
 
 | CAT_NNN  
-| Updates MUST be monotonic
+| Updates affecting a security platform SHOULD be deferred. 
 
 | CAT_NNN
-| Updates SHOULD be robust against update failures
+| Updates MAY be live if live update capability, and suitable governance, is part of an already attested trust contract between a reliant party and the system.
 |===
 
-As a security principle and good practice it should not be possible to roll back to previous versions once an update has been locally accepted, as earlier versions may be carrying known vulnerabilities. For example using derived anti-rollback counters (counter tree) rooted in a hardware monotonic counter.
+A system update changes the attested security state of the affected component(s), as well as that of all other components that depend on it. It can affect whether a dependent confidential service is still considered trustworthy or not, as well as affect any derived assets such as sealing keys.
 
-A system can still support recovery mechanisms, with suitable governance, in the case of update failures. 
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| System updates MUST be monotonic
+
+| CAT_NNN
+| System updates SHOULD be robust against update failures
+|===
+
+Earlier versions may be carrying known vulnerabilities, or may affect the safe operation of a system in other ways. 
+
+For example, using derived anti-rollback counters (counter tree) rooted in a hardware monotonic counter.
+
+A system can still support recovery mechanisms, with suitable governance, in the case of update failures. For example, a fallback process or a dedicated recovery loader.
+
+Success criteria for a system update are typically use case or ecosystem specific and out of scope of this specification. Examples include local watchdog or checkpoints, and network control through a secure update protocol, and a dedicated recovery loader.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -552,9 +553,11 @@ A system can still support recovery mechanisms, with suitable governance, in the
 | Requirement
 
 | CAT_NNN
-| Updates and update messages MUST only be received from trusted sources.
+| System updates, and authorization messages, SHOULD only be received from trusted sources.
 
 |===
+
+A system update is itself always verified before being launched. Verifying the source as well can mitigate against attempts to inject adversary controlled data into a local update process. Including into protected memory regions.
 
 ==== Isolation
 Complex systems include software components from different supply chains, and complex integration chains with different roles and actors. These supply chains and integration actors often share mutual distrust:
