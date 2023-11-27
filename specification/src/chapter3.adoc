@@ -2,9 +2,9 @@
 
 == RISC-V security building blocks
 
-This chapter outlines brief descriptions of Risc-V security building blocks discussed in this specification, together with general guidelines and links to technical specifications.
+This chapter outlines brief descriptions of RISC-V security building blocks discussed in this specification, together with general guidelines and links to technical specifications.
 
-See also the reference use cases chapter of this specification for common examples of how Risc-V security building blocks can be combined. 
+See also the reference use cases chapter of this specification for common examples of how RISC-V security building blocks can be combined. 
 
 === Isolation
 
@@ -91,7 +91,7 @@ https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged ISA
 _Memory management unit (MMU)_ enables memory virtualization for:
 
 * Isolating an OS from workloads on a system without H-extension (one-stage translation)
-* Isolating a hypervisor from a guest, and a guest from workloads, on a system with H-extension (two-stage translation)
+* Isolating a hypervisor from a guest, on a system with H-extension (two-stage translation)
  
 [width=100%]
 [%header, cols="5,20"]
