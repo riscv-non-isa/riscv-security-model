@@ -433,7 +433,7 @@ Verification can be:
 * Direct +
 The measurement is directly compared with an expected measurement from a signed authorization.
 * Indirect +
-The measurement is included in derivations of other assets, for example sealing keys, binding assets to a measurement.
+The measurement is included in derivations of other assets, for example sealing keys, binding assets to a measured state.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -449,7 +449,7 @@ The measurement is included in derivations of other assets, for example sealing 
 
 |===
 
-Verification ensures the system has loaded authorized software and is in a secured state
+Verification ensures the system has loaded authorized software 
 
 [width=100%]
 [%header, cols="5,20"]
@@ -463,7 +463,7 @@ Verification ensures the system has loaded authorized software and is in a secur
 
 * Direct verification requires a signed image autorization from a trusted signer +
 For example, a signed image header, or a separately signed authorization message.
-* Indirect verification requires a signed authorization for migrating assets bound to a boot state +
+* Indirect verification requires a signed authorization for migrating assets bound to a measured state +
 For example, a signed authorization message, or a signed provisioning message.
 
 Either way, only authorizations from trusted signers should be used. For example, from a list of hardware provisioned or securely discovered trusted signers.
