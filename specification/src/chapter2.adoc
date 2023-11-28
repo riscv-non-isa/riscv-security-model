@@ -1,14 +1,14 @@
 [[chapter2]]
 
-==  Risc-V security model overview
+==  RISC-V security model overview
 
-The aim of this chapter is to define common taxonomies and principles for secure systems as used in the rest of this and other Risc V specifications. It is divided into the following sections:
+The aim of this chapter is to define common taxonomies and principles for secure systems as used in the rest of this and other RISC V specifications. It is divided into the following sections:
 
 * Reference model +
 Defines a set of generic hardware and software subsystems used in examples and use cases to describe secure systems.
 
 * Adversarial model +
-Defines common attack types on secure systems, and identifies Risc-V extensions which can aid mitigation.
+Defines common attack types on secure systems, and identifies RISC-V extensions which can aid mitigation.
 
 * Ecosystem security objectives +
 Defines common security features and functional guidelines, used to deploy trustworthy devices in an ecosystem.
@@ -19,7 +19,7 @@ Defines common security features and functional guidelines, used to deploy trust
 [title= "Generic security reference model"]
 image::img_ch2_reference-model.png[]
 
-The figure above outlines a generic security reference model. It is not intended to describe any particular implementation and only aims to define a common taxonomy for the purpose of this and other Risc-V specifications.
+The figure above outlines a generic security reference model. It is not intended to describe any particular implementation and only aims to define a common taxonomy for the purpose of this and other RISC-V specifications.
 
 Most systems are made up of different software components, often from different supply chains, each managing _assets_ that need to be protected. 
 
@@ -169,9 +169,9 @@ Finally, this specification does not attempt to rate attacks by severity, or by 
 | Direct +
 Logical
 | Direct access to unauthroized resources in normal operation.
-a| * Risc-V privilege levels
-* Risc-V isolation
-* RISC-V hardware virtualization (H extension)
+a| * RISC-V privilege levels
+* RISC-V isolation (for example: PMP/sPMP, MTT, supervisor domains)
+* RISC-V hardware virtualization (H extension, MMU)
 | 
 
 | CAT_NNN
@@ -191,8 +191,8 @@ https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20
 | Chained +
 Logical
 | Abusing interfaces across privilege or isolation boundaries, for example to elevate privilege or to gain unauthorized access to resources.
-a| * Risc V privilege levels
-* Risc-V isolation
+a| * RISC V privilege levels
+* RISC-V isolation
 | High assurance cryptography
 
 | CAT_NNN
@@ -257,7 +257,7 @@ a| * Implement robust power management
 | CAT_NNN
 | Subverting supply chains
 | Remote
-| Infiltration or collusion to subvert security provisioning chains, software supply chains and signing processes, hardware supply chains, attestation processes
+| Infiltration or collusion to subvert security provisioning chains, software supply chains and signing processes, hardware supply chains, attestation processes, development processes (for example, unfused development hardware or debug authorizations)
 | Deploy appropriate governance, accreditation, and certification processes for an ecosystem.
 
 |===
@@ -433,11 +433,7 @@ Verification can be:
 * Direct +
 The measurement is directly compared with an expected measurement from a signed authorization.
 * Indirect +
-The measurement is included in derivations of other assets, for example sealing keys binding assets to a boot state.
-
-Direct verification requires access to a hardware provisioned, or securely discovered, list of trusted signers for verification of trusted authorizations. 
-
-Following updates, indirect verification requires a local secure migration process, or a secure remote provisioning process for access credentials,  for migrating assets bound to boot state.
+The measurement is included in derivations of other assets, for example sealing keys, binding assets to a measurement.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -449,10 +445,28 @@ Following updates, indirect verification requires a local secure migration proce
 | A security platform MUST be measured.
 
 | CAT_NNN
-| A security platform MUST be verified, either locally or remotely, before launching services which depend on the security platform.
+| A security platform MUST be verified, either directly or indirectly, before launching services which depend on the security platform.
+
 |===
 
-Verification ensures the system has loaded authorized software and is in a secured state.  
+Verification ensures the system has loaded authorized software and is in a secured state
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| A system MUST only use authorizations from trusted signers.
+|===
+
+* Direct verification requires a signed image autorization from a trusted signer +
+For example, a signed image header, or a separately signed authorization message.
+* Indirect verification requires a signed authorization for migrating assets bound to a boot state +
+For example, a signed authorization message, or a signed provisioning message.
+
+Either way, only authorizations from trusted signers should be used. For example, from a list of hardware provisioned or securely discovered trusted signers.
 
 [width=100%]
 [%header, cols="5,20"]
