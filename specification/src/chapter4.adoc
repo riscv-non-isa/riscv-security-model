@@ -34,21 +34,261 @@
 
 ==== Overview
 
+[caption="Figure {counter:image}: ", reftext="Figure {image}"]
+[title= "Global platform TEE use cases"]
+image::img_ch4_gp-tee.png[]
+
+https://globalplatform.org/[Global platforms] defines technical standards, interface specifications and programming models, open source firmware, and certification programmes for _trusted execution environments (TEE)_. 
+
+A TEE is an isolated environment providing security services to other software on the same Hart. For example:
+
+* Payment clients
+* DRM clients and content protection
+* Secure storage
+* User identity management
+* Platform attestation services
+
+The TEE model divides software into isolated domains:
+
+* Normal domain +
+Typically hosting a _rich OS_ (RTOS or Linux), and user applications. 
+* TEE domain +
+Hosts a _TEE OS_ (domain security manager) and _trusted applications_. The TEE OS is primarily responsible for isolation of TA within the TEE domain, and for providing root of trust services to TA.
+* Root domain +
+Hosts RoT firmware, including a _secure monitor_ primarily responsible for isolation between normal and TEE domains.
+
+The OS in normal domain typically controls scheduling on the Hart. It interacts with the TEE OS through the secure monitor in root domain to interact with TA services. 
+
+The secure monitor is responsible for context switching across domain boundaries. 
+
+For the purpose of this specification, commonly used TEE use cases in existing ecosystems include:
+
+* Static partition TEE +
+A single TEE provides security services to normal domain. TA are typically installed at boot by RoT FW and TEE OS, though Global Platforms does also define protocols for installation of TA at runtime. System configuration and resource allocation can be mostly static, making the system more deterministic. +
+_Use case examples:_ edge devices and IoT, automation, and automotive. 
+* Virtualized TEE +
+On a virtualized system, TEE can also be virtualized. In this case a _secure partition manager_ in TEE domain is responsible for isolation of multiple TEE instances within TEE domain (for example, an OEM TEE and separate Guest TEE for third party providers). This model is typically more dynamic, for example more dynamic resource allocation. +
+_Use case examples:_ mobile clients (including Android pKVM, for example), and automotive.
+
 ==== Isolation model
+
+Global platform TEE provide the following isolation guarantees:
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| Root domain MAY access resources assigned to any domain, but SHOULD prevent itself from unintended access to resources assigned to a different domain (privilege escalation).
+
+| CAT_NNN
+| No other domains can access resources assigned to Root domain
+
+| CAT_NNN
+| Resources assigned to normal domain MUST be accessible to normal domain (r/w/x), and to TEE domain (r/w) (default sharing rule)
+
+| CAT_NNN
+| Resources assigned to TEE domain MUST NOT be accessible to normal domain
+
+|===
+
+For static partition TEE, the following RISC-V hardware enforced isolation mechanisms can enforce those guarantees:
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+| PMP/ePMP MUST be used to isolate Root Domain from other domains.
+
+| CAT_NNN  
+| Supervisor domains and PMP/ePMP, or PMA, MUST be used to enforce isolation between normal and TEE domains.
+
+| CAT_NNN
+| sPMP, or single stage MMU, MUST be used to enforce isolation between workloads within a domain.
+|===
+
+MMU is typically required for use cases requiring Linux support. sPMP can be sufficient for MPU based use cases.
+
+For virtualized TEE, the following RISC-V hardware enforced isolation mechanisms can enforce those guarantees:
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+| PMP/ePMP MUST be used to isolate Root Domain from other domains.
+
+| CAT_NNN  
+| Supervisor domains and MTT, MUST be used to enforce isolation between normal and TEE domains.
+
+| CAT_NNN
+| Two-stage MMU, MUST be used to enforce isolation between workloads within a domain.
+|===
+
+==== Authorized boot
+
+See xref:chapter2.adoc#_Ecosystem_security_objectives[authorized software].
+
+TEE boot is typically based on:
+
+* Measured and verified local boot (direct or indirect)
+* Sealing, tied to at least security lifecycle state, to protect TEE production assets
+
+The process can involve multiple stages (layered boot). 
+
+==== Attestation
+
+See xref:chapter2.adoc#_Ecosystem_security_objectives[authorized software].
+
+Static partition TEE attestation is typically based on:
+
+* A security platform attestation signed by a RoT
+
+A security platform attestation covers at least:
+
+* TEE boot state, including TA
+* Root domain boot state
+* Boot state of all trusted subsystems
+
+Virtualized TEE attestation can be layered, for performance and separation of concern. For example:
+
+* A security platform attestation signed by a RoT
+* A TEE attestation signed by SPM 
+
+A security platform attestation, covers at least:
+
+* TEE domain boot state, including at least SPM
+* Root domain boot state
+* Boot state of all trusted subsystems
+
+A TEE attestation, signed by SPM, covers:
+
+* The boot state of a TEE instance
+
+The two attestations are cryptographically bound such that a reliant party can determine that they were generated on the same system, and are both fresh. For example, hash locked together with, a boot seed supplied by the reliant party.
 
 ==== Device access control
 
+==== System integration
+
 ==== Sealing
 
-==== Attestation
 
 
 === Confidential computing on RISC-V (CoVE)
 ==== Overview
+[caption="Figure {counter:image}: ", reftext="Figure {image}"]
+[title= "Global platform TEE use cases"]
+image::img_ch4_cove.png[]
 
-==== Measured Boot
+In hosting environments, tenant workloads (application or VM) rely on hardware-based isolation primitives that are managed by the host/privileged software. This can lead to a large TCB for tenants, which could include hosting software like a VM, orchestration services, host management services. In some cases it could also include other tenants exploiting vulnerabilities in complex hosting software.
+
+Confidential compute aims to achieve a minimal and certifiable TCB for _confidential workloads_. A confidential workload only _has_ to trust:
+
+* Its own environment (application or VM)
+* A minimal security manager, enforcing security guarantees for confidential workloads
+* A minimal RoT providing system root of trust services
+
+It does not _have_ to trust:
+
+* Other hosting software, including a host hypervisor
+* Other confidential workloads
+
+_CoVE (Confidential VM Extensions)_ https://github.com/riscv-non-isa/riscv-ap-tee/tree/main/specification[specification] defines a confidential compute platform for RISC-V systems, including interfaces and programming models for lifecycle management, attestation, resource management and devices assignment for confidential workloads.
+
+CoVE divides software on a Hart in three domains:
+
+* Normal domain +
+Typically hosting a hypervisor, and normal guests and services. 
+* Confidential domain +
+Hosts a _TSM_ (TEE security manager) and _confidential workloads_. The TEE OS is primarily responsible for isolation of TA within the TEE domain, and for providing root of trust services to TA.
+* Root domain +
+Hosts RoT firmware, including a _secure monitor_ primarily responsible for isolation between normal and confidential domains.
+
+The hypervisor in normal domain typically controls scheduling and resource assignment on the Hart. It interacts with the TSM through the secure monitor in root domain to manage confidential workloads. 
+
+The secure monitor is responsible for context switching and isolation across domain boundaries.
 
 ==== Isolation model
+
+Confidential workloads are provided the following isolation guarantees:
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| Root domain MAY access resources assigned to any domain, but SHOULD prevent itself from unintended access to resources assigned to a different domain (privilege escalation).
+
+| CAT_NNN
+| No other domain can access resources assigned to Root domain
+
+| CAT_NNN
+| Confidential and Normal domains MUST only be able to access resources assigned to themselves.
+
+| CAT_NNN
+| Resources MAY be assigned to both normal and confidential domains (sharing by consent).
+
+|===
+
+The following RISC-V hardware enforced isolation mechanisms can enforce those guarantees:
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+| PMP/ePMP MUST be used to isolate Root Domain from other domains.
+
+| CAT_NNN  
+| Supervisor domains and MTT MUST be used to enforce isolation between normal and TEE domains.
+
+| CAT_NNN
+| Hypervisor extension and MMU MUST be used to enforce isolation between workloads within a domain.
+|===
+
+==== Authorized Boot
+See xref:chapter2.adoc#_Ecosystem_security_objectives[authorized software].
+
+Datacentre boot is typically based on:
+
+* Measured boot of a hosting platform
+* Attestation and security provisioning (unsealing) by a remote provisioning system
+* Launch of a confidential environment, and confidential workloads, once the system has been unsealed
+
+The process can involve multiple stages (layered boot). 
+
+==== Attestation
+
+See xref:chapter2.adoc#_Ecosystem_security_objectives[authorized software].
+
+Attestation for confidential compute is typically layered, for performance and separation of concern:
+
+* A security platform attestation, signed by a hardware root of trust
+* A confidential workload attestation, signed by TSM
+
+A security platform attestation covers at least:
+
+* Confidential domain boot state, including at least TSM
+* Root domain boot state
+* Boot state of all trusted subsystems
+
+A confidential workload attestation covers:
+
+* Boot state of the confidential workload
+
+The two attestations are cryptographically bound such that a reliant party can determine that they were generated on the same system, and are both fresh. For example, hash locked together with a boot seed, supplied by the reliant party.
 
 ==== Physical threat protection
 
