@@ -8,7 +8,7 @@ See also the reference use cases chapter of this specification for common exampl
 
 === Isolation
 
-Isolation enable separation of software components executing on a Hart, as well as device assignment. Risc-V enables:
+Isolation enable separation of software components executing on a Hart, as well as device assignment. RISC-V enables:
 
 * Privilege based isolation
 * Physical memory access control (hart and device initiated accesses)
@@ -26,11 +26,11 @@ Standard privilege levels - Machine mode (M), Supervisor mode (S), and User mode
 
 https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged ISA]
 
-Hypervisor extension supports standard supervisor level hypervisors. It extends S mode into Hypervisor supervisor mode (HS), and a virtual supervisor mode (VS) for guests. It also extends U mode into standard user mode (U) and virtual user mode (VU).
+Hypervisor extension supports standard supervisor level hypervisors. It extends S mode into Hypervisor-extended supervisor mode (HS), and a virtual supervisor mode (VS) for guests. It also extends U mode into standard user mode (U) and virtual user mode (VU).
 
-Isolation of guests is typically enforced using MMU and virtual memory management.  Memory translation is in effect in VS and VU modes, but not in standard U mode. 
+Isolation of guests is enforced using two-stage address translation and protection.  Two-stage address translation and protection is in effect in VS and VU modes. 
 
-Alternatively sPMP can be used instead of MMU to support static partition hypervisors, for example on systems with hard and deterministic real time requirements. 
+Alternatively sPMP can be used instead of MMU to support static partition hypervisors, for example on systems with hard and deterministic real time requirements [Note -The sPMP for Hypervisor extension has not been specified yet.] . 
 
 MMU, PMP/ePMP, and sPMP are discussed later in this chapter.
 
@@ -109,7 +109,7 @@ https://github.com/riscv/riscv-smmtt
 
 Supervisor domains allow software components on the same hart to be developed, certified, deployed and attested independently of each other.
 
-A supervisor domain is a compartment above M-mode, physically isolated - memory, execution state, and devices - from other supervisor domains regardless of privilege level (above M-mode). Isolation and context switching between supervisor domains are managed by M-mode firmware. 
+A supervisor domain is a compartment above M-mode, physically isolated - memory, execution state, and devices - from other supervisor domains regardless of privilege level (below M-mode). Isolation and context switching between supervisor domains are managed by M-mode firmware. 
 
 [width=100%]
 [%header, cols="5,20"]
@@ -117,11 +117,8 @@ A supervisor domain is a compartment above M-mode, physically isolated - memory,
 | ID#     
 | Requirement
 
-| CAT_NNN  
-| PMP/ePMP MUST be used to protect machine mode from any supervisor domain.
-
 | CAT_NN
-| Either PMP/ePMP or MTT MUST be used to enforce physical memory isolation boundaries for supervisor domains.
+| Either PMP/ePMP or MTT MUST be used to enforce physical memory isolation boundaries for supervisor domains, and to protect machine mode from any supervisor domain.
 
 |===
 
@@ -229,7 +226,7 @@ IOMMU is a system level component providing virtual memory access for device ini
 | Systems supporting MMU SHOULD also support IOMMU
 
 | CAT_NNN  
-| Systems supporting IOMMU MUST also support IOPMP, an MAY support IOMTT, to enforce physical memory access control for device initiated transactions.
+| Systems supporting IOMMU MUST also enforce physical memory access control for M-mode memory against device initiated transactions (e.g. via IOMTT, IOPMP or equivalent).
 
 |===
 
