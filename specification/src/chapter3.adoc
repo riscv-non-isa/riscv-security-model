@@ -100,7 +100,7 @@ _Memory management unit (MMU)_ enables memory virtualization for:
 | Requirement
 
 | CAT_NNN  
-| PMP/ePMP MUST be used to protect M-mode from lower privilege levels.
+| Either PMP/ePMP or MTT MUST be used to protect M-mode from lower privilege levels.
 |===
 
 ==== Supervisor domains
