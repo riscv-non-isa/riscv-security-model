@@ -244,7 +244,9 @@ See also hardware enforced memory tagging below.
 
 https://github.com/riscv/riscv-cfi
 
-Control-flow Integrity (CFI) capabilities help defend against Return-Oriented Programming (ROP) and Call/Jump-Oriented Programming (COP/JOP) style control-flow subversion attacks, where an attacker attempts to modify return addresses or call addresses to redirect a victim to code controlled by the attacker.
+Control-flow Integrity (CFI) capabilities help defend against Return-Oriented Programming (ROP) and Call/Jump-Oriented Programming (COP/JOP) style control-flow subversion attacks, where an attacker attempts to modify return addresses or call/jump address to redirect a victim to code reused by the attacker.
+
+These attack methodologies use code sequences in authorized modules, with at least one instruction in the sequence being a control transfer instruction that depends on attacker-controlled data either in the return stack or in memory used to obtain the target address for a call or jump. Attackers stitch these sequences together by diverting the control flow instructions (e.g., JALR, C.JR, C.JALR), from their original target address to a new target via modification in the return stack or in the memory used to obtain the jump/call target address.
 
 Risc-V provides two defenses:
 
