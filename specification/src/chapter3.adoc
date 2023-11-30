@@ -81,14 +81,14 @@ When combined with H-extension, sPMP can be nested so that the hypervisor can co
 | Requirement
 
 | CAT_NNN  
-| PMP/ePMP MUST be used to protect M-mode from lower privilege levels.
+| Either sPMP, 1st-stage or G-stage page tables MUST be used to protect Supervisor domain H/S-mode from lower privilege levels.
 |===
 
 ==== MMU
 
 https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged ISA]
 
-_Memory management unit (MMU)_ enables memory virtualization for:
+_Memory management unit (MMU)_ enables address translation and protection for:
 
 * Isolating an OS from workloads on a system without H-extension (one-stage translation)
 * Isolating a hypervisor from a guest, on a system with H-extension (two-stage translation)
