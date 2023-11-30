@@ -234,7 +234,7 @@ IOMMU is a system level component providing virtual memory access for device ini
 
 https://github.com/riscv/riscv-j-extension
 
-_Memory tagging (MT)_, or pointer masking, is a technique which can improve the memory safety of an application. A part of the effective address of a pointer can be masked off, and used as a tag indicating intended ownership or state of a pointer. The tag can be used to track accesses across different regions, as well as protecting against pointer misuse such as "use after free".
+_Memory tagging (MT)_, is a technique which can improve the memory safety of an application. A part of the effective address of a pointer can be masked off, and used as a tag indicating intended ownership or state of a pointer. The tag can be used to track accesses across different regions, as well as protecting against pointer misuse such as "use after free". The pointer masking should use the proposed J-extension pointer masking extension (Zjpm).
 
 With software based memory tagging the access rules encoded in tags are enforced by software (compiler).
 
