@@ -134,7 +134,7 @@ MTT can be used where more fine grained dynamic resource management across super
 | Requirement
 
 | CAT_NNN
-| A system supporting supervisor domains MUST support supervisor domain extensions for interrupts and performance counters, and SHOULD support supervisor domain extensions for external debug.
+| A system supporting supervisor domains MUST support supervisor domain extensions for interrupts (Smsdia) and performance counters (TBD), and SHOULD support supervisor domain extensions for external debug (Smsdsd TBD).
 
 |===
 
@@ -142,7 +142,7 @@ Interrupts: https://github.com/riscv/riscv-smmtt +
 External debug: https://github.com/riscv-non-isa/riscv-external-debug-security +
 Performance counters: 
 
-These extensions enable management of interrupts, external debug, and performance counters across supervisor domain boundaries:
+These extensions enable management of interrupts, external debug, and performance counters across supervisor domain boundaries. M-mode firmware should context switch hart HPM event/counters to manage isolation of performance counters:
 
 * External debug can be enabled for one supervisor domain without affecting other supervisor domains
 * M-mode firmware manage interrupt routing and preemption across supervisor domain boundaries
