@@ -206,7 +206,7 @@ IOMTT is a system level component providing physical memory access control for d
 | IOMTT configurations MUST only be directly accessible to machine mode.
 
 | CAT_NNN
-| A system which implements IOMTT MUST also implement IOPMP to protect device initiated accesses to M-mode memory.
+| A system which implements IOMTT MAY also implement IOPMP to protect device initiated accesses to M-mode memory.
 
 |===
 
