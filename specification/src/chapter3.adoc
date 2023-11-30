@@ -161,7 +161,7 @@ The _memory tracking table (MTT)_ is a memory structure managed by machine mode,
 | Requirement
 
 | CAT_NNN
-| PMP/ePMP MUST be used to protect M-mode from lower privilege levels
+| Either PMP/ePMP or MTT MUST be used to protect M-mode from lower privilege levels
 
 | CAT_NNN  
 | MTT configurations MUST only be directly accessible to machine mode
