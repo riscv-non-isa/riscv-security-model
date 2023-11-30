@@ -248,7 +248,7 @@ Control-flow Integrity (CFI) capabilities help defend against Return-Oriented Pr
 
 Risc-V provides two defenses:
 
-* Shadow stacks - protect return addresses on call stacks
+* Shadow stacks (Zicfiss) - protect return addresses on call stacks 
 * Landing pads - protect target addresses in jumps and branches
 
 === Cryptography
