@@ -30,7 +30,7 @@
 ==== Attestation
 
 
-=== Global Platforms TEE
+=== Global Platform TEE
 
 ==== Overview
 
