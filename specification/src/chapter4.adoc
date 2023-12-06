@@ -40,7 +40,7 @@ image::img_ch4_gp-tee.png[]
 
 https://globalplatform.org/[Global platform] defines technical standards, interface specifications and programming models, open source firmware, and certification programmes for _trusted execution environments (TEE)_. 
 
-A TEE is an isolated environment providing security services to other software on the same Hart. For example:
+A TEE is an isolated environment on a Hart providing security services to other software on the same Hart. For example:
 
 * Payment clients
 * DRM clients and content protection
@@ -48,10 +48,10 @@ A TEE is an isolated environment providing security services to other software o
 * User identity management
 * Attestation services
 
-The TEE model divides software into isolated domains:
+The TEE model divides software into physically isolated domains:
 
 * Normal domain +
-Typically hosting a _rich OS_ (RTOS or Linux), and user applications. 
+Typically hosting a _rich OS_ (for example, RTOS or Linux), and user applications. 
 * TEE domain +
 Hosts a _TEE OS_ (domain security manager) and _trusted applications (TA)_. 
 * Root domain +
@@ -63,14 +63,14 @@ The OS in normal domain typically controls scheduling on the Hart. To interact w
 
 The secure monitor is responsible for context switching and isolation across domain boundaries. 
 
-For the purpose of this specification, commonly used TEE deployment models in existing ecosystems include:
+For the purpose of this specification, TEE deployment models can be separated as:
 
 * Static partition TEE +
 A single TEE provides security services to normal domain. TA are typically installed at boot by RoT FW and TEE OS, though Global Platforms does also define protocols for installation of TA at runtime. System configuration and resource allocation can be mostly static, making the system more deterministic. +
  +
 _Use case examples:_ edge devices and IoT, automation, and automotive. 
 * Virtualized TEE +
-On a virtualized system, TEE can also be virtualized. In this case a _secure partition manager_ in TEE domain is responsible for isolation of multiple TEE guests (for example, an OEM TEE and separate Guest TEE for third party providers). This model can be more dynamic, for example more dynamic resource allocation. +
+On a virtualized system, TEE can also be virtualized. In this case a _secure partition manager_ in TEE domain is responsible for isolation of multiple TEE guests (for example, an OEM TEE and separate third party TEE). This model can also support more dynamic resource allocation. +
  +
 _Use case examples:_ mobile clients, and automotive.
 
@@ -97,13 +97,13 @@ A Global Platform TEE requires the following isolation guarantees:
 | Resources assigned to normal domain MUST be accessible to normal domain (r/w/x), and to TEE domain (r/w) (default sharing rule)
 
 | CAT_NNN
-| Resources assigned to a single TA, or a guest TEE, MUST be private.
+| Resources assigned to a single TA, or a guest TEE, MUST not be accessible by a different TA, or guest TEE.
 
 |===
 
-The standard GP TEE model does not support sharing memory between TA in TEE domain. Each TA is expected to be a self-contained unit providing a specific security service, either to Normal domain or to other TA. All communications are implemented through secure channels managed by the TEE OS (and SPM in the case of a virtualized TEE). 
+The standard GP TEE model prevents sharing memory between TA in TEE domain. Each TA is expected to be a self-contained unit providing a specific security service, either to Normal domain or to other TA. All communications are implemented through secure channels managed by the TEE OS or SPM. 
 
-Processes in normal domain can share memory assigned to Normal domain when interacting with a TA in TEE world. Such shared memory can be cached when context switching between Normal and TEE domains (default sharing rule).
+Processes in Normal domain can share memory assigned to Normal domain when interacting with a TA in TEE world (default sharing rule). Such shared memory can be cached when context switching between Normal and TEE domains.
 
 RISC-V hardware enforced isolation mechanisms can be used as follows to meet those guarantees:
 
@@ -114,20 +114,20 @@ RISC-V hardware enforced isolation mechanisms can be used as follows to meet tho
 | Requirement
 
 | CAT_NNN 
-| PMP/ePMP, or MTT, MUST be used to isolate Root domain from other domains.
+| PMP/ePMP (PMA), or MTT, MUST be used to isolate Root domain from other domains.
 
 | CAT_NNN  
-| Supervisor domains MUST be used to enforce isolation between normal and TEE domains.
+| Supervisor domains MUST be used to enforce isolation between Normal and TEE domains.
 
 |===
 
-NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode can enforce that its own resources are never assigned to another domain. PMP/ePMP still add further protections for M-mode, such as the ability to implement temporal isolation boundaries within M-mode (for example, protect early boot code), or to prevent itself from accessing or executing from memory assigned to lower privilege levels (privilege escalation).
-
-See xref:chapter3.adoc#_Supervisor_domains[supervisor domains].
+See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
 
 For static partition TEE, using PMP/ePMP or PMA with supervisor domains can be sufficient. 
 
 For virtualized TEE, MTT should be used with supervisor domains.
+
+NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode can enforce that its own resources are never assigned to another domain. PMP/ePMP still add further protections for M-mode, such as the ability to implement temporal isolation boundaries within M-mode (for example, protect early boot code), or to prevent itself from accessing or executing from memory assigned to lower privilege levels (privilege escalation).
 
 [width=100%]
 [%header, cols="5,20"]
@@ -136,10 +136,8 @@ For virtualized TEE, MTT should be used with supervisor domains.
 | Requirement
 
 | CAT_NNN
-| For a static partition TEE, sPMP or MMU MUST be used to enforce isolation between TA.
+| For a static partition TEE, sPMP or MMU MUST be used to enforce isolation between TA in TEE domain.
 |===
-
-For example: sPMP may be required for use cases with hard realtime requirements, and MMU may be required for Linux based systems.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -156,7 +154,7 @@ For example: sPMP may be required for use cases with hard realtime requirements,
 
 ==== Root of Trust
 
-See xref:chapter2.adoc#_Reference_model[reference model].
+See xref:chapter2.adoc#_reference_model[reference model].
 
 [width=100%]
 [%header, cols="5,20"]
@@ -171,7 +169,7 @@ See xref:chapter2.adoc#_Reference_model[reference model].
 
 ==== Authorized boot
 
-See xref:chapter2.adoc#_Ecosystem_security_objectives[authorized software].
+See xref:chapter2.adoc#_authorized_software[authorized software].
 
 TEE boot is typically based on:
 
@@ -182,9 +180,9 @@ The process can involve multiple stages (layered boot).
 
 ==== Attestation
 
-See xref:chapter2.adoc#_Ecosystem_security_objectives[attestable services].
+See xref:chapter2.adoc#_attestable_services[attestable services].
 
-Static partition TEE attestation is typically based on a security platform attestation signed by a RoT.
+Static partition TEE attestation is typically based on a direct security platform attestation.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -193,7 +191,7 @@ Static partition TEE attestation is typically based on a security platform attes
 | Requirement
 
 | CAT_NNN 
-a| A security platform attestation MUST cover: 
+a| A direct security platform attestation MUST cover at least: 
 
 * TEE domain
 * Root domain
@@ -206,26 +204,39 @@ Virtualized TEE attestation can be layered, for performance or separation of con
 * A security platform attestation, signed by a RoT, covering trusted subsystems, Root domains, and SPM
 * Separate guest TEE attestation(s) signed by SPM 
 
+==== Sealing
+
+See xref:chapter2.adoc#_sealing[sealing].
+
+SPM or TEE OS typically provide local trusted storage, key management, and cryptographic services for TA and guest TEE (defined by Global Platform as part of _PSA RoT services_). These services support local sealing of TA or guest TEE assets.
+
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#     
 | Requirement
 
-| CAT_NNN 
-a| Layered attestations MUST be cryptographically bound such that a reliant party can determine that they 
+| CAT_NNN
+| Local sealing for a TA, or a TEE guest, MUST be unique to TEE domain and to a physical instance of a system.
 
-* Were generated on the same system
-* Are both fresh.  
+| CAT_NNN
+| Local sealing for a TA, or a TEE guest, SHOULD also be unique to the TEE guest or the TA.
+
+| CAT_NNN
+| Local sealing MAY be layered.
+
 |===
 
-For example: hash locked together, including freshness supplied by the reliant party.
+For example:
+
+* TEE domain unique sealing keys derived by a RoT from a hardware unique key
+* TA, or guest TEE, unique sealing keys derived by TEE OS or SPM from a TEE domain unique sealing key
 
 ==== Device access control
 
-For the purpose of this specification, a device can be a logical device. A physical device can present more than one logical devices, each with its own (logical) control interface. 
+For the purpose of this specification, a device can be a logical device. A physical device can present one or more logical devices, each with its own (logical) control interface. 
 
-The security guarantees also apply to device initiated accesses, for example DMA and interrupts.
+The security guarantees also apply to device initiated accesses, for example DMA and interrupts. 
 
 [width=100%]
 [%header, cols="5,20"]
@@ -239,34 +250,52 @@ The security guarantees also apply to device initiated accesses, for example DMA
 | CAT_NNN
 | A virtualized TEE MUST use IOMTT and IOMMU to enforce access control rules for devices assigned to Normal or TEE domains, and SHOULD use IOPMP to enforce access control rules for Root devices.
 
-| CAT_NNN
-| IOPMP and IOMTT configurations MUST only be directly accessible by Root domain.
-
 |===
 
-For a static partition TEE, domain level granularity can be sufficient as device access within TEE and Normal domains is governed by TEE OS and the rich OS respectively. It can be implemented using IOPMP. Policy can be controlled by boot configuration (a RoT), or be hardwired at system level.
+For a static partition TEE, domain level granularity can be sufficient as device access within TEE and Normal domains is governed by TEE OS and the rich OS respectively. It can be implemented using IOPMP. Policy can be controlled by boot configuration, by a HW or FW RoT.
 
-For a virtualized TEE, IOMTT enforces supervisor domain level access rules (physical isolation), and IOMMU enforces guest and TA level access rules (virtualization), supporting device assignment to a guest TEE or a TA. The IO subsystem of IOMTT and IOMMU has the capability of determining, through configuration managed by Root domain, which supervisor domain a device is assigned to. IOMTT is then able to apply the appropriate MTT access rules for any device initiated access, regardless of which domain is currently active on a Hart. 
+For a virtualized TEE, IOMTT enforces supervisor domain level access rules (physical isolation). IOMMU enforces guest and TA level access rules (virtualization), supporting device assignment to a guest TEE or a TA.  
 
-NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that M-mode can enforce that its own resources are never assigned to another domain. Use of IOPMP or similar still adds further protections. For example, a system may require that Root devices are not able to access memory assigned to TEE domain.
+NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that M-mode can enforce that its own resources are never assigned to another domain. Use of IOPMP or similar still adds further protections. For example, a system may require that Root devices cannot be used to access memory assigned to Confidential domain.
 
 ==== System integration
 
-In the case of a Global Platform TEE system, the number and make-up of supervisor domains can be known, and a simple convention can be used for common identification of Normal, TEE, and Root domains across multiple Harts in a system. For example, by adopting a commonly used two-bit convention from an existing ecosystem (interoperability) which can be derived from SDID and privilege level.
+In the case of a Global Platform TEE system, the number and make-up of supervisor domains can be known, and a simple convention can be used for common identification of Normal, TEE, and Root domains across multiple Harts in a system. 
 
-System integration in this context involves providing _security attributes_ on the interconnect, tagging all transactions (CPU or system agent initiated) with such a domain ownership identity. 
+System integration in this context involves providing _security attributes_ on the interconnect, tagging all transactions (CPU or system agent initiated). 
 
 Possible use cases include:
 
-* Driving cryptographic memory protection
-* Tagging in cache coherent memory subsystems
-* Device assignment (IOPMP/IOMTT integration)
+* Tweaking cryptographic memory protection (uniqueness)
+* Driving cache coherent memory subsystems
+* Device assignment (IOPMP/IOMTT integration), static or dynamic
 
-Security attributes can be reflected alongside other identities, such as a confidential guest ID.
+For example, the following convention is commonly used in existing ecosystems for domain level granularity:
 
-==== Sealing
+[width=30%]
+[%header, cols="20,10"]
+|===
+| 
+| Security attribute
 
+| TEE domain
+| 2'b00
 
+| Normal domain
+| 2'b01
+
+| Root domain
+| 2'10
+
+| Reserved +
+(Confidential domain)
+| 2'11
+
+|===
+
+The attributes can be derived, for example, from SDID and privilege level, from PMA, or from MTT dynamic PMA (svpam).
+
+For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection. For example, derived from SPM _partition ID_.
 
 === Confidential computing on RISC-V (CoVE)
 ==== Overview
@@ -280,12 +309,14 @@ Confidential compute aims to achieve a minimal and certifiable TCB for _confiden
 
 _CoVE (Confidential VM Extensions)_ https://github.com/riscv-non-isa/riscv-ap-tee/tree/main/specification[specification] defines a confidential compute platform for RISC-V systems, including interfaces and programming models, covering lifecycle management, attestation, resource management and devices assignment, for confidential workloads. It is based on principles defined by https://confidentialcomputing.io/[Confidential Computing Consortium]. Reference firmware for CoVE is being developed as part of the https://riseproject.dev/[Risc-V Software Ecosystem] project.
 
-CoVE divides software on a Hart in three domains:
+CoVE is primarily aimed at cloud hosting of confidential workloads. But the underlying isolation model could potentially be used in other use cases, such as some mobile clients or edge devices.
+
+CoVE divides software on a Hart into physically isolated domains:
 
 * Normal domain +
 Typically hosting a hypervisor, and normal guests and services. 
 * Confidential domain +
-Hosts a _TSM_ (domain security manager) and confidential workloads.
+Hosts a _TSM_ (domain security manager) and confidential guests.
 * Root domain +
 Hosts RoT firmware, including a _secure monitor_ 
 
@@ -309,16 +340,19 @@ Confidential workloads are provided the following isolation guarantees:
 | Root domain MAY access resources assigned to any domain, but SHOULD prevent itself from unintended access to resources assigned to a different domain (privilege escalation).
 
 | CAT_NNN
-| No other domain can access resources assigned to Root domain
+| Resources assigned to Root domain MUST be private to Root domain
 
 | CAT_NNN
-| Resource assigned only to either Confidential or Normal domains MUST be private.
+| Resources assigned only to Confidential domain MUST not be accessible by Normal domain
 
 | CAT_NNN
-| Resources MAY be assigned to both normal and confidential domains (sharing by consent).
+| Resources assigned only to Normal domain MUST not be accessible by Confidential domain
 
 | CAT_NNN
-| Resources assigned to a single confidential workload MUST be private
+| Resources MAY be assigned to both Normal and Confidential domains (sharing by consent).
+
+| CAT_NNN
+| Resources assigned to a single confidential workload MUST NOT be accessible by any other confidential workload
 
 | CAT_NNN
 | Resources MAY be assigned to multiple confidential workloads (sharing by consent)
@@ -334,9 +368,14 @@ RISC-V hardware enforced isolation mechanisms can be used as follows to meet tho
 | Requirement
 
 | CAT_NNN 
-| PMP/ePMP or MTT MUST be used to isolate Root Domain from other domains.
+| PMP/ePMP or MTT MUST be used to isolate Root domain from other domains.
+
+| CAT_NNN  
+| Supervisor domains MUST be used to enforce isolation between Normal and Confidential domains.
 
 |===
+
+See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
 
 NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode can enforce that its own resources are never assigned to another domain. PMP/ePMP still add further protections for M-mode, such as the ability to implement temporal isolation boundaries within M-mode (for example, protect early boot code), or to prevent itself from accessing or executing from memory assigned to lower privilege levels (privilege escalation).
 
@@ -355,7 +394,7 @@ NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode 
 
 ==== Root of trust
 
-See xref:chapter2.adoc#_Reference_model[reference model].
+See xref:chapter2.adoc#_reference_model[reference model].
 
 [width=100%]
 [%header, cols="5,20"]
@@ -364,26 +403,45 @@ See xref:chapter2.adoc#_Reference_model[reference model].
 | Requirement
 
 | CAT_NNN 
-| A confidential compute system MUST implement a HW RoT
+| A CoVE system MUST implement a HW RoT
 
 |===
 
 ==== Authorized Boot
-See xref:chapter2.adoc#_Ecosystem_security_objectives[authorized software].
 
-Confidential compute boot in a data centre context is typically based on:
+See xref:chapter2.adoc#_authorized_software[authorized software].
 
-* Measured boot of a hosting platform
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+a| Confidential guests MUST not boot until at least the security platform has been verified:
+
+* TSM in Confidential domain
+* Root domain
+* Boot state of all trusted subsystems
+|===
+
+Boot in a cloud hosting context is typically based on:
+
+* Measured boot of a hosting platform, including Root domain and TSM
 * Platform attestation and security provisioning (unsealing) by a remote provisioning system
-* Launch of a confidential environment, and confidential workloads, once the system has been unsealed
+* Launch and measurement of confidential workloads, only once the system has been unsealed
+
+A _trusted platform module_ (TPM) can be used to measure the security platform.
+
+Measuring confidential guests can be done by TSM in Confidential domain.
 
 The process can involve multiple stages (layered boot). 
 
 ==== Attestation
 
-See xref:chapter2.adoc#_Ecosystem_security_objectives[attested services].
+See xref:chapter2.adoc#_attestable_services[attestable services].
 
-Attestation for confidential compute is typically layered, for performance and separation of concern:
+Attestation of confidential workloads is typically layered, for performance and separation of concern:
 
 * A security platform attestation, signed by a hardware root of trust
 * A confidential workload attestation, signed by TSM
@@ -395,20 +453,24 @@ Attestation for confidential compute is typically layered, for performance and s
 | Requirement
 
 | CAT_NNN 
-a| A security platform attestation MUST cover: 
+a| A security platform attestation MUST cover at least: 
 
 * TSM
 * Root domain
 * Boot state of all trusted subsystems
 
-| CAT_NNN 
-a| Layered attestations MUST be cryptographically bound such that a reliant party can determine that they 
-
-* Were generated on the same system
-* Are both fresh.  
 |===
 
-For example: hash locked together, including freshness supplied by the reliant party.
+==== Sealing
+
+See xref:chapter2.adoc#_sealing[sealing].
+
+Sealing of confidential workloads is typically based on remote sealing, unsealing assets for a confidential workload following successful attestation by a remote provisioning system. This enables use cases such as:
+
+* Shared assets across multiple instances of a confidential workload (scale or redundancy)
+* Unsealing different sets of assets for different users of a service
+
+TSM itself is typically stateless across reset and does not require any sealed assets of its own.
 
 ==== Device access control
 
@@ -433,27 +495,25 @@ The security guarantees also apply to device initiated accesses, for example DMA
 
 |===
 
-IOMTT enforces supervisor domain level access rules (physical isolation), and IOMMU enforces guest and TA level access rules (virtualization), supporting device assignment to a confidential guest. The IO subsystem of IOMTT and IOMMU has the capability of determining, through configuration managed by Root domain, which supervisor domain a device is assigned to. IOMTT is then able to apply the appropriate MTT access rules for any device initiated access, regardless of which domain is currently active on a Hart. 
+IOMTT enforces supervisor domain level access rules (physical isolation). IOMMU enforces guest and TA level access rules (virtualization), supporting device assignment to a Confidential guest. 
 
-NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that M-mode can enforce that its own resources are never assigned to another domain. Use of IOPMP or similar still adds further protections. For example, a system may require that Root devices are not able to access memory assigned to Confidential domain.
+NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that M-mode can enforce that its own resources are never assigned to another domain. Use of IOPMP or similar still adds further protections. For example, a system may require that Root devices cannot be used to access memory assigned to Confidential domain.
 
 ==== System integration
 
 In the case of a confidential compute system, the number and make-up of supervisor domains can be known, and a simple convention can be used for common identification of Normal, Confidential, and Root domains across multiple Harts in a system. 
 
-System integration in this context involves providing _security attributes_ on the interconnect, tagging all transactions (CPU or system agent initiated) with such a domain ownership identity. 
+System integration in this context involves providing _security attributes_ on the interconnect, tagging all transactions (CPU or system agent initiated). 
 
 Possible use cases include:
 
-* Driving cryptographic memory protection
+* Tweaking cryptographic memory protection (uniqueness)
 * Tagging in cache coherent memory subsystems
 * Device assignment (IOPMP/IOMTT integration)
 
-Security attributes can be reflected alongside other identities, such as a confidential guest ID.
+For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection. For example, derived from MTT dynamic PMA (svpam).
 
 ==== Trusted device assignment
-
-==== Sealing
 
 ==== Debug, QoS and Performance Monitoring
 

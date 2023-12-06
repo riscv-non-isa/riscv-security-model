@@ -153,7 +153,7 @@ supervisor domains are managed by M-mode firmware.
 | Requirement
 
 | CAT_NN
-| Either PMP/ePMP or MTT MUST be used to enforce physical memory isolation
+| PMP/ePMP or MTT MUST be used to enforce physical memory isolation
 boundaries for supervisor domains, and to protect machine mode from any
 supervisor domain.
 
@@ -163,6 +163,8 @@ PMP can be used for more static and deterministic use cases.
 
 MTT can be used where more fine grained dynamic resource management across
 supervisor domain boundaries is required.
+
+NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode can enforce that its own resources are never assigned to another domain. PMP/ePMP still add further protections for M-mode, such as the ability to implement temporal isolation boundaries within M-mode (for example, protect early boot code), or to prevent itself from accessing or executing from memory assigned to lower privilege levels (privilege escalation).
 
 [width=100%]
 [%header, cols="5,20"]
@@ -219,6 +221,8 @@ levels
 | MTT configurations MUST only be directly accessible to machine mode
 |===
 
+NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode can enforce that its own resources are never assigned to another domain. PMP/ePMP still add further protections for M-mode, such as the ability to implement temporal isolation boundaries within M-mode (for example, protect early boot code), or to prevent itself from accessing or executing from memory assigned to lower privilege levels (privilege escalation).
+
 ==== IOPMP
 
 https://github.com/riscv-non-isa/iopmp-spec
@@ -240,6 +244,7 @@ access control.
 | IOPMP configurations MUST only be directly accessible to machine mode.
 |===
 
+NOTE: IOPMP defines multiple "models" for different system configurations. Unless specified differently in the use cases in this specification, system designers are free to choose any IOPMP model.
 
 ==== IOMTT
 
@@ -267,12 +272,13 @@ device-initiated access to M-mode memory.
 
 |===
 
+NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that M-mode can enforce that its own resources are never assigned to another domain. Use of IOPMP or similar still adds further protections. For example, a system may require that Root devices are not able to access memory assigned to TEE domain.
+
 ==== IOMMU
 
 https://github.com/riscv-non-isa/riscv-iommu
 
-IOMMU is a system level component providing virtual memory access-control for
-device-initiated transactions, complementing MMU translation rules.
+IOMMU is a system level component performing memory translation, allowing devices to access virtual memory locations. It complements MMU configurations.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -285,8 +291,7 @@ device-initiated transactions, complementing MMU translation rules.
 
 | CAT_NNN
 | Systems supporting IOMMU MUST also enforce physical memory access control for
-M-mode memory against device-initiated transactions (e.g. via IOMTT, IOPMP or
-equivalent).
+M-mode memory against device-initiated transactions (IOMTT or IOPMP).
 
 |===
 

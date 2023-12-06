@@ -506,7 +506,7 @@ examples later in this specification.
 
 | CAT_NNN
 | A security platform attestation MUST be signed by a HW RoT, if present, or by
-trusted security services
+a FW RoT
 
 | CAT_NNN
 | A security platform attestation MUST be signed using a hardware provisioned
@@ -516,9 +516,11 @@ trusted security services
 | A layered attestation MAY be signed by lower privileged software, itself
 attested by a security platform attestation
 
-| CAT_NNN
-| A layered attestation MUST be signed by a secure identity cryptographically
-bound (for example, hash locked) to a fresh security platform attestation
+| CAT_NNN 
+a| Layered attestations MUST be cryptographically bound such that a reliant party can determine that they 
+
+* Were generated on the same system
+* Are fresh. 
 
 |===
 
@@ -537,7 +539,10 @@ Running unauthorized software can compromise the security state of the system.
 | Requirement
 
 | CAT_NNN
-| A system in secured state MUST only load authorized software.
+| A system in secured or recoverable debug states MUST only load authorized software.
+
+| CAT_NNN
+| A system in secure provisioning state SHOULD only load authorized software.
 
 |===
 
@@ -556,8 +561,8 @@ employed at different stages. This is discussed further in use case examples
 later in this specification. The properties discussed below still apply to each
 stage.
 
-NOTE: Measurements can be calculated at boot (boot state), and sometimes also
-dynamically at runtime (runtime state). Measuring runtime state can be used as
+NOTE: Measurements can be calculated at boot (_boot state_), and sometimes also
+dynamically at runtime (_runtime state_). Measuring runtime state can be used as
 a robustness feature to mitigate against unauthorized runtime changes of static
 code segments. It is out of scope of this specification, though the principles
 discussed below can still be applied.
@@ -606,7 +611,7 @@ Verification ensures the system has loaded authorized software
 | A system MUST only use authorizations from trusted signers.
 |===
 
-* Direct verification requires a signed image autorization from a trusted
+* Direct verification requires a signed image authorization from a trusted
 signer +
 For example, a signed image header, or a separately signed authorization
 message.
@@ -777,9 +782,9 @@ permission
 
 Isolation can also extend to other features, such as interrupts and debug.
 
-==== Data sealing
+==== Sealing
 
-Sealing is the process of protecting confidential data on a system.
+Sealing is the process of protecting confidential assets on a system.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -788,7 +793,7 @@ Sealing is the process of protecting confidential data on a system.
 | Requirement
 
 | CAT_NNN
-| Sealed data MUST only be accessible to an isolated component
+| Sealed assets SHOULD only be possible to unseal in a secured state
 
 |===
 
@@ -816,11 +821,10 @@ privileged software.
 | Requirement
 
 | CAT_NNN
-| Valid local sealing keys SHOULD only be generated in secured state.
+| Local sealed assets MUST only be possible to unseal on the same physical instance of a system that they were sealed on.
 
-| CAT_NNN
-| Valid local sealing keys MAY be generated in a trusted debug state for
-unaffected software components.
 |===
+
+For example, using sealing keys derived from a hardware provisioned _hardware unique key (HUK)_.
 
 Sealing is discussed further in use cases examples later in this document.
