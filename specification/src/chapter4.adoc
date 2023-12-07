@@ -2,33 +2,117 @@
 
 == Use case examples
 
-=== Basic non-virtualized system
+This chapter provides guidance for building secure Risc-V systems for a selection of common use cases. It is not intended to be an exhaustive selection. The purpose is to illustrate common principles that can be applied in a wide variety of use cases. 
+
+Additional use cases may be added in future versions.
+
+=== Generic system
 
 ==== Overview
 
-==== Secure and Verified Boot
+[caption="Figure {counter:image}: ", reftext="Figure {image}"]
+[title= "Generic vertically integrated system"]
+image::img_ch4_gp-tee.png[]
+
+A generic vertically integrated system can be either virtualized or non-virtualized. 
+
+M-mode hosts a FW RoT. An OS or a Hypervisor in S or HS mode controls applications or guests. Guests and applications execute in U or VS/VU modes and trust the OS or Hypervisor to provide isolation guarantees.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+| A secure system SHOULD support either S mode, or the hypervisor extension (HS/VS/VU)
+
+|===
+
+NOTE: The RISC-V architecture also caters for systems with just M and U modes, commonly used in embedded systems, helper cores, and similar use cases. On secure systems not supporting S mode a FW RoT has to share M-mode with an OS. RISC-V does not exclude such implementations - for example, implementations using a certified OS and FW RoT, or using a HW RoT to isolate sensitive code and assets (physical isolation). There is no current mechanism in RISC-V for isolation within M-mode itself other than temporal boundaries +
+ +
+To minimize the TCB of the FW RoT, RISC-V recommends that secure systems implement S mode and de-privilege the OS. 
 
 ==== Isolation model
 
-==== Device access control
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
 
-==== Sealing
+| CAT_NNN 
+| PMP/ePMP MUST be used to isolate M-mode from lower privilege levels.
+
+| CAT_NNN 
+| sPMP or MMU MUST be used to isolate user applications or virtual guests
+
+|===
+
+Using sPMP is typically a more static model and can achieve a more deterministic system, for example in automotive or automation use cases. 
+
+MMU is typically required for Linux based systems, for example MMI use cases or edge devices.
+
+Either MMU and sPMP can be used both with or without hypervisor extension. For example, the hypervisor extension with sPMP can support static partition hypervisors, commonly used in automotive. And a single stage MMU can be used without hypervisor extension for full Linux support.
+
+==== Root of Trust
+
+See xref:chapter2.adoc#_reference_model[reference model].
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+| A secure system SHOULD implement a HW RoT
+
+|===
+
+==== Authorized Boot
+
+Multiple models can be used to ensure a secure system can only run authorized software.
+
+See xref:chapter2.adoc#_authorized_software[authorized software].
 
 ==== Attestation
 
+Multiple models can be used to prove to a reliant party that a secure system is in a trustworthy state.
 
-=== Basic virtualized system
-
-==== Overview
-
-==== Isolation model
-
-==== Device access control
+See xref:chapter2.adoc#_attestable_services[attestable services].
 
 ==== Sealing
 
-==== Attestation
+Multiple models can be used to protect assets if a system is not in a trustworthy state.
 
+See xref:chapter2.adoc#_sealing[sealing].
+
+==== Device access control
+
+For the purpose of this specification, a device can be a logical device. A physical device can present one or more logical devices, each with its own (logical) control interface.
+
+Isolation guarantees provided to software also apply to device initiated transaction. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT NNN
+| IOPMP MUST be used to guarantee that devices assigned to lower privilege levels cannot access resources assigned to M-mode.
+
+| CAT_NNN
+| IOPMP and IOMMU MUST be used to enforce access rules for devices assigned to user applications or guests on a virtualized system.
+
+|===
+
+On a non-virtualized system, user devices can be managed by the OS which can enforce access rules for user applications.
+
+On a virtualized system, devices can be virtualized and assigned to guests by the hypervisor configuring MMU and IOMMU translation rules. 
+
+In either case, physical device access rules are always enforced by IOPMP, controlled by RoT FW in M mode, preventing unauthorized device access to M-mode resources.
 
 === Global Platform TEE
 
@@ -66,7 +150,7 @@ The secure monitor is responsible for context switching and isolation across dom
 For the purpose of this specification, TEE deployment models can be separated as:
 
 * Static partition TEE +
-A single TEE provides security services to normal domain. TA are typically installed at boot by RoT FW and TEE OS, though Global Platforms does also define protocols for installation of TA at runtime. System configuration and resource allocation can be mostly static, making the system more deterministic. +
+A single TEE provides security services to normal domain. TA are typically installed at boot by RoT FW and TEE OS, though Global Platform does also define protocols for installation of TA at runtime. System configuration and resource allocation can be mostly static, making the system more deterministic. +
  +
 _Use case examples:_ edge devices and IoT, automation, and automotive. 
 * Virtualized TEE +
@@ -114,7 +198,7 @@ RISC-V hardware enforced isolation mechanisms can be used as follows to meet tho
 | Requirement
 
 | CAT_NNN 
-| PMP/ePMP (PMA), or MTT, MUST be used to isolate Root domain from other domains.
+| PMP/ePMP, or MTT, MUST be used to isolate Root domain from other domains.
 
 | CAT_NNN  
 | Supervisor domains MUST be used to enforce isolation between Normal and TEE domains.
@@ -208,7 +292,7 @@ Virtualized TEE attestation can be layered, for performance or separation of con
 
 See xref:chapter2.adoc#_sealing[sealing].
 
-SPM or TEE OS typically provide local trusted storage, key management, and cryptographic services for TA and guest TEE (defined by Global Platform as part of _PSA RoT services_). These services support local sealing of TA or guest TEE assets.
+In the Global Platform security model, SPM or TEE OS typically provide local trusted storage, key management, and cryptographic services to TA and guest TEE. These services support local sealing of TA or guest TEE assets, and minimize exposure of cryptographic materials.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -245,10 +329,10 @@ The security guarantees also apply to device initiated accesses, for example DMA
 | Requirement
 
 | CAT_NNN
-| A static partition TEE MUST use IOPMP to enforce access control rules for devices.
+| A static partition TEE MUST use IOPMP to enforce access rules for devices.
 
 | CAT_NNN
-| A virtualized TEE MUST use IOMTT and IOMMU to enforce access control rules for devices assigned to Normal or TEE domains, and SHOULD use IOPMP to enforce access control rules for Root devices.
+| A virtualized TEE MUST use IOMTT and IOMMU to enforce access rules for devices assigned to Normal or TEE domains, and SHOULD use IOPMP to enforce access rules for Root devices.
 
 |===
 
@@ -267,7 +351,7 @@ System integration in this context involves providing _security attributes_ on t
 Possible use cases include:
 
 * Tweaking cryptographic memory protection (uniqueness)
-* Driving cache coherent memory subsystems
+* Tagging interrupts, debug accesses, or coherent memory accesses
 * Device assignment (IOPMP/IOMTT integration), static or dynamic
 
 For example, the following convention is commonly used in existing ecosystems for domain level granularity:
@@ -300,7 +384,7 @@ For some use cases security attributes can be extended to reflect finer granular
 === Confidential computing on RISC-V (CoVE)
 ==== Overview
 [caption="Figure {counter:image}: ", reftext="Figure {image}"]
-[title= "Global platform TEE use cases"]
+[title= "Confidential compute use case"]
 image::img_ch4_cove.png[]
 
 In hosting environments, tenant workloads rely on isolation primitives that are managed by host privileged software. This can lead to a large TCB for tenants which could include, for example, a hypervisor, orchestration services, and host management services. It could also include other tenants exploiting vulnerabilities in complex hosting software.
@@ -472,6 +556,7 @@ Sealing of confidential workloads is typically based on remote sealing, unsealin
 
 TSM itself is typically stateless across reset and does not require any sealed assets of its own.
 
+[#_cove_device_access_control]
 ==== Device access control
 
 For the purpose of this specification, a device can be a logical device. A physical device can present more than one logical devices, each with its own (logical) control interface. 
@@ -485,10 +570,10 @@ The security guarantees also apply to device initiated accesses, for example DMA
 | Requirement
 
 | CAT_NNN
-| IOMTT and IOMMU MUST be used to enforce access control rules for devices assigned to Normal or Confidential domains.
+| IOMTT and IOMMU MUST be used to enforce access rules for devices assigned to Normal or Confidential domains.
 
 | CAT_NNN
-| IOPMP SHOULD be used to enforce access control rules for Root devices.
+| IOPMP SHOULD be used to enforce access rules for Root devices.
 
 | CAT_NNN
 | IOPMP and IOMTT configurations MUST only be directly accessible by Root domain.
@@ -508,17 +593,32 @@ System integration in this context involves providing _security attributes_ on t
 Possible use cases include:
 
 * Tweaking cryptographic memory protection (uniqueness)
-* Tagging in cache coherent memory subsystems
-* Device assignment (IOPMP/IOMTT integration)
+* Tagging debug accesses, or coherent memory accesses
+* Device assignment (IOPMP/IOMTT integration), static or dynamic
 
 For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection. For example, derived from MTT dynamic PMA (svpam).
 
 ==== Trusted device assignment
 
-==== Debug, QoS and Performance Monitoring
+The goal of confidential compute is to provide a minimum TCB for a confidential service, and CPU isolation mechanisms discussed so far does that on a Hart.
 
-=== Additional examples
+But most confidential services also make use of devices, both on-chip and external. <<_cove_device_access_control, Device virtualization>> can guarantee exclusivity for devices assigned to a confidential workload - TSM can guarantee that a device assigned to a confidential workload cannot be accessed by:
 
-(Variations on the above)
+* Any other confidential workload
+* Any software in Normal domain
 
-Android pKVM
+But the confidential workload still has to trust all intermediaries between the workload and the device, both physical and software. For example:
+
+* Drivers
+* Physical interconnects and buses
+
+The _TEE device interface security protocol (TDISP)_ defined by PCIe provides a security architecture and protocols allowing a confidential workload to securely attest, manage and exchange data with a trusted device.
+
+Secure access to devices is important in a number of use cases where a device performs work on assets owned by a confidential workload, such as accelerators. The confidential workload is able to establish the trustworthiness of the device, as well as protect its assets in transit.
+
+CoVE defines Risc-V support for TDISP. See:
+
+https://pcisig.com/specifications/
+https://github.com/riscv-non-isa/riscv-ap-tee-io
+
+

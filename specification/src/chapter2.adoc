@@ -89,6 +89,9 @@ logical attack than a complex Hart.
 | Requirement
 
 | CAT_NNN
+| A secure system SHOULD implement a HW RoT
+
+| CAT_NNN
 | A FW RoT SHOULD be the only software in machine mode (M).
 |===
 
@@ -107,8 +110,7 @@ For the purpose of this document, these can be treated as secondary roots of
 trust. The HW RoT governs the security platform itself and acts as a primary
 root of trust on the system.
 
-The full set of software a workload must trust is its _trusted compute base
-(TCB)_. A TCB can include other software. For example:
+The full TCB of a component can include other software. For example:
 
 * On a vertically integrated embedded system: An operating system
 * On a virtualized system: A hypervisor and a guest operating system
