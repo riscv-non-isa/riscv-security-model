@@ -50,6 +50,18 @@ yet].
 
 MMU, PMP/ePMP, and sPMP are discussed later in this chapter.
 
+==== PMA
+https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged
+ISA]
+
+_Physical memory attributes (PMA)_ are intended to capture inherent properties of the underlying hardware. For example, read-only ROM regions, or non-cachable device regions. Often PMA can be fixed at design time or at boot, but sometimes runtime PMA can be required.
+
+A separate hardware checker - _PMA checker_ - enforces PMA rules at runtime once a physical address is known. PMA rules are always checked on every physical access, and typically configured by region.
+
+Other RISC-V mechanisms can also be used for managing memory attributes. For example <<_mtt, MTT>> can provide finer grained dynamic PMA (svpam) at physical address level. Or <<_mmu, MMU>> TLB can be used by a kernel or hypervisor to manage memory attributes and permissions on a virtualized system.
+
+Which mechanism is used depends on use case. They can be combined, in which case any memory access must pass all memory attribute checks.
+
 ==== PMP and ePMP
 
 https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged
@@ -145,6 +157,8 @@ A supervisor domain is a compartment above M-mode, physically isolated -
 memory, execution state, and devices - from other supervisor domains regardless
 of privilege level (below M-mode). Isolation and context switching between
 supervisor domains are managed by M-mode firmware.
+
+A supervisor domain is identified at architecture level by a _supervisor domain id (SDID)_ CSR, managed by M-mode firmware.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -330,7 +344,7 @@ C.JR, C.JALR), from their original target address to a new target via
 modification in the return stack or in the memory used to obtain the jump/call
 target address.
 
-Risc-V provides two defenses:
+RISC-V provides two defenses:
 
 * Shadow stacks (Zicfiss) - protect return addresses on call stacks
 * Labeled Landing pads (Zicfilp) - protect target addresses in jumps and
@@ -340,20 +354,20 @@ branches
 
 https://github.com/riscv/riscv-crypto
 
-Risc-V includes ISA extensions in the following cryptographic areas:
+RISC-V includes ISA extensions in the following cryptographic areas:
 
 * Scalar cryptography
 * Vector cryptography
 * Entropy source (scalar)
 
-Risc-V cryptographic extensions are aimed at supporting efficient acceleration
+RISC-V cryptographic extensions are aimed at supporting efficient acceleration
 of cryptographic operations at ISA level. This can both help reduce the TCB of
 an isolated component, and avoid hardware bottlenecks (for example, system
 level cryptographic subsystems).
 
 The entropy source extension provides an ISA level interface to a hardware
 entropy source. Entropy source requirements can depend on use case or ecosystem
-specific requirements and Risc-V does not provide any entropy source technical
+specific requirements and RISC-V does not provide any entropy source technical
 specification. But the entropy source ISA specification does contain general
 recommendations and references.
 
@@ -364,7 +378,7 @@ recommendations and references.
 | Requirement
 
 | CAT_NNN
-| Risc-V systems SHOULD support either scalar or vector cryptographic ISA
+| RISC-V systems SHOULD support either scalar or vector cryptographic ISA
 extensions
 
 | CAT_NNN

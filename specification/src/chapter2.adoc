@@ -52,8 +52,8 @@ privileged software.
 * Physical memory isolation +
 More privileged software controls memory access for less privileged software.
 * Domain isolation +
-Separates resources so that a domain cannot access or modify resources assigned
-to a different domain without consent, regardless of privilege level.
+Software in one domain cannot access or modify resources assigned to a different domain (without consent), regardless of privilege level. +
+(higher privileged software in one domain cannot access resources assigned to a lower privilege level in a different domain)
 * Virtualization +
 Virtualization creates and manages _virtual resources_ - compute, memory,
 devices - independent of actual physical hardware. A system, or individual
@@ -242,19 +242,18 @@ a| * RISC-V privilege levels
 | Chained +
 Logical
 | Attacks on speculative execution implementations.
-| Known (documented) attacks except Spectre v1 are specific to particular
-micro-architectures, and RISC-V systems are not expected to be vulnerable to
-those. This is an evolving area of research. +
-For example: +
+| Known (documented) attacks, except Spectre v1, are specific to particular
+micro-architectures. Micro-architecture for RISC-V systems is implementation specific, but must not introduce such vulnerabilities. +
+ + 
+This is an evolving area of research. +
+ +
+ For example: +
 https://meltdownattack.com/[Spectre and meltdown papers] +
-
-https://www.intel.com/content/www/us/en/developer/topic-technology/software-secu
-rity-guidance/processors-affected-consolidated-product-cpu-model.html[Intel
+https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html[Intel
 security guidance] +
-https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20
-Security%20Center,Speculative%20Processor%20Vulnerability[Arm speculative
+https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20Security%20Center,Speculative%20Processor%20Vulnerability[Arm speculative
 vulnerability]
-| Fence.t could mitigate against Spectre v1.
+| Fence.t, or similar future extensions, could at least partially mitigate against Spectre v1.
 
 | CAT_NNN
 | Interface abuse
@@ -331,6 +330,7 @@ a| * Glitching to bypass secure boot
 * Retrieving residual confidential memory after a system reset
 a| * Implement robust power management
 * Implement cryptographic memory protection with at least boot freshness
+* Code hardening (for example, see https://www.riscure.com/publication/practical-steps-evaluate-protect-secure-boot-implementations-embedded-devices/[Riscure white paper])
 
 | CAT_NNN
 | Subverting supply chains
@@ -408,14 +408,23 @@ A security lifecycle reflects the trustworthiness of a system during its
 lifetime and reflects the lifecycle state of hardware provisioned assets.
 
 It can be extended as indicated below to cover additional security provisioning
-steps such as device onboarding, device activiation, user management, and RMA
+steps such as device onboarding, device activation, user management, and RMA
 processes. These are use case or ecosystem specific and out of scope of this
 specification.
+
+For the purpose of this specification, _revealing debug_ includes any HW or FW debug capability which 
+
+* Could break security guarantees or could expose assets 
+* Is not part of an attested trust contract with a reliant party 
+
+Examples of revealing debug typically includes external debug or boundary scans, dedicated debug builds of software components, or enabling self-hosted debug for a component.
+
+Depending on use case, an attested software component can include debug capabilities managed through an application defined governance process. For example, self-hosted debug enabled following an application specific authorization process. In this case the debug capability, and the associated governance, is part of the trust contract with a reliant party and does not have to be classed as revealing.
 
 For the purpose of this specification, a minimum security lifecycle includes at
 least the following states:
 
-* Manufacture - The system may not yet be fully locked down and has no hardware
+* Manufacture - The system may not yet be locked down and has no hardware
 provisioned assets
 * Security provisioning - The process of provisioning hardware provisioned
 assets +
@@ -423,18 +432,15 @@ Depending on ecosystem requirement, security provisioning could be performed in
 multiple stages through a supply chain and may require additional sub-states.
 These types of application specific extensions are out of scope of this
 specification.
-* Secured - the system is fully locked down and has all its hardware
-provisioned assets +
-Additional application specific provisioning stages can take place in this
+* Secured - hardware provisioned assets are locked (immutable), only authorized software can be used, and revealing debug is not enabled. +
+Additional specific provisioning stages can take place in this
 state - for example network onboarding and device activation, TSS/App/Device
 attestation or user identity management. This is out of scope of this
 specification.
-* Recoverable debug - part of the system is in a debug state +
-At least trusted security services or a hardware root of trust are not
-compromised, and hardware provisioned secrets remain protected. +
-This state is both attestable and recoverable. For example, debug is enabled
-for a security domain without compromising another security domain or any
-trusted security services.
+* Recoverable debug - part of the system is in a revealing debug state +
+At least the RoT is not compromised and hardware provisioned secrets remain protected. +
+This state is both attestable and recoverable. For example, revealing debug is enabled
+for a domain without compromising another domain or any RoT services.
 * Terminated - any system change which could expose hardware provisioned assets
 +
 Typically hardware provisioned assets are made permanently inaccessible and
@@ -442,8 +448,9 @@ revoked before entering this state. This also protects any derived assets such
 as attestation and sealing keys.
 
 A system could support re-provisioning from a terminated state, for example
-following repair. This is equivalent to starting over from the security
-provisioning state and creates a new instance with a new secure identifier.
+following repair/RMA. This can be viewed as equivalent to starting over from the security
+provisioning state, and creates a new instance with a new secure identifier.
+
 
 [width=100%]
 [%header, cols="5,20"]
@@ -610,20 +617,19 @@ Verification ensures the system has loaded authorized software
 | Requirement
 
 | CAT_NNN
-| A system MUST only use authorizations from trusted signers.
+| A system MUST only use authorizations from trusted authority.
 |===
 
 * Direct verification requires a signed image authorization from a trusted
-signer +
-For example, a signed image header, or a separately signed authorization
+authority before loading an image +
+For example, a signed image, or a separately signed authorization
 message.
-* Indirect verification requires a signed authorization for migrating assets
-bound to a measured state +
-For example, a signed authorization message, or a signed provisioning message.
+* Indirect verification requires a signed authorization from a trusted authority for migrating assets bound to a previously measured state +
+For example, a signed provisioning message.
 
-Either way, only authorizations from trusted signers should be used. For
+Either way, only authorizations from trusted authorities should be used. For
 example, from a list of hardware provisioned or securely discovered trusted
-signers.
+authorities.
 
 [width=100%]
 [%header, cols="5,20"]

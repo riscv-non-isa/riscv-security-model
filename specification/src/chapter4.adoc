@@ -12,7 +12,7 @@ Additional use cases may be added in future versions.
 
 [caption="Figure {counter:image}: ", reftext="Figure {image}"]
 [title= "Generic vertically integrated system"]
-image::img_ch4_gp-tee.png[]
+image::img_ch4_priv.png[]
 
 A generic vertically integrated system can be either virtualized or non-virtualized. 
 
@@ -124,7 +124,7 @@ image::img_ch4_gp-tee.png[]
 
 https://globalplatform.org/[Global platform] defines technical standards, interface specifications and programming models, open source firmware, and certification programmes for _trusted execution environments (TEE)_. 
 
-A TEE is an isolated environment on a Hart providing security services to other software on the same Hart. For example:
+A TEE is an isolated environment providing security services. TEE services can be available to software on multiple Harts. For example:
 
 * Payment clients
 * DRM clients and content protection
@@ -139,18 +139,18 @@ Typically hosting a _rich OS_ (for example, RTOS or Linux), and user application
 * TEE domain +
 Hosts a _TEE OS_ (domain security manager) and _trusted applications (TA)_. 
 * Root domain +
-Hosts RoT firmware, including a secure monitor
+Hosts RoT firmware, including a secure monitor.
 
 The TEE OS is primarily responsible for isolation of TA, and for providing root of trust services, within the TEE domain.
 
-The OS in normal domain typically controls scheduling on the Hart. To interact with TA services, the OS in normal mode interacts with the TEE OS through the secure monitor in root domain. 
+The OS in Normal domain typically controls scheduling on the system, across all Harts available to it. To interact with TA services in TEE domain, the OS in Normal domain interacts with a TEE OS through a secure monitor in Root domain. 
 
-The secure monitor is responsible for context switching and isolation across domain boundaries. 
+The secure monitor is responsible for context switching and isolation across domain boundaries, including event management. 
 
 For the purpose of this specification, TEE deployment models can be separated as:
 
 * Static partition TEE +
-A single TEE provides security services to normal domain. TA are typically installed at boot by RoT FW and TEE OS, though Global Platform does also define protocols for installation of TA at runtime. System configuration and resource allocation can be mostly static, making the system more deterministic. +
+A single TEE provides security services to Normal domain. TA are typically installed at boot by RoT FW and TEE OS, though Global Platform does also define protocols for installation of TA at runtime. System configuration and resource allocation can be mostly static, making the system more deterministic. +
  +
 _Use case examples:_ edge devices and IoT, automation, and automotive. 
 * Virtualized TEE +
@@ -175,17 +175,17 @@ A Global Platform TEE requires the following isolation guarantees:
 | No other domains can access resources assigned to Root domain
 
 | CAT_NNN
-| Resources assigned to TEE domain MUST NOT be accessible to normal domain
+| Resources assigned to TEE domain MUST NOT be accessible to Normal domain
 
 | CAT_NNN
-| Resources assigned to normal domain MUST be accessible to normal domain (r/w/x), and to TEE domain (r/w) (default sharing rule)
+| Resources assigned to Normal domain MUST be accessible to Normal domain (r/w/x), and to TEE domain (r/w) (default sharing rule)
 
 | CAT_NNN
 | Resources assigned to a single TA, or a guest TEE, MUST not be accessible by a different TA, or guest TEE.
 
 |===
 
-The standard GP TEE model prevents sharing memory between TA in TEE domain. Each TA is expected to be a self-contained unit providing a specific security service, either to Normal domain or to other TA. All communications are implemented through secure channels managed by the TEE OS or SPM. 
+The standard GP TEE model does not support sharing memory between TA in TEE domain. Each TA is expected to be a self-contained unit providing a specific security service, either to Normal domain or to other TA. All communications are implemented through secure channels managed by the TEE OS or SPM. 
 
 Processes in Normal domain can share memory assigned to Normal domain when interacting with a TA in TEE world (default sharing rule). Such shared memory can be cached when context switching between Normal and TEE domains.
 
@@ -344,9 +344,9 @@ NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that
 
 ==== System integration
 
-In the case of a Global Platform TEE system, the number and make-up of supervisor domains can be known, and a simple convention can be used for common identification of Normal, TEE, and Root domains across multiple Harts in a system. 
+In the case of a Global Platform TEE system a rich OS in Normal domain is free to schedule services, including TEE services, on any Hart available to it. The number and make-up of supervisor domains can be known, and a simple convention can be used for common identification (SDID value, see xref:chapter3.adoc#_supervisor_domains[supervisor domains]) of Normal, TEE, and Root domains across multiple Harts in a system. 
 
-System integration in this context involves providing _security attributes_ on the interconnect, tagging all transactions (CPU or system agent initiated). 
+System integration in this context involves providing _security attributes_ on a system interconnect, tagging all transactions (CPU or system agent initiated) to either Root, Normal, or TEE domains. 
 
 Possible use cases include:
 
@@ -354,10 +354,10 @@ Possible use cases include:
 * Tagging interrupts, debug accesses, or coherent memory accesses
 * Device assignment (IOPMP/IOMTT integration), static or dynamic
 
-For example, the following convention is commonly used in existing ecosystems for domain level granularity:
+For interoperability, an implementation could adopt the following convention commonly used in Global Platform TEE ecosystems:
 
 [width=30%]
-[%header, cols="20,10"]
+[%header, cols="30,20"]
 |===
 | 
 | Security attribute
@@ -379,7 +379,7 @@ For example, the following convention is commonly used in existing ecosystems fo
 
 The attributes can be derived, for example, from SDID and privilege level, from PMA, or from MTT dynamic PMA (svpam).
 
-For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection. For example, derived from SPM _partition ID_.
+For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection with TA granularity.
 
 === Confidential computing on RISC-V (CoVE)
 ==== Overview
@@ -391,24 +391,24 @@ In hosting environments, tenant workloads rely on isolation primitives that are 
 
 Confidential compute aims to achieve a minimal and certifiable TCB for _confidential workloads_. 
 
-_CoVE (Confidential VM Extensions)_ https://github.com/riscv-non-isa/riscv-ap-tee/tree/main/specification[specification] defines a confidential compute platform for RISC-V systems, including interfaces and programming models, covering lifecycle management, attestation, resource management and devices assignment, for confidential workloads. It is based on principles defined by https://confidentialcomputing.io/[Confidential Computing Consortium]. Reference firmware for CoVE is being developed as part of the https://riseproject.dev/[Risc-V Software Ecosystem] project.
+_CoVE (Confidential VM Extensions)_ https://github.com/riscv-non-isa/riscv-ap-tee/tree/main/specification[specification] defines a confidential compute platform for RISC-V systems, including interfaces and programming models, covering lifecycle management, attestation, resource management and devices assignment, for confidential workloads. It is based on principles defined by https://confidentialcomputing.io/[Confidential Computing Consortium]. Reference firmware for CoVE is being developed as part of the https://riseproject.dev/[RISC-V Software Ecosystem] project.
 
 CoVE is primarily aimed at cloud hosting of confidential workloads. But the underlying isolation model could potentially be used in other use cases, such as some mobile clients or edge devices.
 
-CoVE divides software on a Hart into physically isolated domains:
+CoVE divides software into physically isolated domains:
 
 * Normal domain +
-Typically hosting a hypervisor, and normal guests and services. 
+Typically hosting a hypervisor, and Normal guests and services. 
 * Confidential domain +
 Hosts a _TSM_ (domain security manager) and confidential guests.
 * Root domain +
-Hosts RoT firmware, including a _secure monitor_ 
+Hosts RoT firmware, including a secure monitor.
 
-The TSM is primarily responsible for isolation of confidential workloads, and for providing RoT services, within the confidential domain.
+The TSM is primarily responsible for isolation of confidential workloads, and for providing RoT services, within the Confidential domain.
 
-A hypervisor in normal domain typically controls scheduling and resource assignment on the Hart. It interacts with the TSM through the secure monitor in root domain to manage confidential workloads. 
+A hypervisor in Normal domain typically controls scheduling and resource assignment on the system across all Harts available to it, including for confidential workloads. It interacts with the TSM through the secure monitor in Root domain to manage confidential workloads. 
 
-The secure monitor is responsible for context switching and isolation across domain boundaries.
+The secure monitor is responsible for context switching and isolation across domain boundaries, including event management.
 
 ==== Isolation model
 
@@ -473,7 +473,7 @@ NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode 
 | Hypervisor extension MUST be supported
 
 | CAT_NNN
-| MMU MUST be used to enforce isolation between confidential guests within Confidential domain.
+| MMU MUST be used to enforce isolation between Confidential guests within Confidential domain.
 |===
 
 ==== Root of trust
@@ -586,17 +586,19 @@ NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that
 
 ==== System integration
 
-In the case of a confidential compute system, the number and make-up of supervisor domains can be known, and a simple convention can be used for common identification of Normal, Confidential, and Root domains across multiple Harts in a system. 
+In the case of a confidential compute system, hypervisor in Normal domain typically controls scheduling and resource assignment on the system across all Harts available to it. The number and make-up of supervisor domains can be known, and a simple convention can be used for common identification of Normal, Confidential, and Root domains across multiple Harts in a system. 
 
-System integration in this context involves providing _security attributes_ on the interconnect, tagging all transactions (CPU or system agent initiated). 
+System integration in this context involves providing _security attributes_ on the interconnect, tagging all transactions (CPU or system agent initiated) to either Root, Normal, or TEE domains. 
 
 Possible use cases include:
 
 * Tweaking cryptographic memory protection (uniqueness)
-* Tagging debug accesses, or coherent memory accesses
+* Tagging interrupts, debug accesses, or coherent memory accesses
 * Device assignment (IOPMP/IOMTT integration), static or dynamic
 
-For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection. For example, derived from MTT dynamic PMA (svpam).
+The attributes can be derived, for example, from MTT dynamic PMA (svpam).
+
+For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection with confidential workload granularity.
 
 ==== Trusted device assignment
 
@@ -610,13 +612,13 @@ But most confidential services also make use of devices, both on-chip and extern
 But the confidential workload still has to trust all intermediaries between the workload and the device, both physical and software. For example:
 
 * Drivers
-* Physical interconnects and buses
+* Physical interconnects and device hardware interfaces
+
+Secure access to devices is important in a number of use cases where a device performs work on assets owned by a confidential workload, such as accelerators. 
 
 The _TEE device interface security protocol (TDISP)_ defined by PCIe provides a security architecture and protocols allowing a confidential workload to securely attest, manage and exchange data with a trusted device.
 
-Secure access to devices is important in a number of use cases where a device performs work on assets owned by a confidential workload, such as accelerators. The confidential workload is able to establish the trustworthiness of the device, as well as protect its assets in transit.
-
-CoVE defines Risc-V support for TDISP. See:
+CoVE defines RISC-V support for TDISP. See:
 
 https://pcisig.com/specifications/
 https://github.com/riscv-non-isa/riscv-ap-tee-io
