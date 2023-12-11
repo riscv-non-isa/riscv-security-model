@@ -114,6 +114,91 @@ On a virtualized system, devices can be virtualized and assigned to guests by th
 
 In either case, physical device access rules are always enforced by IOPMP, controlled by RoT FW in M mode, preventing unauthorized device access to M-mode resources.
 
+=== Debug and performance management
+
+See xref:chapter2.adoc#_security_lifecycle[security lifecycle]. +
+See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT NNN
+| External debug SHOULD be enabled separately for M-mode and non M-mode software.
+
+| CAT_NNN
+| External debug MUST only be enabled by HW RoT (M-mode external debug) or by FW RoT (non M-mode external debug).
+
+|===
+
+Enables recoverable external debug of non M-mode software. In turn enabling supply chain separation.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Self-hosted debug MAY be used for debug of non M-mode software.
+
+| CAT_NNN
+| Self-hosted debug MUST only be enabled by a higher privileged component.
+
+|===
+
+For example, within normal domain an S-mode OS can enable self-hosted debug for a user application. Only M-mode firmware should enable self-hosted debug for the S-mode OS.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| FW RoT MAY disable self-hosted debug for all non M-mode software.
+
+|===
+
+For example, disable self-hosted debug in a production system for certification reasons.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| External debug MUST only be enabled at boot (measuring) of the affected component.
+
+| CAT_NNN
+| Revealing self-hosted debug MUST only be enabled at boot (measuring) of the affected component
+
+| CAT_NNN
+| Trusted self-hosted debug MAY be enabled after boot (measuring) of the affected component, to an application specific governance process.
+
+|===
+
+Guarantees the system remains attestable.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to measure higher privilege software.
+
+| CAT_NNN
+| Software in one domain MUST NOT be able to measure software in a different domain, without consent.
+
+|===
+
+Prevents using event counters to measure across application or privilege boundaries. Event counters can be managed by higher privileged software as part of context switching across boundaries.
+ 
 === Global Platform TEE
 
 ==== Overview
@@ -381,6 +466,96 @@ The attributes can be derived, for example, from SDID and privilege level, from 
 
 For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection with TA granularity.
 
+=== Debug and performance management
+
+See xref:chapter2.adoc#_security_lifecycle[security lifecycle]. +
+See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| External debug MUST be enabled separately for Root domain.
+
+| CAT_NNN
+| External debug MUST be enabled separately for each supervisor domain.
+
+| CAT_NNN
+| External debug MUST only be enabled by a HW RoT (Root domain external debug) or by Root domain (supervisor domain external debug).
+
+|===
+
+Enables recoverable external debug of a supervisor domain separately from other supervisor domains, and Root domain. In turn enabling supply chain separation.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Self-hosted debug MAY be used for debug within a supervisor domain.
+
+| CAT_NNN
+| Self-hosted debug MUST only be enabled by a higher privileged component.
+
+|===
+
+For example, within normal domain an S-mode or VS-mode OS can enable self-hosted debug for a user application. Or an HS-mode hypervisor can enable self-hosted debug for a VS-mode guest. Only Root domain should enable self-hosted debug for an S-mode OS or an HS mode hypervisor.
+
+Within TEE domain a TEE OS can enable self-hosted debug for a TA. An SPM can enable self-hosted debug for guest TEE. Only Root domain should enable self-hosted debug of SPM (virtualized) or TEE OS (non-virtualized).
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Root domain MAY disable self-hosted debug for a whole domain.
+
+|===
+
+For example, for all of TEE domain on a production system, for certification reasons.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| External debug MUST only be enabled at boot (measuring) of the affected component.
+
+| CAT_NNN
+| Revealing self-hosted debug MUST only be enabled at boot (measuring) of the affected component
+
+| CAT_NNN
+| Trusted self-hosted debug MAY be enabled after boot (measuring) of the affected component, to an application specific governance process.
+
+|===
+
+Guarantees the system remains attestable.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to measure higher privilege software.
+
+| CAT_NNN
+| Software in one domain MUST NOT be able to measure software in a different domain, without consent.
+
+|===
+
+Prevents using event counters to measure across guest/application, privilege and supervisor domain boundaries. Event counters can be managed by higher privileged software as part of context switching across boundaries.
+
 === Confidential computing on RISC-V (CoVE)
 ==== Overview
 [caption="Figure {counter:image}: ", reftext="Figure {image}"]
@@ -623,4 +798,101 @@ CoVE defines RISC-V support for TDISP. See:
 https://pcisig.com/specifications/
 https://github.com/riscv-non-isa/riscv-ap-tee-io
 
+==== Debug and performance management
 
+See xref:chapter2.adoc#_security_lifecycle[security lifecycle]. +
+See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| External debug MUST be enabled separately for Root domain.
+
+| CAT_NNN
+| External debug MUST be enabled separately for each supervisor domain.
+
+| CAT_NNN
+| External debug MUST only be enabled by a HW RoT (Root domain external debug) or by Root domain (supervisor domain external debug).
+
+|===
+
+Enables recoverable external debug of a supervisor domain separately from other supervisor domains, and Root domain. In turn enabling supply chain separation.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Self-hosted debug MAY be used for debug within a supervisor domain.
+
+| CAT_NNN
+| Self-hosted debug MUST only be enabled by a higher privileged component.
+
+|===
+
+For example, within normal domain an HS-mode hypervisor can enable self-hosted debug for a VS-mode guest. Only Root domain should enable self-hosted debug for the HS mode hypervisor.
+
+Within Confidential domain the TSM can enable self-hosted debug for a confidential guest. Only Root domain should enable self-hosted debug of TSM.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| External debug MUST only be enabled at boot (measuring) of the affected component.
+
+| CAT_NNN
+| Revealing self-hosted debug MUST only be enabled at boot (measuring) of the affected component
+
+| CAT_NNN
+| Trusted self-hosted debug MAY be enabled after boot of the affected component, to an application specific governance process.
+
+|===
+
+Guarantees the system remains attestable.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to measure higher privilege software.
+
+| CAT_NNN
+| Software in one domain MUST NOT be able to measure software in a different domain, without consent.
+
+|===
+
+Prevents using event counters to measure across guest/application, privilege and supervisor domain boundaries. 
+
+Event counters can be managed by higher privileged software as part of context switching across boundaries.
+
+==== Platform QoS
+
+See xref:chapter2.adoc#_platform_quality_of_service[platform quality of service].
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to measure higher privilege software.
+
+| CAT_NNN
+| Software in one domain MUST NOT be able to measure software in a different domain, without consent.
+
+|===
+
+Event counters can be managed by higher privileged software as part of context switching across boundaries.

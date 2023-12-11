@@ -38,11 +38,65 @@ Examples of assets include:
 * Proprietary models
 * Secret algorithms
 
-Assets can be protected by _isolation_. Isolation separates different software
-components on a Hart to protect _resources_:
+==== Trusted compute base
 
-* Memory
-* Execution state
+The _trusted compute base (TCB)_ of a component is the minimum amount of
+software and hardware that needs to be trusted by that component. 
+
+The TCB of a component typically includes other software. For example:
+
+* An operating system
+* A hypervisor and a guest operating system
+* Hosting services such as orchestration and server provisioning software
+
+==== Root of trust
+
+The minimum amount of software that always has to be trusted on a system is its _root of trust (RoT)_. A RoT includes fundamental security services, for example:
+
+* Boot and attestation
+* Security lifecycle management
+* Key derivations and sealing
+* Security provisioning
+
+Depending on use case and ecosystem requirements, a RoT can be:
+
+* Hart firmware (FW RoT)
+* A dedicated trusted subsystem (HW RoT), supporting a FW RoT
+
+Using a HW RoT moves critical functions and assets off a Hart to a dedicated
+trusted subsystem, which can provide stronger protection against physical and logical attack than a complex Hart.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| A secure system SHOULD implement a HW RoT
+
+| CAT_NNN
+| A FW RoT SHOULD be the only software in machine mode (M).
+|===
+
+NOTE: In this document, the terms "FW RoT" and "HW RoT" will be used as defined above. The term "RoT" on its own can be used where a rule or a rational applies to either model.
+
+NOTE: It is common for secure systems to support multiple trust chains and
+multiple roots of trust. For example, a TPM can be a root of trust for UEFI
+boot flows within a runtime environment, and a SIM can be a root of trust for user identity management. They are usually dedicated trusted subsystems with their own specifications and certification processes. +
+ +
+For the purpose of this document, these can be treated as secondary roots of
+trust. The HW RoT governs the security platform itself and acts as a primary
+root of trust on the system.
+
+==== Isolation
+
+Assets can be protected by _isolation_. Isolation reduces dependencies between components, and reduces the amount of software that needs to be trusted. 
+
+Isolation protects _resources_:
+
+* Memory and memory mapped devices
+* _Execution state_, including Hart register state
 
 Examples of isolation mechanisms include:
 
@@ -59,64 +113,6 @@ Virtualization creates and manages _virtual resources_ - compute, memory,
 devices - independent of actual physical hardware. A system, or individual
 domains, can be virtualized.
 
-Isolation reduces dependencies between components, and reduces the amount of
-software that needs to be trusted, with the aim of minimizing the amount of
-software that needs to be trusted by a _workload_ - the _trusted compute base
-(TCB)_ of the workload.
-
-The minimum amount of software that always has to be trusted on any system is
-its _root of trust (RoT)_. A RoT includes fundamental security services, for
-example:
-
-* Boot and attestation
-* Security lifecycle management
-* Key derivations and sealing
-* Security provisioning
-
-Depending on use case and ecosystem requirements, a RoT can be:
-
-* Hart firmware (FW RoT)
-* A dedicated trusted subsystem (HW RoT), supporting a FW RoT
-
-Using a HW RoT moves critical functions and assets off a Hart to a dedicated
-trusted subsystem, which can provide stronger protection against physical or
-logical attack than a complex Hart.
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| CAT_NNN
-| A secure system SHOULD implement a HW RoT
-
-| CAT_NNN
-| A FW RoT SHOULD be the only software in machine mode (M).
-|===
-
-NOTE: In this document, the terms "FW RoT" and "HW RoT" will be used as defined
-above. The term "RoT" on its own can be used where a rule or a rational applies
-to either model.
-
-NOTE: It is common for secure systems to support multiple trust chains and
-multiple roots of trust. For example, a TPM can be a root of trust for UEFI
-boot flows within a runtime environment, and a SIM can be a root of trust for
-user identity management within application security services. They are usually
-dedicated trusted subsystems with their own specifications and certification
-processes. +
- +
-For the purpose of this document, these can be treated as secondary roots of
-trust. The HW RoT governs the security platform itself and acts as a primary
-root of trust on the system.
-
-The full TCB of a component can include other software. For example:
-
-* On a vertically integrated embedded system: An operating system
-* On a virtualized system: A hypervisor and a guest operating system
-* In a data centre: A hypervisor and a guest OS, as well as other hosting
-services such as orchestration and server provisioning software
-
 On complex systems the TCB can grow large and get difficult to certify and
 attest.
 
@@ -132,7 +128,9 @@ Domain isolation use cases include:
 management, payment clients, DRM clients
 * Hosted confidential third party workloads
 
-Isolation policy needs to extend to devices:
+==== Device assignment
+
+Isolation policy needs to extend to device assignment:
 
 * Physical memory access control for device initiated transactions
 * Virtual memory translation for virtualized device transactions
@@ -141,11 +139,12 @@ Isolation policy needs to extend to devices:
 These policies can be enforced by system level hardware, controlled by Hart
 firmware.
 
-Finally, _invasive subsystems_ include any system or hart feature which could
+==== Invasive subsystems
+
+_Invasive subsystems_ include any system or Hart feature which could
 break security guarantees, either directly or indirectly. For example:
 
 * External debug
-* Event counters and performance monitoring
 * Power and timing management
 * RAS (_reliability, accessibility, serviceability_)
 
@@ -157,7 +156,58 @@ break security guarantees, either directly or indirectly. For example:
 
 | CAT_NNN
 | Invasive subsystems MUST be controlled, or moderated, by a RoT.
+
 |===
+
+==== Event counters
+
+Event counters are commonly used for performance management and resource allocation. 
+
+However, they can also pose a security risk. For example, one workload measuring an operation in a different workload, or an operation by higher privilege software, could be able to reveal assets used in those operations.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to measure higher privilege software.
+
+| CAT_NNN
+| Software in one domain MUST NOT be able to measure software in a different domain, without consent.
+
+|===
+
+==== Platform quality of service
+
+Server platforms can provide _platform quality of service (QoS)_ features, consisting of Hart and system hardware and firmware aimed at managing access to shared physical resources across workloads, minimizing contention. For example:
+
+* Memory bandwidth management
+* Cache allocation policies across workloads, including workload prioritization
+* Hart allocation policies across workloads
+
+These types of features rely on measuring resource utilization of workloads, similar to event counters, and optimizing resource allocation policies.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to measure higher privilege software.
+
+| CAT_NNN
+| Software in one domains MUST NOT be able to measure software in a different domain, without consent.
+
+|===
+
+==== Denial of service
+
+The RISC-V security model is primarily concerned with protection of assets. 
+
+_Denial of service (DoS)_ is out of scope of this specification. For example, a hosting environment is free to apply their own resource allocation policy to any workloads. Including denying service. This applies in the same way to confidential workloads.
 
 === Adversarial model
 
@@ -407,9 +457,7 @@ image::img_ch2_security-lifecycle.png[]
 A security lifecycle reflects the trustworthiness of a system during its
 lifetime and reflects the lifecycle state of hardware provisioned assets.
 
-It can be extended as indicated below to cover additional security provisioning
-steps such as device onboarding, device activation, user management, and RMA
-processes. These are use case or ecosystem specific and out of scope of this
+It can be extended as indicated below to cover additional security provisioning steps such as device onboarding, device activation, user management, and RMA processes. These are use case or ecosystem specific and out of scope of this
 specification.
 
 For the purpose of this specification, _revealing debug_ includes any HW or FW debug capability which 
@@ -417,12 +465,11 @@ For the purpose of this specification, _revealing debug_ includes any HW or FW d
 * Could break security guarantees or could expose assets 
 * Is not part of an attested trust contract with a reliant party 
 
-Examples of revealing debug typically includes external debug or boundary scans, dedicated debug builds of software components, or enabling self-hosted debug for a component.
+Examples of revealing debug include revealing logging, external debug or boundary scans, dedicated debug builds of software components, or enabling self-hosted debug for a component.
 
-Depending on use case, an attested software component can include debug capabilities managed through an application defined governance process. For example, self-hosted debug enabled following an application specific authorization process. In this case the debug capability, and the associated governance, is part of the trust contract with a reliant party and does not have to be classed as revealing.
+Depending on use case, an attested software component can include debug capabilities managed through an ecosystem defined governance process - _trusted debug_. For example, self-hosted debug enabled following an ecosystem specific authorization process. In this case the debug capability, and the associated governance, is part of the trust contract with a reliant party.
 
-For the purpose of this specification, a minimum security lifecycle includes at
-least the following states:
+For the purpose of this specification, a minimum security lifecycle includes at least the following states:
 
 * Manufacture - The system may not yet be locked down and has no hardware
 provisioned assets
@@ -439,18 +486,14 @@ attestation or user identity management. This is out of scope of this
 specification.
 * Recoverable debug - part of the system is in a revealing debug state +
 At least the RoT is not compromised and hardware provisioned secrets remain protected. +
-This state is both attestable and recoverable. For example, revealing debug is enabled
-for a domain without compromising another domain or any RoT services.
+This state is both attestable and recoverable. For example, revealing debug is enabled for a domain without compromising another domain or any RoT services.
 * Terminated - any system change which could expose hardware provisioned assets
 +
 Typically hardware provisioned assets are made permanently inaccessible and
-revoked before entering this state. This also protects any derived assets such
-as attestation and sealing keys.
+revoked before entering this state. This also protects any derived assets such as attestation and sealing keys.
 
 A system could support re-provisioning from a terminated state, for example
-following repair/RMA. This can be viewed as equivalent to starting over from the security
-provisioning state, and creates a new instance with a new secure identifier.
-
+following repair/RMA. This can be viewed as equivalent to starting over from the security provisioning state, and creates a new instance with a new secure identifier.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -466,8 +509,41 @@ secured state, or a recoverable debug state.
 | Derived assets MUST only be available if a component is in secured state.
 |===
 
-A derived asset in this context is any asset derived from hardware provisioned
-assets. For example attestation keys, or sealing keys for a supervisor domain.
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Hardware provisioned assets MUST only be accessible while the system is in
+secured state, or a recoverable debug state.
+
+| CAT_NNN
+| Derived assets MUST only be available if a component is in secured state.
+|===
+
+A derived asset in this context is any asset derived from hardware provisioned assets. For example attestation keys, or sealing keys for a supervisor domain.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Revealing debug MUST be reflected in attestation.
+
+|===
+
+_Attestable states_ are ones where the RoT and hardware provisioned assets are not compromised by debug and a valid attestation can be generated reflecting that state:
+
+* Secured
+* Recoverable debug
+
+In other states the system is not able to generate a valid attestation key. It is still _indirectly attestable_ as any generated attestation will not be signed correctly and can be rejected by a reliant party.
+
+Trusted debug is part of a trust contract with a reliant party, and application specific. The presence of trusted debug can be determined indirectly by a reliant party through other attested properties, for example measurements.
 
 ==== Attestable services
 
@@ -533,9 +609,7 @@ a| Layered attestations MUST be cryptographically bound such that a reliant part
 
 |===
 
-NOTE: Care needs to be taken in attestation interface design. For example,
-software interfaces should only support either direct attestation or layered
-attestation workflows, never both, to prevent impersonation.
+NOTE: Software interfaces should only support either direct attestation or layered attestation workflows, never both, to prevent impersonation attacks.
 
 ==== Authorized software
 
