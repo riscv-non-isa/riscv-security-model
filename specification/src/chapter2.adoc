@@ -53,7 +53,7 @@ privileged software.
 More privileged software controls memory access for less privileged software.
 * Domain isolation +
 Software in one domain cannot access or modify resources assigned to a different domain (without consent), regardless of privilege level. +
-(higher privileged software in one domain cannot access resources assigned to a lower privilege level in a different domain)
+(Higher privileged software in one domain cannot access resources assigned to a lower privilege level in a different domain)
 * Virtualization +
 Virtualization creates and manages _virtual resources_ - compute, memory,
 devices - independent of actual physical hardware. A system, or individual
