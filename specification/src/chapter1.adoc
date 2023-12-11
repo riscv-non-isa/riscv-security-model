@@ -3,7 +3,7 @@
 
 == Introduction
 
-This specifications provides guidelines for how RISC-V systems can use RISC-V
+This specification provides guidelines for how RISC-V systems can use RISC-V
 security building blocks to build secure systems for different use cases.
 
 The guidelines are listed through a few example uses cases based on commonly
