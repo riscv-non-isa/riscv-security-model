@@ -31,12 +31,16 @@ common taxonomy for the purpose of this and other RISC-V specifications.
 Most systems are made up of different software components, often from different
 supply chains, each managing _assets_ that need to be protected.
 
+==== Assets
+
 Examples of assets include:
 
 * Cryptographic keys and credentials
 * User data
 * Proprietary models
 * Secret algorithms
+
+In this specification, a _hardware provisioned asset_ is an immutable asset provisioned in hardware by a security provisioning process, before a device is used in a production environment. For example, hardware provisioned keys or identities.
 
 ==== Trusted Computing Base (TCB)
 
@@ -885,7 +889,15 @@ Isolation can also extend to other features, such as interrupts and debug.
 
 ==== Sealing
 
-Sealing is the process of protecting confidential assets on a system.
+Sealing is the process of protecting confidential assets on a system, typically using sealing keys derived in different ways for different use cases as discussed in this section. For example, from a hardware provisioned root key, from a boot state (measurements, security lifecycle state), or provisioned at runtime by a remote provisioning system.
+
+Sealing can be:
+
+* Local +
+Local sealing binds assets to a local device (hardware unique sealing) or to a measured boot state.
+* Remote +
+Remote sealing binds assets to credentials provided by a remote provisioning
+service following successful attestation.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -898,19 +910,12 @@ Sealing is the process of protecting confidential assets on a system.
 
 |===
 
-Sealing can be:
-
-* Local +
-Local sealing binds assets to a local device (hardware unique sealing).
-* Remote +
-Remote sealing binds assets to credentials provided by a remote provisioning
-service following successful attestation.
+For example, local sealing key derivations should take the security lifecycle state of the system into account. And remote sealing key provisioning should always attest the system before releasing unsealing credentials or keys.
 
 Local sealing can be:
 
 * Direct +
-Direct sealing binds assets to sealing keys derived by trusted security
-services, or a HW RoT.
+Direct sealing binds assets to sealing keys derived by a RoT.
 * Layered +
  Layered sealing enables delegation of some sealing key derivations to lower
 privileged software.
@@ -922,10 +927,23 @@ privileged software.
 | Requirement
 
 | CAT_NNN
-| Local sealed assets MUST only be possible to unseal on the same physical instance of a system that they were sealed on.
+| Locally sealed assets MUST only be possible to unseal on the same physical instance of a system that they were sealed on.
 
 |===
 
-For example, using sealing keys derived from a hardware provisioned _hardware unique key (HUK)_.
+For example, using sealing keys derived from a hardware provisioned _hardware unique key (HUK)_. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Locally sealed assets bound to a boot measurement MUST only be possible to unseal if that measurement has not changed, or the system has received an authorized update.
+
+|===
+
+See <<_system_updates, system updates>>
 
 Sealing is discussed further in use cases examples later in this document.
