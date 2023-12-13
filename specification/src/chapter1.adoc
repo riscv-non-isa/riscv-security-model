@@ -3,14 +3,19 @@
 
 == Introduction
 
-This specification provides guidelines for how RISC-V systems can use RISC-V
-security building blocks to build secure systems for different use cases.
+This specification provides guidelines for how RISC-V security building blocks 
+can be used to build secure systems for different use cases. It is
+aimed at developers of RISC-V technical specifications, as well as at designers
+of secure RISC-V systems.
 
-The guidelines are listed through a few example uses cases based on commonly
-used profiles. The guidelines are not intended to be exhaustive; it is expected
-that the principles described in the chosen examples are general enough to be
-applicable to other use cases as well. The examples may be extended over time
-as required.
+A few example uses cases based on commonly used deployment models are provided. 
+These use cases are not intended to be exhaustive, or to act as protection profiles. 
+They are intended as templates to be used as general guidelines,
+which can be applied to a wide variety of use cases. 
+
+The examples may be extended over time as required. Protection profiles for more 
+specific use cases are expected to be provided within relevant certification bodies,
+or as separate RISC-V specifications if required.
 
 === Requirements and tracking
 
