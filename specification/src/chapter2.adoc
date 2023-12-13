@@ -482,11 +482,11 @@ specification.
 For the purpose of this specification, _revealing debug_ includes any HW or FW debug capability which 
 
 * Could break security guarantees or could expose assets 
-* Is not part of an attested trust contract with a reliant party 
+* Is not part of an attested trust contract with a relying party 
 
 Examples of revealing debug include revealing logging, external debug or boundary scans, dedicated debug builds of software components, or enabling self-hosted debug for a component.
 
-Depending on use case, an attested software component can include debug capabilities managed through an ecosystem defined governance process - _trusted debug_. For example, self-hosted debug enabled following an ecosystem specific authorization process. In this case the debug capability, and the associated governance, is part of the trust contract with a reliant party.
+Depending on use case, an attested software component can include debug capabilities managed through an ecosystem defined governance process - _trusted debug_. For example, self-hosted debug enabled following an ecosystem specific authorization process. In this case the debug capability, and the associated governance, is part of the trust contract with a relying party.
 
 For the purpose of this specification, a minimum security lifecycle includes at least the following states:
 
@@ -560,9 +560,9 @@ _Attestable states_ are ones where the RoT and hardware provisioned assets are n
 * Secured
 * Recoverable debug
 
-In other states the system is not able to generate a valid attestation key. It is still _indirectly attestable_ as any generated attestation will not be signed correctly and can be rejected by a reliant party.
+In other states the system is not able to generate a valid attestation key. It is still _indirectly attestable_ as any generated attestation will not be signed correctly and can be rejected by a relying party.
 
-Trusted debug is part of a trust contract with a reliant party, and application specific. The presence of trusted debug can be determined indirectly by a reliant party through other attested properties, for example measurements.
+Trusted debug is part of a trust contract with a relying party, and application specific. The presence of trusted debug can be determined indirectly by a relying party through other attested properties, for example measurements.
 
 ==== Attestable services
 
@@ -581,7 +581,7 @@ an isolated application security service.
 on, MUST be attestable.
 |===
 
-Attestation allows a remote reliant party to determine the trustworthiness of a
+Attestation allows a remote relying party to determine the trustworthiness of a
 confidential service before submitting assets to it.
 
 * Verify the security state of a confidential service
@@ -674,7 +674,7 @@ Verification can be:
 * Local +
 A measurement is verified locally on the device.
 * Remote +
-A measurement is verified by a remote provisioning service, or a remote reliant
+A measurement is verified by a remote provisioning service, or a remote relying
 party.
 
 Verification can be:
@@ -791,7 +791,7 @@ The update can be effected without restarting any dependent components.
 
 | CAT_NNN
 | Updates MAY be live if live update capability, and suitable governance, is
-part of an already attested trust contract between a reliant party and the
+part of an already attested trust contract between a relying party and the
 system.
 |===
 
