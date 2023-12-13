@@ -58,7 +58,7 @@ _Physical memory attributes (PMA)_ are intended to capture inherent properties o
 
 A separate hardware checker - _PMA checker_ - enforces PMA rules at runtime once a physical address is known. PMA rules are always checked on every physical access, and typically configured by region.
 
-Other RISC-V mechanisms can also be used for managing memory attributes. For example <<_mtt, MTT>> can provide finer grained dynamic meta-data (svpam) at physical address level. Or <<_mmu, MMU>> TLB can be used by a kernel or hypervisor to manage memory attributes and permissions on a virtualized system.
+Other RISC-V mechanisms can also be used for managing memory attributes. For example <<_mtt, MTT>> can provide dynamic meta-data during Sv address translation (MTT Svpam). Or <<_mmu, MMU>> TLB can be used by a kernel or hypervisor to manage memory attributes and permissions at a virtualized system level.
 
 Which mechanism is used depends on use case. They can be combined, in which case any memory access must pass all memory attribute checks.
 
@@ -158,7 +158,7 @@ memory, execution state, and devices - from other supervisor domains regardless
 of privilege level (below M-mode). Isolation and context switching between
 supervisor domains are managed by M-mode firmware.
 
-A supervisor domain is identified at architecture level by a _supervisor domain id (SDID)_ CSR, managed by M-mode firmware.
+A supervisor domain is identified at architecture level by a _supervisor domain id (SDID)_, managed by M-mode firmware.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -412,7 +412,7 @@ other processes within the same workload.
 
 * TBD
 
-==== System level isolation
+==== System integration
 
 * WorldGuard
 

@@ -67,6 +67,14 @@ Depending on use case and ecosystem requirements, a RoT can be:
 Using a HW RoT moves critical functions and assets off a Hart to a dedicated
 trusted subsystem, which can provide stronger protection against physical and logical attack than a complex Hart.
 
+NOTE: It is common for secure systems to support multiple trust chains with their own root of trust. For example, a TPM can be a root of trust for UEFI
+boot flows within a runtime environment, and a SIM can be a root of trust for user identity management. +
+ +
+For the purpose of this document, these should be treated as _secondary roots of
+trust_. +
+ +
+The HW RoT acts as a _primary root of trust_ on the system. For example, the HW RoT governs boot, and can load firmware and manage the security lifecycle of a secondary root of trust.
+
 [width=100%]
 [%header, cols="5,20"]
 |===
@@ -74,21 +82,18 @@ trusted subsystem, which can provide stronger protection against physical and lo
 | Requirement
 
 | CAT_NNN
-| A secure system SHOULD implement a HW RoT
+| A complex secure system MUST implement a HW RoT
 
 | CAT_NNN
-| A FW RoT SHOULD be the only software in machine mode (M).
+| A simpler system MAY not require a HW RoT but one is still recommended
+
 |===
 
-NOTE: In this document, the terms "FW RoT" and "HW RoT" will be used as defined above. The term "RoT" on its own can be used where a rule or a rational applies to either model.
+Examples of a complex system include one with coherent multi-core, or out of order, application Harts.
 
-NOTE: It is common for secure systems to support multiple trust chains and
-multiple roots of trust. For example, a TPM can be a root of trust for UEFI
-boot flows within a runtime environment, and a SIM can be a root of trust for user identity management. They are usually dedicated trusted subsystems with their own specifications and certification processes. +
- +
-For the purpose of this document, these can be treated as secondary roots of
-trust. The HW RoT governs the security platform itself and acts as a primary
-root of trust on the system.
+Examples of a simpler system include a single core in-order microcontroller.
+
+NOTE: In this document, the terms "FW RoT" and "HW RoT" will be used as defined above. The term "RoT" on its own can be used where a rule or a rational applies to either model.
 
 ==== Isolation
 
@@ -164,7 +169,7 @@ break security guarantees, either directly or indirectly. For example:
 
 Event counters are commonly used for performance management and resource allocation. 
 
-However, they can also pose a security risk. For example, one workload measuring an operation in a different workload, or an operation by higher privilege software, could be able to reveal assets used in those operations.
+However, they can also pose a security risk. For example, one workload monitoring an operation in a different workload, or an operation by higher privilege software, could be able to reveal assets used in those operations.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -173,10 +178,10 @@ However, they can also pose a security risk. For example, one workload measuring
 | Requirement
 
 | CAT_NNN
-| Lower privilege software MUST NOT be able to measure higher privilege software.
+| Lower privilege software MUST NOT be able to monitor higher privilege software.
 
 | CAT_NNN
-| Software in one domain MUST NOT be able to measure software in a different domain, without consent.
+| Software in one domain MUST NOT be able to monitor software in a different domain, without consent.
 
 |===
 
@@ -188,7 +193,7 @@ Server platforms can provide _platform quality of service (QoS)_ features, consi
 * Cache allocation policies across workloads, including workload prioritization
 * Hart allocation policies across workloads
 
-These types of features rely on measuring resource utilization of workloads, similar to event counters, and optimizing resource allocation policies.
+These types of features rely on monitoring resource utilization of workloads, similar to event counters, and optimizing resource allocation policies.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -197,10 +202,10 @@ These types of features rely on measuring resource utilization of workloads, sim
 | Requirement
 
 | CAT_NNN
-| Lower privilege software MUST NOT be able to measure higher privilege software.
+| Lower privilege software MUST NOT be able to monitor higher privilege software.
 
 | CAT_NNN
-| Software in one domains MUST NOT be able to measure software in a different domain, without consent.
+| Software in one domains MUST NOT be able to monitor software in a different domain, without consent.
 
 |===
 
@@ -208,7 +213,20 @@ These types of features rely on measuring resource utilization of workloads, sim
 
 The RISC-V security model is primarily concerned with protection of assets. 
 
-_Denial of service (DoS)_ is out of scope of this specification. For example, a hosting environment is free to apply their own resource allocation policy to any workloads. Including denying service. This applies in the same way to confidential workloads.
+For example, a hosting environment is free to apply their own resource allocation policy to any workloads. Including denying service. This applies in the same way to confidential workloads.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to deny service to higher privilege software, or other isolated workloads at the same privilege level.
+
+|===
+
+Higher privilege software must always be able to enforce its own resource management policy without interference. Including scheduling and resource assignment policies.
 
 === Adversarial model
 
@@ -626,7 +644,7 @@ Running unauthorized software can compromise the security state of the system.
 | A system in secured or recoverable debug states MUST only load authorized software.
 
 | CAT_NNN
-| A system in secure provisioning state SHOULD only load authorized software.
+| A system in security provisioning state SHOULD only load authorized software.
 
 |===
 

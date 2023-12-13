@@ -2,11 +2,16 @@
 
 == Use case examples
 
-This chapter provides guidance for building secure Risc-V systems for a selection of common use cases. It is not intended to be an exhaustive selection. The purpose is to illustrate common principles that can be applied in a wide variety of use cases. 
+This chapter provides a selection of example uses cases based on commonly used deployment models. 
+These use cases are not intended to be exhaustive, or to act as protection profiles. 
+They are intended as templates which can be used as general guidelines, which can be applied to a wide 
+variety of use cases. 
 
-Additional use cases may be added in future versions.
+The examples may be extended over time as required. Protection profiles for more 
+specific use cases are expected to be provided within relevant certification bodies,
+or as separate RISC-V specifications if required.
 
-=== Generic system
+=== Generic system without supervisor domains
 
 ==== Overview
 
@@ -18,20 +23,11 @@ A generic vertically integrated system can be either virtualized or non-virtuali
 
 M-mode hosts a FW RoT. An OS or a Hypervisor in S or HS mode controls applications or guests. Guests and applications execute in U or VS/VU modes and trust the OS or Hypervisor to provide isolation guarantees.
 
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#     
-| Requirement
-
-| CAT_NNN 
-| A secure system SHOULD support either S mode, or the hypervisor extension (HS/VS/VU)
-
-|===
+A system level HW RoT is recommended.
 
 NOTE: The RISC-V architecture also caters for systems with just M and U modes, commonly used in embedded systems, helper cores, and similar use cases. On secure systems not supporting S mode a FW RoT has to share M-mode with an OS. RISC-V does not exclude such implementations - for example, implementations using a certified OS and FW RoT, or using a HW RoT to isolate sensitive code and assets (physical isolation). There is no current mechanism in RISC-V for isolation within M-mode itself other than temporal boundaries +
  +
-To minimize the TCB of the FW RoT, RISC-V recommends that secure systems implement S mode and de-privilege the OS. 
+To minimize the TCB of the FW RoT RISC-V recommends that secure systems implement S mode, and de-privilege non-RoT firmware such as an OS. 
 
 ==== Isolation model
 
@@ -42,12 +38,14 @@ To minimize the TCB of the FW RoT, RISC-V recommends that secure systems impleme
 | Requirement
 
 | CAT_NNN 
-| PMP/ePMP MUST be used to isolate M-mode from lower privilege levels.
+| PMP/ePMP, or MTT, MUST be used to isolate M-mode from lower privilege levels.
 
 | CAT_NNN 
 | sPMP or MMU MUST be used to isolate user applications or virtual guests
 
 |===
+
+NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode can enforce that its own resources are never assigned to another domain. PMP/ePMP still add further protections for M-mode, such as the ability to implement temporal isolation boundaries within M-mode (for example, protect early boot code), or to prevent itself from accessing or executing from memory assigned to lower privilege levels (privilege escalation).
 
 Using sPMP is typically a more static model and can achieve a more deterministic system, for example in automotive or automation use cases. 
 
@@ -101,10 +99,10 @@ Isolation guarantees provided to software also apply to device initiated transac
 | Requirement
 
 | CAT NNN
-| IOPMP MUST be used to guarantee that devices assigned to lower privilege levels cannot access resources assigned to M-mode.
+| IOPMP or IOMTT MUST be used to guarantee that devices assigned to lower privilege levels cannot access resources assigned to M-mode.
 
 | CAT_NNN
-| IOPMP or IOMTT with IOMMU MUST be used to enforce access rules for devices assigned to user applications or guests on a virtualized system.
+| IOPMP, or IOMTT with IOMMU, MUST be used to enforce access rules for devices assigned to user applications or guests on a virtualized system.
 
 |===
 
@@ -112,7 +110,7 @@ On a non-virtualized system, user devices can be managed by the OS which can enf
 
 On a virtualized system, devices can be virtualized and assigned to guests by the hypervisor configuring MMU and IOMMU translation rules. 
 
-In either case, physical device access rules are always enforced by IOPMP, controlled by RoT FW in M mode, preventing unauthorized device access to M-mode resources.
+NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that M-mode can enforce that its own resources are never assigned to another domain. Use of IOPMP or similar may still add further protections. For example, a system may require that Root devices cannot access memory assigned to Confidential domain.
 
 === Debug and performance management
 
@@ -171,13 +169,13 @@ For example, disable self-hosted debug in a production system for certification 
 | Requirement
 
 | CAT_NNN
-| External debug MUST only be enabled at boot (measuring) of the affected component.
+| External debug MUST only be enabled following system reset (part of measuring) of the affected component.
 
 | CAT_NNN
-| Revealing self-hosted debug MUST only be enabled at boot (measuring) of the affected component
+| Revealing self-hosted debug MUST only be enabled following reboot (part of measuring) of the affected component.
 
 | CAT_NNN
-| Trusted self-hosted debug MAY be enabled after boot (measuring) of the affected component, to an application specific governance process.
+| Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the affected component, to an application specific governance process.
 
 |===
 
@@ -190,14 +188,14 @@ Guarantees the system remains attestable.
 | Requirement
 
 | CAT_NNN
-| Lower privilege software MUST NOT be able to measure higher privilege software.
+| Lower privilege software MUST NOT be able to monitor higher privilege software.
 
 | CAT_NNN
-| Software in one domain MUST NOT be able to measure software in a different domain, without consent.
+| Software in one domain MUST NOT be able to monitor software in a different domain, without consent.
 
 |===
 
-Prevents using event counters to measure across application or privilege boundaries. Event counters can be managed by higher privileged software as part of context switching across boundaries.
+Prevents using event counters to monitor across application or privilege boundaries. Event counters can be managed by higher privileged software as part of context switching across boundaries.
  
 === Global Platform TEE
 
@@ -266,11 +264,13 @@ A Global Platform TEE requires the following isolation guarantees:
 | Resources assigned to Normal domain MUST be accessible to Normal domain (r/w/x), and to TEE domain (r/w) (default sharing rule)
 
 | CAT_NNN
-| Resources assigned to a single TA, or a guest TEE, MUST not be accessible by a different TA, or guest TEE.
+| Resources assigned to a single TA, or a guest TEE, MUST not be accessible by a different TA, or guest TEE, without consent.
 
 |===
 
-The standard GP TEE model does not support sharing memory between TA in TEE domain. Each TA is expected to be a self-contained unit providing a specific security service, either to Normal domain or to other TA. All communications are implemented through secure channels managed by the TEE OS or SPM. 
+In the standard GP TEE model, each TA is expected to be a self-contained unit providing a specific security service, either to Normal domain or to other TA. All communications are implemented through secure channels managed by the TEE OS or SPM. 
+
+Sharing of memory between TA is generally discouraged. But there are mechanisms to do so in specific use cases. For example, sharing media buffers in a secure media path. Such policies are enforced by SPM or TEE OS.
 
 Processes in Normal domain can share memory assigned to Normal domain when interacting with a TA in TEE world (default sharing rule). Such shared memory can be cached when context switching between Normal and TEE domains.
 
@@ -292,7 +292,7 @@ RISC-V hardware enforced isolation mechanisms can be used as follows to meet tho
 
 See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
 
-For static partition TEE, using PMP/ePMP or PMA with supervisor domains can be sufficient. 
+For static partition TEE, using PMP/ePMP, or PMA, with supervisor domains can be sufficient. 
 
 For virtualized TEE, MTT should be used with supervisor domains.
 
@@ -425,7 +425,7 @@ For a static partition TEE, domain level granularity can be sufficient as device
 
 For a virtualized TEE, IOMTT enforces supervisor domain level access rules (physical isolation). IOMMU enforces guest and TA level access rules (virtualization), supporting device assignment to a guest TEE or a TA.  
 
-NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that M-mode can enforce that its own resources are never assigned to another domain. Use of IOPMP or similar still adds further protections. For example, a system may require that Root devices cannot be used to access memory assigned to Confidential domain.
+NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that M-mode can enforce that its own resources are never assigned to another domain. Use of IOPMP or similar may still add further protections. For example, a system may require that Root devices cannot be used to access memory assigned to Confidential domain.
 
 ==== System integration
 
@@ -439,30 +439,7 @@ Possible use cases include:
 * Tagging interrupts, debug accesses, or coherent memory accesses
 * Device assignment (IOPMP/IOMTT integration), static or dynamic
 
-For interoperability, an implementation could adopt the following convention commonly used in Global Platform TEE ecosystems:
-
-[width=30%]
-[%header, cols="30,20"]
-|===
-| 
-| Security attribute
-
-| TEE domain
-| 2'b00
-
-| Normal domain
-| 2'b01
-
-| Root domain
-| 2'10
-
-| Reserved +
-(Confidential domain)
-| 2'11
-
-|===
-
-The attributes can be derived, for example, from SDID and privilege level, from PMA, or from MTT dynamic PMA (svpam).
+The attributes can be derived, for example, from SDID and privilege level, from PMA, or from dynamic meta-data during Sv address translation (MTT svpam).
 
 For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection with TA granularity.
 
@@ -528,13 +505,13 @@ For example, for all of TEE domain on a production system, for certification rea
 | Requirement
 
 | CAT_NNN
-| External debug MUST only be enabled at boot (measuring) of the affected component.
+| External debug MUST only be enabled following system reset (part of measuring) of the affected component.
 
 | CAT_NNN
-| Revealing self-hosted debug MUST only be enabled at boot (measuring) of the affected component
+| Revealing self-hosted debug MUST only be enabled following reboot (part of measuring) of the affected component.
 
 | CAT_NNN
-| Trusted self-hosted debug MAY be enabled after boot (measuring) of the affected component, to an application specific governance process.
+| Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the affected component, to an application specific governance process.
 
 |===
 
@@ -547,14 +524,14 @@ Guarantees the system remains attestable.
 | Requirement
 
 | CAT_NNN
-| Lower privilege software MUST NOT be able to measure higher privilege software.
+| Lower privilege software MUST NOT be able to monitor higher privilege software.
 
 | CAT_NNN
-| Software in one domain MUST NOT be able to measure software in a different domain, without consent.
+| Software in one domain MUST NOT be able to monitor software in a different domain, without consent.
 
 |===
 
-Prevents using event counters to measure across guest/application, privilege and supervisor domain boundaries. Event counters can be managed by higher privileged software as part of context switching across boundaries.
+Prevents using event counters to monitor across guest/application, privilege and supervisor domain boundaries. Event counters can be managed by higher privileged software as part of context switching across boundaries.
 
 === Confidential computing on RISC-V (CoVE)
 ==== Overview
@@ -772,7 +749,7 @@ Possible use cases include:
 * Tagging interrupts, debug accesses, or coherent memory accesses
 * Device assignment (IOPMP/IOMTT integration), static or dynamic
 
-The attributes can be derived, for example, from dynamic meta-data during Sv address translation (Svpam).
+The attributes can be derived, for example, from dynamic meta-data during Sv address translation (MTT Svpam).
 
 For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection with confidential workload granularity.
 
@@ -848,13 +825,13 @@ Within Confidential domain the TSM can enable self-hosted debug for a confidenti
 | Requirement
 
 | CAT_NNN
-| External debug MUST only be enabled at boot (measuring) of the affected component.
+| External debug MUST only be enabled following system reset (part of measuring) of the affected component.
 
 | CAT_NNN
-| Revealing self-hosted debug MUST only be enabled at boot (measuring) of the affected component
+| Revealing self-hosted debug MUST only be enabled following reboot (part of measuring) of the affected component.
 
 | CAT_NNN
-| Trusted self-hosted debug MAY be enabled after boot of the affected component, to an application specific governance process.
+| Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the affected component, to an application specific governance process.
 
 |===
 
