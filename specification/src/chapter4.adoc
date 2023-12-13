@@ -78,7 +78,7 @@ See xref:chapter2.adoc#_authorized_software[authorized software].
 
 ==== Attestation
 
-Multiple models can be used to prove to a reliant party that a secure system is in a trustworthy state.
+Multiple models can be used to prove to a relying party that a secure system is in a trustworthy state.
 
 See xref:chapter2.adoc#_attestable_services[attestable services].
 
@@ -104,7 +104,7 @@ Isolation guarantees provided to software also apply to device initiated transac
 | IOPMP MUST be used to guarantee that devices assigned to lower privilege levels cannot access resources assigned to M-mode.
 
 | CAT_NNN
-| IOPMP and IOMMU MUST be used to enforce access rules for devices assigned to user applications or guests on a virtualized system.
+| IOPMP or IOMTT with IOMMU MUST be used to enforce access rules for devices assigned to user applications or guests on a virtualized system.
 
 |===
 
@@ -714,6 +714,7 @@ Attestation of confidential workloads is typically layered, for performance and 
 | CAT_NNN 
 a| A security platform attestation MUST cover at least: 
 
+* HW RoT
 * TSM
 * Root domain
 * Boot state of all trusted subsystems
@@ -771,7 +772,7 @@ Possible use cases include:
 * Tagging interrupts, debug accesses, or coherent memory accesses
 * Device assignment (IOPMP/IOMTT integration), static or dynamic
 
-The attributes can be derived, for example, from MTT dynamic PMA (svpam).
+The attributes can be derived, for example, from dynamic meta-data during Sv address translation (Svpam).
 
 For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection with confidential workload granularity.
 
