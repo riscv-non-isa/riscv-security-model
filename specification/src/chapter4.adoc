@@ -292,7 +292,7 @@ RISC-V hardware enforced isolation mechanisms can be used as follows to meet tho
 
 See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
 
-For static partition TEE, using PMP/ePMP, or PMA, with supervisor domains can be sufficient. 
+For static partition TEE, using PMP/ePMP, with supervisor domains can be sufficient. PMA or svpam can also be used to assign physical memory attributes at system level, for example for system integration use cases.  
 
 For virtualized TEE, MTT should be used with supervisor domains.
 
