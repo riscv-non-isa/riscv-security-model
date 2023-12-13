@@ -38,20 +38,21 @@ Examples of assets include:
 * Proprietary models
 * Secret algorithms
 
-==== Trusted compute base
+==== Trusted Computing Base (TCB)
 
-The _trusted compute base (TCB)_ of a component is the minimum amount of
+The _Trusted Computing Base (TCB)_ of a component is the minimum amount of
 software and hardware that needs to be trusted by that component. 
 
 The TCB of a component typically includes other software. For example:
 
 * An operating system
 * A hypervisor and a guest operating system
+* A TEE security manager
 * Hosting services such as orchestration and server provisioning software
 
 ==== Root of trust
 
-The minimum amount of software that always has to be trusted on a system is its _root of trust (RoT)_. A RoT includes fundamental security services, for example:
+The minimum amount of hardware and/or software that always has to be trusted on a system is its _root of trust (RoT)_. A RoT supports fundamental security services, for example:
 
 * Boot and attestation
 * Security lifecycle management
@@ -517,7 +518,7 @@ secured state, or a recoverable debug state.
 
 | CAT_NNN
 | Hardware provisioned assets MUST only be accessible while the system is in
-secured state, or a recoverable debug state.
+secured state, or a recoverable debug state (with the recoverable debug state in attestation evidence).
 
 | CAT_NNN
 | Derived assets MUST only be available if a component is in secured state.
@@ -602,7 +603,7 @@ a FW RoT
 attested by a security platform attestation
 
 | CAT_NNN 
-a| Layered attestations MUST be cryptographically bound such that a reliant party can determine that they 
+a| Layered attestations MUST be cryptographically bound such that a relying party can determine that they 
 
 * Were generated on the same system
 * Are fresh. 
