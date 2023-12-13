@@ -609,7 +609,7 @@ examples later in this specification.
 | Requirement
 
 | CAT_NNN
-| A security platform attestation MUST be signed by a HW RoT, if present, or by
+| A security platform attestation MUST be signed by a HW RoT, if present, or else by
 a FW RoT
 
 | CAT_NNN
