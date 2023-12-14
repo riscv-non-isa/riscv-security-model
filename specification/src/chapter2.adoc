@@ -403,7 +403,6 @@ a| * Glitching to bypass secure boot
 * Retrieving residual confidential memory after a system reset
 a| * Implement robust power management
 * Implement cryptographic memory protection with at least boot freshness
-* Code hardening (for example, see https://www.riscure.com/publication/practical-steps-evaluate-protect-secure-boot-implementations-embedded-devices/[Riscure white paper])
 
 | CAT_NNN
 | Subverting supply chains
