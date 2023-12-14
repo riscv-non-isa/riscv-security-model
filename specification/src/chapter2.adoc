@@ -230,7 +230,7 @@ For example, a hosting environment is free to apply their own resource allocatio
 
 |===
 
-Higher privilege software must always be able to enforce its own resource management policy without interference. Including scheduling and resource assignment policies.
+Higher privilege software always has to be able to enforce its own resource management policy without interference. Including scheduling and resource assignment policies.
 
 === Adversarial model
 
