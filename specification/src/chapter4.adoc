@@ -2,69 +2,883 @@
 
 == Use case examples
 
-=== Basic non-virtualized system
+This chapter provides a selection of example uses cases based on commonly used deployment models. 
+These use cases are not intended to be exhaustive, or to act as protection profiles. 
+They are intended as templates which can be used as general guidelines, which can be applied to a wide 
+variety of use cases. 
+
+The examples may be extended over time as required. Protection profiles for more 
+specific use cases are expected to be provided within relevant certification bodies,
+or as separate RISC-V specifications if required.
+
+=== Generic system without supervisor domains
 
 ==== Overview
 
-==== Secure and Verified Boot
+[caption="Figure {counter:image}: ", reftext="Figure {image}"]
+[title= "Generic vertically integrated system"]
+image::img_ch4_priv.png[]
+
+A generic vertically integrated system can be either virtualized or non-virtualized. 
+
+M-mode hosts a FW RoT. An OS or a Hypervisor in S or HS mode controls applications or guests. Guests and applications execute in U or VS/VU modes and trust the OS or Hypervisor to provide isolation guarantees.
+
+A system level HW RoT is recommended.
+
+NOTE: The RISC-V architecture also caters for systems with just M and U modes, commonly used in embedded systems, helper cores, and similar use cases. On secure systems not supporting S mode a FW RoT has to share M-mode with an OS. RISC-V does not exclude such implementations - for example, implementations using a certified OS and FW RoT, or using a HW RoT to isolate sensitive code and assets (physical isolation). There is no current mechanism in RISC-V for isolation within M-mode itself other than temporal boundaries +
+ +
+To minimize the TCB of the FW RoT RISC-V recommends that secure systems implement S mode, and de-privilege non-RoT firmware such as an OS. 
 
 ==== Isolation model
 
-==== Device access control
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
 
-==== Sealing
+| CAT_NNN 
+| PMP/ePMP, or MTT, MUST be used to isolate M-mode from lower privilege levels.
+
+| CAT_NNN 
+| sPMP or MMU MUST be used to isolate user applications or virtual guests
+
+|===
+
+NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode can enforce that its own resources are never assigned to another domain. PMP/ePMP still add further protections for M-mode, such as the ability to implement temporal isolation boundaries within M-mode (for example, protect early boot code), or to prevent itself from accessing or executing from memory assigned to lower privilege levels (privilege escalation).
+
+Using sPMP is typically a more static model and can achieve a more deterministic system, for example in automotive or automation use cases. 
+
+MMU is typically required for Linux based systems, for example MMI use cases or edge devices.
+
+Either MMU and sPMP can be used both with or without hypervisor extension. For example, the hypervisor extension with sPMP can support static partition hypervisors, commonly used in automotive. And a single stage MMU can be used without hypervisor extension for full Linux support.
+
+==== Root of Trust
+
+See xref:chapter2.adoc#_reference_model[reference model].
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+| A secure system SHOULD implement a HW RoT
+
+|===
+
+==== Authorized Boot
+
+Multiple models can be used to ensure a secure system can only run authorized software.
+
+See xref:chapter2.adoc#_authorized_software[authorized software].
 
 ==== Attestation
 
+Multiple models can be used to prove to a relying party that a secure system is in a trustworthy state.
 
-=== Basic virtualized system
+See xref:chapter2.adoc#_attestable_services[attestable services].
+
+==== Sealing
+
+Multiple models can be used to protect assets if a system is not in a trustworthy state.
+
+See xref:chapter2.adoc#_sealing[sealing].
+
+==== Device access control
+
+For the purpose of this specification, a device can be a logical device. A physical device can present one or more logical devices, each with its own (logical) control interface.
+
+Isolation guarantees provided to software also apply to device initiated transaction. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT NNN
+| IOPMP or IOMTT MUST be used to guarantee that devices assigned to lower privilege levels cannot access resources assigned to M-mode.
+
+| CAT_NNN
+| IOPMP, or IOMTT with IOMMU, MUST be used to enforce access rules for devices assigned to user applications or guests on a virtualized system.
+
+|===
+
+On a non-virtualized system, user devices can be managed by the OS which can enforce access rules for user applications.
+
+On a virtualized system, devices can be virtualized and assigned to guests by the hypervisor configuring MMU and IOMMU translation rules. 
+
+NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that M-mode can enforce that its own resources are never assigned to another domain. Use of IOPMP or similar may still add further protections. For example, a system may require that Root devices cannot access memory assigned to Confidential domain.
+
+=== Debug and performance management
+
+See xref:chapter2.adoc#_security_lifecycle[security lifecycle]. +
+See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT NNN
+| External debug SHOULD be enabled separately for M-mode and non M-mode software.
+
+| CAT_NNN
+| External debug MUST only be enabled by HW RoT (M-mode external debug) or by FW RoT (non M-mode external debug).
+
+|===
+
+Enables recoverable external debug of non M-mode software. In turn enabling supply chain separation.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Self-hosted debug MAY be used for debug of non M-mode software.
+
+| CAT_NNN
+| Self-hosted debug MUST only be enabled by a higher privileged component.
+
+|===
+
+For example, within normal domain an S-mode OS can enable self-hosted debug for a user application. Only M-mode firmware should enable self-hosted debug for the S-mode OS.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| FW RoT MAY disable self-hosted debug for all non M-mode software.
+
+|===
+
+For example, disable self-hosted debug in a production system for certification reasons.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| External debug MUST only be enabled following system reset (part of measuring) of the affected component.
+
+| CAT_NNN
+| Revealing self-hosted debug MUST only be enabled following reboot (part of measuring) of the affected component.
+
+| CAT_NNN
+| Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the affected component, to an application specific governance process.
+
+|===
+
+Guarantees the system remains attestable.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to monitor higher privilege software.
+
+| CAT_NNN
+| Software in one domain MUST NOT be able to monitor software in a different domain, without consent.
+
+|===
+
+Prevents using event counters to monitor across application or privilege boundaries. Event counters can be managed by higher privileged software as part of context switching across boundaries.
+ 
+=== Global Platform TEE
 
 ==== Overview
 
+[caption="Figure {counter:image}: ", reftext="Figure {image}"]
+[title= "Global platform TEE use cases"]
+image::img_ch4_gp-tee.png[]
+
+https://globalplatform.org/[Global platform] defines technical standards, interface specifications and programming models, open source firmware, and certification programmes for _trusted execution environments (TEE)_. 
+
+A TEE is an isolated environment providing security services. TEE services can be available to software on multiple Harts. For example:
+
+* Payment clients
+* DRM clients and content protection
+* Secure storage
+* User identity management
+* Attestation services
+
+The TEE model divides software into physically isolated domains:
+
+* Normal domain +
+Typically hosting a _rich OS_ (for example, RTOS or Linux), and user applications. 
+* TEE domain +
+Hosts a _TEE OS_ (domain security manager) and _trusted applications (TA)_. 
+* Root domain +
+Hosts RoT firmware, including a secure monitor.
+
+The TEE OS is primarily responsible for isolation of TA, and for providing root of trust services, within the TEE domain.
+
+The OS in Normal domain typically controls scheduling on the system, across all Harts available to it. To interact with TA services in TEE domain, the OS in Normal domain interacts with a TEE OS through a secure monitor in Root domain. 
+
+The secure monitor is responsible for context switching and isolation across domain boundaries, including event management. 
+
+For the purpose of this specification, TEE deployment models can be separated as:
+
+* Static partition TEE +
+A single TEE provides security services to Normal domain. TA are typically installed at boot by RoT FW and TEE OS, though Global Platform does also define protocols for installation of TA at runtime. System configuration and resource allocation can be mostly static, making the system more deterministic. +
+ +
+_Use case examples:_ edge devices and IoT, automation, and automotive. 
+* Virtualized TEE +
+On a virtualized system, TEE can also be virtualized. In this case a _secure partition manager_ in TEE domain is responsible for isolation of multiple TEE guests (for example, an OEM TEE and separate third party TEE). This model can also support more dynamic resource allocation. +
+ +
+_Use case examples:_ mobile clients, and automotive.
+
 ==== Isolation model
 
-==== Device access control
+A Global Platform TEE requires the following isolation guarantees:
 
-==== Sealing
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN  
+| Root domain MAY access resources assigned to any domain, but SHOULD prevent itself from unintended access to resources assigned to a different domain (privilege escalation).
+
+| CAT_NNN
+| No other domains can access resources assigned to Root domain
+
+| CAT_NNN
+| Resources assigned to TEE domain MUST NOT be accessible to Normal domain
+
+| CAT_NNN
+| Resources assigned to Normal domain MUST be accessible to Normal domain (r/w/x), and to TEE domain (r/w) (default sharing rule)
+
+| CAT_NNN
+| Resources assigned to a single TA, or a guest TEE, MUST not be accessible by a different TA, or guest TEE, without consent.
+
+|===
+
+In the standard GP TEE model, each TA is expected to be a self-contained unit providing a specific security service, either to Normal domain or to other TA. All communications are implemented through secure channels managed by the TEE OS or SPM. 
+
+Sharing of memory between TA is generally discouraged. But there are mechanisms to do so in specific use cases. For example, sharing media buffers in a secure media path. Such policies are enforced by SPM or TEE OS.
+
+Processes in Normal domain can share memory assigned to Normal domain when interacting with a TA in TEE world (default sharing rule). Such shared memory can be cached when context switching between Normal and TEE domains.
+
+RISC-V hardware enforced isolation mechanisms can be used as follows to meet those guarantees:
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+| PMP/ePMP, or MTT, MUST be used to isolate Root domain from other domains.
+
+| CAT_NNN  
+| Supervisor domains MUST be used to enforce isolation between Normal and TEE domains.
+
+|===
+
+See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
+
+For static partition TEE, using PMP/ePMP, with supervisor domains can be sufficient.   
+
+For virtualized TEE, MTT should be used with supervisor domains.
+
+NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode can enforce that its own resources are never assigned to another domain. PMP/ePMP still add further protections for M-mode, such as the ability to implement temporal isolation boundaries within M-mode (for example, protect early boot code), or to prevent itself from accessing or executing from memory assigned to lower privilege levels (privilege escalation).
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| For a static partition TEE, sPMP or MMU MUST be used to enforce isolation between TA in TEE domain.
+|===
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| For a virtualized TEE, hypervisor extension MUST be supported
+
+| CAT_NNN
+| For a virtualized TEE, MMU MUST be used to enforce isolation between guest TEE, and between TA within a TEE.
+|===
+
+==== Root of Trust
+
+See xref:chapter2.adoc#_reference_model[reference model].
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+| A TEE based system SHOULD implement a HW RoT
+
+|===
+
+==== Authorized boot
+
+See xref:chapter2.adoc#_authorized_software[authorized software].
+
+TEE boot is typically based on:
+
+* Measured and verified local boot (direct or indirect)
+* Sealing, to protect TEE production assets
+
+The process can involve multiple stages (layered boot). 
 
 ==== Attestation
 
+See xref:chapter2.adoc#_attestable_services[attestable services].
 
-=== Global Platforms TEE
+Static partition TEE attestation is typically based on a direct security platform attestation.
 
-==== Overview
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
 
-==== Isolation model
+| CAT_NNN 
+a| A direct security platform attestation MUST cover at least: 
 
-==== Device access control
+* TEE domain
+* Root domain
+* Boot state of all trusted subsystems
+
+|===
+
+Virtualized TEE attestation can be layered, for performance or separation of concern. For example:
+
+* A security platform attestation, signed by a RoT, covering trusted subsystems, Root domain, and SPM
+* Separate guest TEE attestation(s) signed by SPM 
 
 ==== Sealing
 
-==== Attestation
+See xref:chapter2.adoc#_sealing[sealing].
 
+In the Global Platform security model, SPM or TEE OS typically provide local trusted storage, key management, and cryptographic services to TA and guest TEE. These services support local sealing of TA or guest TEE assets, and minimize exposure of cryptographic materials.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Local sealing for a TA, or a TEE guest, MUST be unique to TEE domain and to a physical instance of a system.
+
+| CAT_NNN
+| Local sealing for a TA, or a TEE guest, SHOULD also be unique to the TEE guest or the TA.
+
+| CAT_NNN
+| Local sealing MAY be layered.
+
+|===
+
+For example:
+
+* TEE domain unique sealing keys derived by a RoT from a hardware unique key
+* TA, or guest TEE, unique sealing keys derived by TEE OS or SPM from a TEE domain unique sealing key
+
+==== Device access control
+
+For the purpose of this specification, a device can be a logical device. A physical device can present one or more logical devices, each with its own (logical) control interface. 
+
+The security guarantees also apply to device initiated accesses, for example DMA and interrupts. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| A static partition TEE MUST use IOPMP to enforce access rules for devices.
+
+| CAT_NNN
+| A virtualized TEE MUST use IOMTT and IOMMU to enforce access rules for devices assigned to Normal or TEE domains, and SHOULD use IOPMP to enforce access rules for Root devices.
+
+|===
+
+For a static partition TEE, domain level granularity can be sufficient as device access within TEE and Normal domains is governed by TEE OS and the rich OS respectively. It can be implemented using IOPMP. Policy can be controlled by boot configuration, by a HW or FW RoT.
+
+For a virtualized TEE, IOMTT enforces supervisor domain level access rules (physical isolation). IOMMU enforces guest and TA level access rules (virtualization), supporting device assignment to a guest TEE or a TA.  
+
+NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that M-mode can enforce that its own resources are never assigned to another domain. Use of IOPMP or similar may still add further protections. For example, a system may require that Root devices cannot be used to access memory assigned to Confidential domain.
+
+==== System integration
+
+In the case of a Global Platform TEE system a rich OS in Normal domain is free to schedule services, including TEE services, on any Hart available to it. The number and make-up of supervisor domains can be known, and a simple convention can be used for common identification (SDID value, see xref:chapter3.adoc#_supervisor_domains[supervisor domains]) of Normal, TEE, and Root domains across multiple Harts in a system. 
+
+System integration in this context involves providing _security attributes_ on a system interconnect, tagging all transactions (CPU or system agent initiated) to either Root, Normal, or TEE domains. 
+
+Possible use cases include:
+
+* Tweaking cryptographic memory protection (uniqueness)
+* Tagging interrupts, debug accesses, or coherent memory accesses
+* Device assignment (IOPMP/IOMTT integration), static or dynamic
+
+The attributes can be derived, for example, from SDID and privilege level, from PMA, or from dynamic meta-data during Sv address translation (MTT svpam).
+
+For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection with TA granularity.
+
+=== Debug and performance management
+
+See xref:chapter2.adoc#_security_lifecycle[security lifecycle]. +
+See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| External debug MUST be enabled separately for Root domain.
+
+| CAT_NNN
+| External debug MUST be enabled separately for each supervisor domain.
+
+| CAT_NNN
+| External debug MUST only be enabled by a HW RoT (Root domain external debug) or by Root domain (supervisor domain external debug).
+
+|===
+
+Enables recoverable external debug of a supervisor domain separately from other supervisor domains, and Root domain. In turn enabling supply chain separation.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Self-hosted debug MAY be used for debug within a supervisor domain.
+
+| CAT_NNN
+| Self-hosted debug MUST only be enabled by a higher privileged component.
+
+|===
+
+For example, within normal domain an S-mode or VS-mode OS can enable self-hosted debug for a user application. Or an HS-mode hypervisor can enable self-hosted debug for a VS-mode guest. Only Root domain should enable self-hosted debug for an S-mode OS or an HS mode hypervisor.
+
+Within TEE domain a TEE OS can enable self-hosted debug for a TA. An SPM can enable self-hosted debug for guest TEE. Only Root domain should enable self-hosted debug of SPM (virtualized) or TEE OS (non-virtualized).
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Root domain MAY disable self-hosted debug for a whole domain.
+
+|===
+
+For example, for all of TEE domain on a production system, for certification reasons.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| External debug MUST only be enabled following system reset (part of measuring) of the affected component.
+
+| CAT_NNN
+| Revealing self-hosted debug MUST only be enabled following reboot (part of measuring) of the affected component.
+
+| CAT_NNN
+| Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the affected component, to an application specific governance process.
+
+|===
+
+Guarantees the system remains attestable.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to monitor higher privilege software.
+
+| CAT_NNN
+| Software in one domain MUST NOT be able to monitor software in a different domain, without consent.
+
+|===
+
+Prevents using event counters to monitor across guest/application, privilege and supervisor domain boundaries. Event counters can be managed by higher privileged software as part of context switching across boundaries.
 
 === Confidential computing on RISC-V (CoVE)
 ==== Overview
+[caption="Figure {counter:image}: ", reftext="Figure {image}"]
+[title= "Confidential compute use case"]
+image::img_ch4_cove.png[]
 
-==== Measured Boot
+In hosting environments, tenant workloads rely on isolation primitives that are managed by host privileged software. This can lead to a large TCB for tenants which could include, for example, a hypervisor, orchestration services, and host management services. It could also include other tenants exploiting vulnerabilities in complex hosting software.
+
+Confidential compute aims to achieve a minimal and certifiable TCB for _confidential workloads_. 
+
+_CoVE (Confidential VM Extensions)_ https://github.com/riscv-non-isa/riscv-ap-tee/tree/main/specification[specification] defines a confidential compute platform for RISC-V systems, including interfaces and programming models, covering lifecycle management, attestation, resource management and devices assignment, for confidential workloads. It is based on principles defined by https://confidentialcomputing.io/[Confidential Computing Consortium]. Reference firmware for CoVE is being developed as part of the https://riseproject.dev/[RISC-V Software Ecosystem] project.
+
+CoVE is primarily aimed at cloud hosting of confidential workloads. But the underlying isolation model could potentially be used in other use cases, such as some mobile clients or edge devices.
+
+CoVE divides software into physically isolated domains:
+
+* Normal domain +
+Typically hosting a hypervisor, and Normal guests and services. 
+* Confidential domain +
+Hosts a _TSM_ (domain security manager) and confidential guests.
+* Root domain +
+Hosts RoT firmware, including a secure monitor.
+
+The TSM is primarily responsible for isolation of confidential workloads, and for providing RoT services, within the Confidential domain.
+
+A hypervisor in Normal domain typically controls scheduling and resource assignment on the system across all Harts available to it, including for confidential workloads. It interacts with the TSM through the secure monitor in Root domain to manage confidential workloads. 
+
+The secure monitor is responsible for context switching and isolation across domain boundaries, including event management.
 
 ==== Isolation model
 
-==== Physical threat protection
+Confidential workloads are provided the following isolation guarantees:
 
-==== Device access control
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
 
-==== Trusted device assignment
+| CAT_NNN  
+| Root domain MAY access resources assigned to any domain, but SHOULD prevent itself from unintended access to resources assigned to a different domain (privilege escalation).
 
-==== Sealing
+| CAT_NNN
+| Resources assigned to Root domain MUST be private to Root domain
+
+| CAT_NNN
+| Resources assigned only to Confidential domain MUST not be accessible by Normal domain
+
+| CAT_NNN
+| Resources assigned only to Normal domain MUST not be accessible by Confidential domain
+
+| CAT_NNN
+| Resources MAY be assigned to both Normal and Confidential domains (sharing by consent).
+
+| CAT_NNN
+| Resources assigned to a single confidential workload MUST NOT be accessible by any other confidential workload
+
+| CAT_NNN
+| Resources MAY be assigned to multiple confidential workloads (sharing by consent)
+
+|===
+
+RISC-V hardware enforced isolation mechanisms can be used as follows to meet those guarantees:
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+| PMP/ePMP or MTT MUST be used to isolate Root domain from other domains.
+
+| CAT_NNN  
+| Supervisor domains MUST be used to enforce isolation between Normal and Confidential domains.
+
+|===
+
+See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
+
+NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode can enforce that its own resources are never assigned to another domain. PMP/ePMP still add further protections for M-mode, such as the ability to implement temporal isolation boundaries within M-mode (for example, protect early boot code), or to prevent itself from accessing or executing from memory assigned to lower privilege levels (privilege escalation).
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Hypervisor extension MUST be supported
+
+| CAT_NNN
+| MMU MUST be used to enforce isolation between Confidential guests within Confidential domain.
+|===
+
+==== Root of trust
+
+See xref:chapter2.adoc#_reference_model[reference model].
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+| A CoVE system MUST implement a HW RoT
+
+|===
+
+==== Authorized Boot
+
+See xref:chapter2.adoc#_authorized_software[authorized software].
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+a| Confidential guests MUST not boot until at least the security platform has been verified:
+
+* TSM in Confidential domain
+* Root domain
+* Boot state of all trusted subsystems
+|===
+
+Boot in a cloud hosting context is typically based on:
+
+* Measured boot of a hosting platform, including Root domain and TSM
+* Platform attestation and security provisioning (unsealing) by a remote provisioning system
+* Launch and measurement of confidential workloads, only once the system has been unsealed
+
+A _trusted platform module_ (TPM) can be used to measure the security platform.
+
+Measuring confidential guests can be done by TSM in Confidential domain.
+
+The process can involve multiple stages (layered boot). 
 
 ==== Attestation
 
-==== Debug, QoS and Performance Monitoring
+See xref:chapter2.adoc#_attestable_services[attestable services].
+
+Virtualized TEE attestation can be layered, for performance or separation of concern. For example:
+
+* A security platform attestation, signed by a RoT, covering trusted subsystems, Root domain, and SPM
+* Separate guest TEE attestation(s) signed by SPM 
 
 
-=== Additional examples
+See xref:chapter2.adoc#_attestable_services[attestable services].
 
-(Variations on the above)
+Attestation of confidential workloads is typically layered, for performance and separation of concern:
 
-Android pKVM
+* A security platform attestation, signed by a hardware root of trust
+* A confidential workload attestation, signed by TSM
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN 
+a| A security platform attestation MUST cover at least: 
+
+* HW RoT
+* TSM
+* Root domain
+* Boot state of all trusted subsystems
+
+|===
+
+==== Sealing
+
+See xref:chapter2.adoc#_sealing[sealing].
+
+Sealing of confidential workloads is typically based on remote sealing, unsealing assets for a confidential workload following successful attestation by a remote provisioning system. This enables use cases such as:
+
+* Shared assets across multiple instances of a confidential workload (scale or redundancy)
+* Unsealing different sets of assets for different users of a service
+
+TSM itself is typically stateless across reset and does not require any sealed assets of its own.
+
+[#_cove_device_access_control]
+==== Device access control
+
+For the purpose of this specification, a device can be a logical device. A physical device can present more than one logical devices, each with its own (logical) control interface. 
+
+The security guarantees also apply to device initiated accesses, for example DMA and interrupts.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| IOMTT and IOMMU MUST be used to enforce access rules for devices assigned to Normal or Confidential domains.
+
+| CAT_NNN
+| IOPMP SHOULD be used to enforce access rules for Root devices.
+
+| CAT_NNN
+| IOPMP and IOMTT configurations MUST only be directly accessible by Root domain.
+
+|===
+
+IOMTT enforces supervisor domain level access rules (physical isolation). IOMMU enforces guest and TA level access rules (virtualization), supporting device assignment to a Confidential guest. 
+
+NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that M-mode can enforce that its own resources are never assigned to another domain. Use of IOPMP or similar still adds further protections. For example, a system may require that Root devices cannot be used to access memory assigned to Confidential domain.
+
+==== System integration
+
+In the case of a confidential compute system, hypervisor in Normal domain typically controls scheduling and resource assignment on the system across all Harts available to it. The number and make-up of supervisor domains can be known, and a simple convention can be used for common identification of Normal, Confidential, and Root domains across multiple Harts in a system. 
+
+System integration in this context involves providing _security attributes_ on the interconnect, tagging all transactions (CPU or system agent initiated) to either Root, Normal, or TEE domains. 
+
+Possible use cases include:
+
+* Tweaking cryptographic memory protection (uniqueness)
+* Tagging interrupts, debug accesses, or coherent memory accesses
+* Device assignment (IOPMP/IOMTT integration), static or dynamic
+
+The attributes can be derived, for example, from dynamic meta-data during Sv address translation (MTT Svpam).
+
+For some use cases security attributes can be extended to reflect finer granularity, for example for cryptographic memory protection with confidential workload granularity.
+
+==== Trusted device assignment
+
+The goal of confidential compute is to provide a minimum TCB for a confidential service, and CPU isolation mechanisms discussed so far does that on a Hart.
+
+But most confidential services also make use of devices, both on-chip and external. <<_cove_device_access_control, Device virtualization>> can guarantee exclusivity for devices assigned to a confidential workload - TSM can guarantee that a device assigned to a confidential workload cannot be accessed by:
+
+* Any other confidential workload
+* Any software in Normal domain
+
+But the confidential workload still has to trust all intermediaries between the workload and the device, both physical and software. For example:
+
+* Drivers
+* Physical interconnects and device hardware interfaces
+
+Secure access to devices is important in a number of use cases where a device performs work on assets owned by a confidential workload, such as accelerators. 
+
+The _TEE device interface security protocol (TDISP)_ defined by PCIe provides a security architecture and protocols allowing a confidential workload to securely attest, manage and exchange data with a trusted device.
+
+CoVE defines RISC-V support for TDISP. See:
+
+https://pcisig.com/specifications/
+https://github.com/riscv-non-isa/riscv-ap-tee-io
+
+==== Debug and performance management
+
+See xref:chapter2.adoc#_security_lifecycle[security lifecycle]. +
+See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| External debug MUST be enabled separately for Root domain.
+
+| CAT_NNN
+| External debug MUST be enabled separately for each supervisor domain.
+
+| CAT_NNN
+| External debug MUST only be enabled by a HW RoT (Root domain external debug) or by Root domain (supervisor domain external debug).
+
+|===
+
+Enables recoverable external debug of a supervisor domain separately from other supervisor domains, and Root domain. In turn enabling supply chain separation.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| Self-hosted debug MAY be used for debug within a supervisor domain.
+
+| CAT_NNN
+| Self-hosted debug MUST only be enabled by a higher privileged component.
+
+|===
+
+For example, within normal domain an HS-mode hypervisor can enable self-hosted debug for a VS-mode guest. Only Root domain should enable self-hosted debug for the HS mode hypervisor.
+
+Within Confidential domain the TSM can enable self-hosted debug for a confidential guest. Only Root domain should enable self-hosted debug of TSM.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#     
+| Requirement
+
+| CAT_NNN
+| External debug MUST only be enabled following system reset (part of measuring) of the affected component.
+
+| CAT_NNN
+| Revealing self-hosted debug MUST only be enabled following reboot (part of measuring) of the affected component.
+
+| CAT_NNN
+| Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the affected component, to an application specific governance process.
+
+|===
+
+Guarantees the system remains attestable.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to measure higher privilege software.
+
+| CAT_NNN
+| Software in one domain MUST NOT be able to measure software in a different domain, without consent.
+
+|===
+
+Prevents using event counters to measure across guest/application, privilege and supervisor domain boundaries. 
+
+Event counters can be managed by higher privileged software as part of context switching across boundaries.
+
+==== Platform QoS
+
+See xref:chapter2.adoc#_platform_quality_of_service[platform quality of service].
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to measure higher privilege software.
+
+| CAT_NNN
+| Software in one domain MUST NOT be able to measure software in a different domain, without consent.
+
+|===
+
+Event counters can be managed by higher privileged software as part of context switching across boundaries.

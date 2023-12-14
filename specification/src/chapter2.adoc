@@ -31,6 +31,8 @@ common taxonomy for the purpose of this and other RISC-V specifications.
 Most systems are made up of different software components, often from different
 supply chains, each managing _assets_ that need to be protected.
 
+==== Assets
+
 Examples of assets include:
 
 * Cryptographic keys and credentials
@@ -38,35 +40,23 @@ Examples of assets include:
 * Proprietary models
 * Secret algorithms
 
-Assets can be protected by _isolation_. Isolation separates different software
-components on a Hart to protect _resources_:
+In this specification, a _hardware provisioned asset_ is an immutable asset provisioned in hardware by a security provisioning process, before a device is used in a production environment. For example, hardware provisioned keys or identities.
 
-* Memory
-* Execution state
+==== Trusted Computing Base (TCB)
 
-Examples of isolation mechanisms include:
+The _Trusted Computing Base (TCB)_ of a component is the minimum amount of
+software and hardware that needs to be trusted by that component. 
 
-* Privilege based isolation +
-More privileged software is able to enforce security guarantees for less
-privileged software.
-* Physical memory isolation +
-More privileged software controls memory access for less privileged software.
-* Domain isolation +
-Separates resources so that a domain cannot access or modify resources assigned
-to a different domain without consent, regardless of privilege level.
-* Virtualization +
-Virtualization creates and manages _virtual resources_ - compute, memory,
-devices - independent of actual physical hardware. A system, or individual
-domains, can be virtualized.
+The TCB of a component typically includes other software. For example:
 
-Isolation reduces dependencies between components, and reduces the amount of
-software that needs to be trusted, with the aim of minimizing the amount of
-software that needs to be trusted by a _workload_ - the _trusted compute base
-(TCB)_ of the workload.
+* An operating system
+* A hypervisor and a guest operating system
+* A TEE security manager
+* Hosting services such as orchestration and server provisioning software
 
-The minimum amount of software that always has to be trusted on any system is
-its _root of trust (RoT)_. A RoT includes fundamental security services, for
-example:
+==== Root of trust
+
+The minimum amount of hardware and/or software that always has to be trusted on a system is its _root of trust (RoT)_. A RoT supports fundamental security services, for example:
 
 * Boot and attestation
 * Security lifecycle management
@@ -79,8 +69,15 @@ Depending on use case and ecosystem requirements, a RoT can be:
 * A dedicated trusted subsystem (HW RoT), supporting a FW RoT
 
 Using a HW RoT moves critical functions and assets off a Hart to a dedicated
-trusted subsystem, which can provide stronger protection against physical or
-logical attack than a complex Hart.
+trusted subsystem, which can provide stronger protection against physical and logical attack than a complex Hart.
+
+NOTE: It is common for secure systems to support multiple trust chains with their own root of trust. For example, a TPM can be a root of trust for UEFI
+boot flows within a runtime environment, and a SIM can be a root of trust for user identity management. +
+ +
+For the purpose of this document, these should be treated as _secondary roots of
+trust_. +
+ +
+The HW RoT acts as a _primary root of trust_ on the system. For example, the HW RoT governs boot, and can load firmware and manage the security lifecycle of a secondary root of trust.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -89,31 +86,42 @@ logical attack than a complex Hart.
 | Requirement
 
 | CAT_NNN
-| A FW RoT SHOULD be the only software in machine mode (M).
+| A complex secure system MUST implement a HW RoT
+
+| CAT_NNN
+| A simpler system MAY not require a HW RoT but one is still recommended
+
 |===
 
-NOTE: In this document, the terms "FW RoT" and "HW RoT" will be used as defined
-above. The term "RoT" on its own can be used where a rule or a rational applies
-to either model.
+Examples of a complex system include one with coherent multi-core, or out of order, application Harts.
 
-NOTE: It is common for secure systems to support multiple trust chains and
-multiple roots of trust. For example, a TPM can be a root of trust for UEFI
-boot flows within a runtime environment, and a SIM can be a root of trust for
-user identity management within application security services. They are usually
-dedicated trusted subsystems with their own specifications and certification
-processes. +
- +
-For the purpose of this document, these can be treated as secondary roots of
-trust. The HW RoT governs the security platform itself and acts as a primary
-root of trust on the system.
+Examples of a simpler system include a single core in-order microcontroller.
 
-The full set of software a workload must trust is its _trusted compute base
-(TCB)_. A TCB can include other software. For example:
+NOTE: In this document, the terms "FW RoT" and "HW RoT" will be used as defined above. The term "RoT" on its own can be used where a rule or a rational applies to either model.
 
-* On a vertically integrated embedded system: An operating system
-* On a virtualized system: A hypervisor and a guest operating system
-* In a data centre: A hypervisor and a guest OS, as well as other hosting
-services such as orchestration and server provisioning software
+==== Isolation
+
+Assets can be protected by _isolation_. Isolation reduces dependencies between components, and reduces the amount of software that needs to be trusted. 
+
+Isolation protects _resources_:
+
+* Memory and memory mapped devices
+* _Execution state_, including Hart register state
+
+Examples of isolation mechanisms include:
+
+* Privilege based isolation +
+More privileged software is able to enforce security guarantees for less
+privileged software.
+* Physical memory isolation +
+More privileged software controls memory access for less privileged software.
+* Domain isolation +
+Software in one domain cannot access or modify resources assigned to a different domain (without consent), regardless of privilege level. +
+(Higher privileged software in one domain cannot access resources assigned to a lower privilege level in a different domain)
+* Virtualization +
+Virtualization creates and manages _virtual resources_ - compute, memory,
+devices - independent of actual physical hardware. A system, or individual
+domains, can be virtualized.
 
 On complex systems the TCB can grow large and get difficult to certify and
 attest.
@@ -130,7 +138,9 @@ Domain isolation use cases include:
 management, payment clients, DRM clients
 * Hosted confidential third party workloads
 
-Isolation policy needs to extend to devices:
+==== Device assignment
+
+Isolation policy needs to extend to device assignment:
 
 * Physical memory access control for device initiated transactions
 * Virtual memory translation for virtualized device transactions
@@ -139,11 +149,12 @@ Isolation policy needs to extend to devices:
 These policies can be enforced by system level hardware, controlled by Hart
 firmware.
 
-Finally, _invasive subsystems_ include any system or hart feature which could
+==== Invasive subsystems
+
+_Invasive subsystems_ include any system or Hart feature which could
 break security guarantees, either directly or indirectly. For example:
 
 * External debug
-* Event counters and performance monitoring
 * Power and timing management
 * RAS (_reliability, accessibility, serviceability_)
 
@@ -155,7 +166,71 @@ break security guarantees, either directly or indirectly. For example:
 
 | CAT_NNN
 | Invasive subsystems MUST be controlled, or moderated, by a RoT.
+
 |===
+
+==== Event counters
+
+Event counters are commonly used for performance management and resource allocation. 
+
+However, they can also pose a security risk. For example, one workload monitoring an operation in a different workload, or an operation by higher privilege software, could be able to reveal assets used in those operations.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to monitor higher privilege software.
+
+| CAT_NNN
+| Software in one domain MUST NOT be able to monitor software in a different domain, without consent.
+
+|===
+
+==== Platform quality of service
+
+Server platforms can provide _platform quality of service (QoS)_ features, consisting of Hart and system hardware and firmware aimed at managing access to shared physical resources across workloads, minimizing contention. For example:
+
+* Memory bandwidth management
+* Cache allocation policies across workloads, including workload prioritization
+* Hart allocation policies across workloads
+
+These types of features rely on monitoring resource utilization of workloads, similar to event counters, and optimizing resource allocation policies.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to monitor higher privilege software.
+
+| CAT_NNN
+| Software in one domains MUST NOT be able to monitor software in a different domain, without consent.
+
+|===
+
+==== Denial of service
+
+The RISC-V security model is primarily concerned with protection of assets. 
+
+For example, a hosting environment is free to apply their own resource allocation policy to any workloads. Including denying service. This applies in the same way to confidential workloads.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Lower privilege software MUST NOT be able to deny service to higher privilege software, or other isolated workloads at the same privilege level.
+
+|===
+
+Higher privilege software always has to be able to enforce its own resource management policy without interference. Including scheduling and resource assignment policies.
 
 === Adversarial model
 
@@ -240,19 +315,18 @@ a| * RISC-V privilege levels
 | Chained +
 Logical
 | Attacks on speculative execution implementations.
-| Known (documented) attacks except Spectre v1 are specific to particular
-micro-architectures, and RISC-V systems are not expected to be vulnerable to
-those. This is an evolving area of research. +
-For example: +
+| Known (documented) attacks, except Spectre v1, are specific to particular
+micro-architectures. Micro-architecture for RISC-V systems is implementation specific, but must not introduce such vulnerabilities. +
+ + 
+This is an evolving area of research. +
+ +
+ For example: +
 https://meltdownattack.com/[Spectre and meltdown papers] +
-
-https://www.intel.com/content/www/us/en/developer/topic-technology/software-secu
-rity-guidance/processors-affected-consolidated-product-cpu-model.html[Intel
+https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html[Intel
 security guidance] +
-https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20
-Security%20Center,Speculative%20Processor%20Vulnerability[Arm speculative
+https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20Security%20Center,Speculative%20Processor%20Vulnerability[Arm speculative
 vulnerability]
-| Fence.t could mitigate against Spectre v1.
+| Fence.t, or similar future extensions, could at least partially mitigate against Spectre v1.
 
 | CAT_NNN
 | Interface abuse
@@ -405,15 +479,21 @@ image::img_ch2_security-lifecycle.png[]
 A security lifecycle reflects the trustworthiness of a system during its
 lifetime and reflects the lifecycle state of hardware provisioned assets.
 
-It can be extended as indicated below to cover additional security provisioning
-steps such as device onboarding, device activiation, user management, and RMA
-processes. These are use case or ecosystem specific and out of scope of this
+It can be extended as indicated below to cover additional security provisioning steps such as device onboarding, device activation, user management, and RMA processes. These are use case or ecosystem specific and out of scope of this
 specification.
 
-For the purpose of this specification, a minimum security lifecycle includes at
-least the following states:
+For the purpose of this specification, _revealing debug_ includes any HW or FW debug capability which 
 
-* Manufacture - The system may not yet be fully locked down and has no hardware
+* Could break security guarantees or could expose assets 
+* Is not part of an attested trust contract with a relying party 
+
+Examples of revealing debug include revealing logging, external debug or boundary scans, dedicated debug builds of software components, or enabling self-hosted debug for a component.
+
+Depending on use case, an attested software component can include debug capabilities managed through an ecosystem defined governance process - _trusted debug_. For example, self-hosted debug enabled following an ecosystem specific authorization process. In this case the debug capability, and the associated governance, is part of the trust contract with a relying party.
+
+For the purpose of this specification, a minimum security lifecycle includes at least the following states:
+
+* Manufacture - The system may not yet be locked down and has no hardware
 provisioned assets
 * Security provisioning - The process of provisioning hardware provisioned
 assets +
@@ -421,27 +501,21 @@ Depending on ecosystem requirement, security provisioning could be performed in
 multiple stages through a supply chain and may require additional sub-states.
 These types of application specific extensions are out of scope of this
 specification.
-* Secured - the system is fully locked down and has all its hardware
-provisioned assets +
-Additional application specific provisioning stages can take place in this
+* Secured - hardware provisioned assets are locked (immutable), only authorized software can be used, and revealing debug is not enabled. +
+Additional specific provisioning stages can take place in this
 state - for example network onboarding and device activation, TSS/App/Device
 attestation or user identity management. This is out of scope of this
 specification.
-* Recoverable debug - part of the system is in a debug state +
-At least trusted security services or a hardware root of trust are not
-compromised, and hardware provisioned secrets remain protected. +
-This state is both attestable and recoverable. For example, debug is enabled
-for a security domain without compromising another security domain or any
-trusted security services.
+* Recoverable debug - part of the system is in a revealing debug state +
+At least the RoT is not compromised and hardware provisioned secrets remain protected. +
+This state is both attestable and recoverable. For example, revealing debug is enabled for a domain without compromising another domain or any RoT services.
 * Terminated - any system change which could expose hardware provisioned assets
 +
 Typically hardware provisioned assets are made permanently inaccessible and
-revoked before entering this state. This also protects any derived assets such
-as attestation and sealing keys.
+revoked before entering this state. This also protects any derived assets such as attestation and sealing keys.
 
 A system could support re-provisioning from a terminated state, for example
-following repair. This is equivalent to starting over from the security
-provisioning state and creates a new instance with a new secure identifier.
+following repair/RMA. This can be viewed as equivalent to starting over from the security provisioning state, and creates a new instance with a new secure identifier.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -457,8 +531,41 @@ secured state, or a recoverable debug state.
 | Derived assets MUST only be available if a component is in secured state.
 |===
 
-A derived asset in this context is any asset derived from hardware provisioned
-assets. For example attestation keys, or sealing keys for a supervisor domain.
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Hardware provisioned assets MUST only be accessible while the system is in
+secured state, or a recoverable debug state (with the recoverable debug state in attestation evidence).
+
+| CAT_NNN
+| Derived assets MUST only be available if a component is in secured state.
+|===
+
+A derived asset in this context is any asset derived from hardware provisioned assets. For example attestation keys, or sealing keys for a supervisor domain.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| Revealing debug MUST be reflected in attestation.
+
+|===
+
+_Attestable states_ are ones where the RoT and hardware provisioned assets are not compromised by debug and a valid attestation can be generated reflecting that state:
+
+* Secured
+* Recoverable debug
+
+In other states the system is not able to generate a valid attestation key. It is still _indirectly attestable_ as any generated attestation will not be signed correctly and can be rejected by a relying party.
+
+Trusted debug is part of a trust contract with a relying party, and application specific. The presence of trusted debug can be determined indirectly by a relying party through other attested properties, for example measurements.
 
 ==== Attestable services
 
@@ -477,7 +584,7 @@ an isolated application security service.
 on, MUST be attestable.
 |===
 
-Attestation allows a remote reliant party to determine the trustworthiness of a
+Attestation allows a remote relying party to determine the trustworthiness of a
 confidential service before submitting assets to it.
 
 * Verify the security state of a confidential service
@@ -505,8 +612,8 @@ examples later in this specification.
 | Requirement
 
 | CAT_NNN
-| A security platform attestation MUST be signed by a HW RoT, if present, or by
-trusted security services
+| A security platform attestation MUST be signed by a HW RoT, if present, or else by
+a FW RoT
 
 | CAT_NNN
 | A security platform attestation MUST be signed using a hardware provisioned
@@ -516,15 +623,15 @@ trusted security services
 | A layered attestation MAY be signed by lower privileged software, itself
 attested by a security platform attestation
 
-| CAT_NNN
-| A layered attestation MUST be signed by a secure identity cryptographically
-bound (for example, hash locked) to a fresh security platform attestation
+| CAT_NNN 
+a| Layered attestations MUST be cryptographically bound such that a relying party can determine that they 
+
+* Were generated on the same system
+* Are fresh. 
 
 |===
 
-NOTE: Care needs to be taken in attestation interface design. For example,
-software interfaces should only support either direct attestation or layered
-attestation workflows, never both, to prevent impersonation.
+NOTE: Software interfaces should only support either direct attestation or layered attestation workflows, never both, to prevent impersonation attacks.
 
 ==== Authorized software
 
@@ -537,7 +644,10 @@ Running unauthorized software can compromise the security state of the system.
 | Requirement
 
 | CAT_NNN
-| A system in secured state MUST only load authorized software.
+| A system in secured or recoverable debug states MUST only load authorized software.
+
+| CAT_NNN
+| A system in security provisioning state SHOULD only load authorized software.
 
 |===
 
@@ -556,8 +666,8 @@ employed at different stages. This is discussed further in use case examples
 later in this specification. The properties discussed below still apply to each
 stage.
 
-NOTE: Measurements can be calculated at boot (boot state), and sometimes also
-dynamically at runtime (runtime state). Measuring runtime state can be used as
+NOTE: Measurements can be calculated at boot (_boot state_), and sometimes also
+dynamically at runtime (_runtime state_). Measuring runtime state can be used as
 a robustness feature to mitigate against unauthorized runtime changes of static
 code segments. It is out of scope of this specification, though the principles
 discussed below can still be applied.
@@ -567,7 +677,7 @@ Verification can be:
 * Local +
 A measurement is verified locally on the device.
 * Remote +
-A measurement is verified by a remote provisioning service, or a remote reliant
+A measurement is verified by a remote provisioning service, or a remote relying
 party.
 
 Verification can be:
@@ -603,20 +713,19 @@ Verification ensures the system has loaded authorized software
 | Requirement
 
 | CAT_NNN
-| A system MUST only use authorizations from trusted signers.
+| A system MUST only use authorizations from trusted authority.
 |===
 
-* Direct verification requires a signed image autorization from a trusted
-signer +
-For example, a signed image header, or a separately signed authorization
+* Direct verification requires a signed image authorization from a trusted
+authority before loading an image +
+For example, a signed image, or a separately signed authorization
 message.
-* Indirect verification requires a signed authorization for migrating assets
-bound to a measured state +
-For example, a signed authorization message, or a signed provisioning message.
+* Indirect verification requires a signed authorization from a trusted authority for migrating assets bound to a previously measured state +
+For example, a signed provisioning message.
 
-Either way, only authorizations from trusted signers should be used. For
+Either way, only authorizations from trusted authorities should be used. For
 example, from a list of hardware provisioned or securely discovered trusted
-signers.
+authorities.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -685,7 +794,7 @@ The update can be effected without restarting any dependent components.
 
 | CAT_NNN
 | Updates MAY be live if live update capability, and suitable governance, is
-part of an already attested trust contract between a reliant party and the
+part of an already attested trust contract between a relying party and the
 system.
 |===
 
@@ -777,9 +886,17 @@ permission
 
 Isolation can also extend to other features, such as interrupts and debug.
 
-==== Data sealing
+==== Sealing
 
-Sealing is the process of protecting confidential data on a system.
+Sealing is the process of protecting confidential assets on a system, typically using sealing keys derived in different ways for different use cases as discussed in this section. For example, from a hardware provisioned root key, from a boot state (measurements, security lifecycle state), or provisioned at runtime by a remote provisioning system.
+
+Sealing can be:
+
+* Local +
+Local sealing binds assets to a local device (hardware unique sealing) or to a measured boot state.
+* Remote +
+Remote sealing binds assets to credentials provided by a remote provisioning
+service following successful attestation.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -788,23 +905,16 @@ Sealing is the process of protecting confidential data on a system.
 | Requirement
 
 | CAT_NNN
-| Sealed data MUST only be accessible to an isolated component
+| Sealed assets SHOULD only be possible to unseal in a secured state
 
 |===
 
-Sealing can be:
-
-* Local +
-Local sealing binds assets to a local device (hardware unique sealing).
-* Remote +
-Remote sealing binds assets to credentials provided by a remote provisioning
-service following successful attestation.
+For example, local sealing key derivations should take the security lifecycle state of the system into account. And remote sealing key provisioning should always attest the system before releasing unsealing credentials or keys.
 
 Local sealing can be:
 
 * Direct +
-Direct sealing binds assets to sealing keys derived by trusted security
-services, or a HW RoT.
+Direct sealing binds assets to sealing keys derived by a RoT.
 * Layered +
  Layered sealing enables delegation of some sealing key derivations to lower
 privileged software.
@@ -816,11 +926,23 @@ privileged software.
 | Requirement
 
 | CAT_NNN
-| Valid local sealing keys SHOULD only be generated in secured state.
+| Locally sealed assets MUST only be possible to unseal on the same physical instance of a system that they were sealed on.
+
+|===
+
+For example, using sealing keys derived from a hardware provisioned _hardware unique key (HUK)_. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
 
 | CAT_NNN
-| Valid local sealing keys MAY be generated in a trusted debug state for
-unaffected software components.
+| Locally sealed assets bound to a boot measurement MUST only be possible to unseal if that measurement has not changed, or the system has received an authorized update.
+
 |===
+
+See <<_system_updates, system updates>>
 
 Sealing is discussed further in use cases examples later in this document.
