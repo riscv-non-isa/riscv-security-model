@@ -2,6 +2,72 @@
 
 == Cryptography
 
-<use models enabled by crypto ISA extensions>
+RISC-V supports a number of ISA-level extensions aimed at improving performance for cryptographic operations (scalar and vector). They also include an ISA-level entropy source, and guidelines for data independent execution latency.
 
-<crypto guidelines>
+See xref:chapter3.adoc#_cryptography[cryptography] +
+See https://github.com/riscv/riscv-crypto
+
+Current ISA level cryptographic extensions work at round level. With the data independent execution latency properties, they can provide some mitigation against some side-channel attacks, such as cache timing attacks. They may not defend fully against some differential power analysis, for example.
+
+Work is on-going to define ISA-level _high assurance cryptography (HAC)_. This work includes defining full-round operations to increase side-channel resistance; adding operations supporting _post-quantum cryptography (PQC)_; and adding ISA-level privilege-based key management.
+
+Cryptographic requirements depend on target ecosystem, as well as on varying regulatory requirements in different geographic regions. This chapter summarizes commonly used cryptographic guidance for secure systems, provided as guidance for development of RISC-V specifications and RISC-V based secure systems.
+
+=== PQC readiness
+
+Quantum safe cryptography is an evolving area of research. For example, see:  https://csrc.nist.gov/projects/post-quantum-cryptography.
+
+ML-KEM (FIPS-203), ML-DSA (FIPS-204), and SLH-DSA (FIPS-205). ML-KEM defines a key-encapsulation mechanism used to establish a shared secret key over a public channel. ML-DSA and SLH-DSA defined digital signature schemes.
+
+RISC-V systems and specifications must at least support a migration path towards use of PQC. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| CAT_NNN
+| In applications which require a migration path to PQC algorithms, all immutable components SHOULD support PQC alternatives.
+
+| CAT_NNN
+| All mutable components MUST at least have a migration path to quantum safe cryptography.
+
+|===
+
+Immutable components, in particular immutable boot code, cannot be updated. To provide a full migration path for a system, immutable components need to support PQC alternatives.
+
+Mutable stages can be updated, and can provide a migration path to quantum safe cryptography. For example, system designers should consider protocols, governance, and storage requirements for upgrading hardware provisioned assets to PQC versions.
+
+=== Cryptographic algorithms and guidelines
+
+The following resources provide general cryptographic guidance applicable to most western jurisdictions:
+https://csrc.nist.gov/Projects/Cryptographic-Standards-and-Guidelines
+https://www.cnss.gov/CNSS/issuances/Memoranda.cfm
+
+In particular, for most new systems:
+
+* Public identifier: 512 bits (for example, hash of a public key)
+* Counter used as identifier: 64 bits
+* Block cipher: AES-256
+* Hash function: SHA-512, or SHA-3
+* Message authentication: HMAC-SHA-512
+* Asymmetric signing/encryption: RSA-3072, or ECC-384 (see <<_pqc_readiness, PQC readiness>>)
+
+Some legacy use cases may require use of other algorithms, such as SHA-256 or AES-128. In these cases, wherever possible, an upgrade path should be supported. For example, allocating sufficient storage to accommodate larger sizes in future updates.
+
+Some use cases, such as cryptographic memory protection, may sometimes use specialized algorithms for performance in a constrained use case. These are not discussed here but should have similar properties to the ones listed above, but with different trade-offs.
+
+For Chinese markets, equivalent _ShangMi (SM)_ algorithm support is required. In particular:
+
+* SM2: Authentication (ECC based)
+* SM3: Hash function (256-bit)
+* SM4: Block cipher
+
+See http://gmbz.org.cn/main/index.html
+
+RISC-V cryptographic ISA extensions also include support for ShangMi algorithms (SM3 and SM4)
+
+Some Shang-Mi algorithms are also described in ISO specifications.
+
+Other specific markets also require regional cryptographic algorithms, for example Russian Ghost. RISC-V cryptographic ISA extensions currently do not directly support Russia specific algorithms.
