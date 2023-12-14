@@ -292,7 +292,7 @@ RISC-V hardware enforced isolation mechanisms can be used as follows to meet tho
 
 See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
 
-For static partition TEE, using PMP/ePMP, with supervisor domains can be sufficient. PMA or svpam can also be used to assign physical memory attributes at system level, for example for system integration use cases.  
+For static partition TEE, using PMP/ePMP, with supervisor domains can be sufficient.   
 
 For virtualized TEE, MTT should be used with supervisor domains.
 
@@ -370,7 +370,7 @@ a| A direct security platform attestation MUST cover at least:
 
 Virtualized TEE attestation can be layered, for performance or separation of concern. For example:
 
-* A security platform attestation, signed by a RoT, covering trusted subsystems, Root domains, and SPM
+* A security platform attestation, signed by a RoT, covering trusted subsystems, Root domain, and SPM
 * Separate guest TEE attestation(s) signed by SPM 
 
 ==== Sealing
@@ -674,6 +674,14 @@ Measuring confidential guests can be done by TSM in Confidential domain.
 The process can involve multiple stages (layered boot). 
 
 ==== Attestation
+
+See xref:chapter2.adoc#_attestable_services[attestable services].
+
+Virtualized TEE attestation can be layered, for performance or separation of concern. For example:
+
+* A security platform attestation, signed by a RoT, covering trusted subsystems, Root domain, and SPM
+* Separate guest TEE attestation(s) signed by SPM 
+
 
 See xref:chapter2.adoc#_attestable_services[attestable services].
 
