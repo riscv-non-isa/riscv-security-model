@@ -3,19 +3,19 @@
 
 == Introduction
 
-This specification provides guidelines for how RISC-V security building blocks 
+This specification provides guidelines for how RISC-V security building blocks
 can be used to build secure systems for different use cases. It is
 aimed at developers of RISC-V technical specifications, as well as at designers
 of secure RISC-V systems.
 
-A few example uses cases based on commonly used deployment models are provided. 
-These use cases are not intended to be exhaustive, or to act as protection profiles. 
-They are intended as templates to be used as general guidelines,
-which can be applied to a wide variety of use cases. 
+A few example uses cases based on commonly used deployment models are provided.
+These use cases are not intended to be exhaustive, or to act as protection
+profiles. They are intended as templates to be used as general guidelines,
+which can be applied to a wide variety of use cases.
 
-The examples may be extended over time as required. Protection profiles for more 
-specific use cases are expected to be provided within relevant certification bodies,
-or as separate RISC-V specifications if required.
+The examples may be extended over time as required. Protection profiles for more
+specific use cases are expected to be provided within relevant certification
+bodies, or as separate RISC-V specifications if required.
 
 === Requirements and tracking
 
@@ -28,9 +28,12 @@ trackable requirements using the following format:
 | ID#
 | Requirement
 
-| CAT_NNN
-| The `CAT` is a category prefix that logically groups the requirements and is
-followed by 3 digits - `NNN` - assigning a numeric ID to the requirement. +
+| SR_CAT_NNN
+| The `SR_CAT` is a "Security Requirement CATegory" prefix that logically groups
+the requirements (e.g. SR_UPD denotes security requirements related to updates,
+and SR_ATT denotes security requirements related to attestation) and is followed
+by 3 digits - `NNN` - assigning a numeric ID to the requirement.
+
 The requirements use the key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
 "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
 and "OPTIONAL" that are to be interpreted as described in

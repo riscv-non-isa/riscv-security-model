@@ -40,12 +40,15 @@ Examples of assets include:
 * Proprietary models
 * Secret algorithms
 
-In this specification, a _hardware provisioned asset_ is an immutable asset provisioned in hardware by a security provisioning process, before a device is used in a production environment. For example, hardware provisioned keys or identities.
+In this specification, a _hardware provisioned asset_ is an immutable asset
+provisioned in hardware by a security provisioning process, before a device is
+used in a production environment. For example, hardware provisioned keys or
+identities.
 
 ==== Trusted Computing Base (TCB)
 
 The _Trusted Computing Base (TCB)_ of a component is the minimum amount of
-software and hardware that needs to be trusted by that component. 
+software and hardware that needs to be trusted by that component.
 
 The TCB of a component typically includes other software. For example:
 
@@ -56,7 +59,9 @@ The TCB of a component typically includes other software. For example:
 
 ==== Root of trust
 
-The minimum amount of hardware and/or software that always has to be trusted on a system is its _root of trust (RoT)_. A RoT supports fundamental security services, for example:
+The minimum amount of hardware and/or software that always has to be trusted on
+a system is its _root of trust (RoT)_. A RoT supports fundamental security
+services, for example:
 
 * Boot and attestation
 * Security lifecycle management
@@ -69,39 +74,49 @@ Depending on use case and ecosystem requirements, a RoT can be:
 * A dedicated trusted subsystem (HW RoT), supporting a FW RoT
 
 Using a HW RoT moves critical functions and assets off a Hart to a dedicated
-trusted subsystem, which can provide stronger protection against physical and logical attack than a complex Hart.
+trusted subsystem, which can provide stronger protection against physical and
+logical attack than a complex Hart.
 
-NOTE: It is common for secure systems to support multiple trust chains with their own root of trust. For example, a TPM can be a root of trust for UEFI
-boot flows within a runtime environment, and a SIM can be a root of trust for user identity management. +
+NOTE: It is common for secure systems to support multiple trust chains with
+their own root of trust. For example, a TPM can be a root of trust for UEFI
+boot flows within a runtime environment, and a SIM can be a root of trust for
+user identity management. +
  +
 For the purpose of this document, these should be treated as _secondary roots of
 trust_. +
  +
-The HW RoT acts as a _primary root of trust_ on the system. For example, the HW RoT governs boot, and can load firmware and manage the security lifecycle of a secondary root of trust.
+The HW RoT acts as a _primary root of trust_ on the system. For example, the HW
+RoT governs boot, and can load firmware and manage the security lifecycle of a
+secondary root of trust.
 
+[#cat_sr_sub_rot]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_ROT_001
 | A complex secure system MUST implement a HW RoT
 
-| CAT_NNN
+| SR_ROT_002
 | A simpler system MAY not require a HW RoT but one is still recommended
 
 |===
 
-Examples of a complex system include one with coherent multi-core, or out of order, application Harts.
+Examples of a complex system include one with coherent multi-core, or out of
+order, application Harts.
 
 Examples of a simpler system include a single core in-order microcontroller.
 
-NOTE: In this document, the terms "FW RoT" and "HW RoT" will be used as defined above. The term "RoT" on its own can be used where a rule or a rational applies to either model.
+NOTE: In this document, the terms "FW RoT" and "HW RoT" will be used as defined
+above. The term "RoT" on its own can be used where a rule or a rational applies
+to either model.
 
 ==== Isolation
 
-Assets can be protected by _isolation_. Isolation reduces dependencies between components, and reduces the amount of software that needs to be trusted. 
+Assets can be protected by _isolation_. Isolation reduces dependencies between
+components, and reduces the amount of software that needs to be trusted.
 
 Isolation protects _resources_:
 
@@ -116,8 +131,10 @@ privileged software.
 * Physical memory isolation +
 More privileged software controls memory access for less privileged software.
 * Domain isolation +
-Software in one domain cannot access or modify resources assigned to a different domain (without consent), regardless of privilege level. +
-(Higher privileged software in one domain cannot access resources assigned to a lower privilege level in a different domain)
+Software in one domain cannot access or modify resources assigned to a different
+domain (without consent), regardless of privilege level. +
+(Higher privileged software in one domain cannot access resources assigned to a
+lower privilege level in a different domain)
 * Virtualization +
 Virtualization creates and manages _virtual resources_ - compute, memory,
 devices - independent of actual physical hardware. A system, or individual
@@ -158,79 +175,101 @@ break security guarantees, either directly or indirectly. For example:
 * Power and timing management
 * RAS (_reliability, accessibility, serviceability_)
 
+[#cat_sr_sub_inv]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_INV_001
 | Invasive subsystems MUST be controlled, or moderated, by a RoT.
 
+| SR_INV_002
+| Invasive subsystems SHOULD be enabled separately for M-mode &
+non-M-mode software.
 |===
 
 ==== Event counters
 
-Event counters are commonly used for performance management and resource allocation. 
+Event counters are commonly used for performance management and resource
+allocation.
 
-However, they can also pose a security risk. For example, one workload monitoring an operation in a different workload, or an operation by higher privilege software, could be able to reveal assets used in those operations.
+However, they can also pose a security risk. For example, one workload
+monitoring an operation in a different workload, or an operation by higher
+privilege software, could be able to reveal assets used in those operations.
 
+[#cat_sr_sub_pmu]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
-| Lower privilege software MUST NOT be able to monitor higher privilege software.
+| SR_PMU_001
+| Lower privileged software MUST NOT be able to monitor higher privileged
+software.
 
-| CAT_NNN
-| Software in one domain MUST NOT be able to monitor software in a different domain, without consent.
+| SR_PMU_002
+| Software in one domain MUST NOT be able to monitor software in a different
+domain, without consent.
 
 |===
 
 ==== Platform quality of service
 
-Server platforms can provide _platform quality of service (QoS)_ features, consisting of Hart and system hardware and firmware aimed at managing access to shared physical resources across workloads, minimizing contention. For example:
+Server platforms can provide _platform quality of service (QoS)_ features,
+consisting of Hart and system hardware and firmware aimed at managing access to
+shared physical resources across workloads, minimizing contention. For example:
 
 * Memory bandwidth management
 * Cache allocation policies across workloads, including workload prioritization
 * Hart allocation policies across workloads
 
-These types of features rely on monitoring resource utilization of workloads, similar to event counters, and optimizing resource allocation policies.
+These types of features rely on monitoring resource utilization of workloads,
+similar to event counters, and optimizing resource allocation policies.
 
+[#cat_sr_sub_qos]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
-| Lower privilege software MUST NOT be able to monitor higher privilege software.
+| SR_QOS_001
+| Lower privileged software MUST NOT be able to monitor higher privileged
+software.
 
-| CAT_NNN
-| Software in one domains MUST NOT be able to monitor software in a different domain, without consent.
+| SR_QOS_002
+| Software in one domains MUST NOT be able to monitor software in a different
+domain, without consent.
 
 |===
 
 ==== Denial of service
 
-The RISC-V security model is primarily concerned with protection of assets. 
+The RISC-V security model is primarily concerned with protection of assets.
 
-For example, a hosting environment is free to apply their own resource allocation policy to any workloads. Including denying service. This applies in the same way to confidential workloads.
+For example, a hosting environment is free to apply their own resource
+allocation policy to any workloads. Including denying service. This applies in
+the same way to confidential workloads.
 
+[@cat_sr_sub_dos]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
-| Lower privilege software MUST NOT be able to deny service to higher privilege software, or other isolated workloads at the same privilege level.
+| SR_DOS_001
+| Lower privileged software MUST NOT be able to deny service to higher
+privileged software, or other isolated workloads at the same privilege level.
 
 |===
 
-Higher privilege software always has to be able to enforce its own resource management policy without interference. Including scheduling and resource assignment policies.
+Higher privileged software always has to be able to enforce its own resource
+management policy without interference. Including scheduling, resource
+assignment and recovation policies.
 
 === Adversarial model
 
@@ -290,6 +329,7 @@ models and requirements.
 
 ==== Logical
 
+[#cat_sr_sub_lgc]
 [width=100%]
 [%header, cols="5,5,5,10,15,10"]
 |===
@@ -300,7 +340,7 @@ models and requirements.
 | Current RISC-V mitigations
 | Planned RISC-V mitigations
 
-| CAT_NNN
+| SR_LGC_001
 | Unrestricted access
 | Direct +
 Logical
@@ -310,14 +350,15 @@ a| * RISC-V privilege levels
 * RISC-V hardware virtualization (H extension, MMU)
 |
 
-| CAT_NNN
+| SR_LGC_002
 | Transient execution attacks
 | Chained +
 Logical
 | Attacks on speculative execution implementations.
 | Known (documented) attacks, except Spectre v1, are specific to particular
-micro-architectures. Micro-architecture for RISC-V systems is implementation specific, but must not introduce such vulnerabilities. +
- + 
+micro-architectures. Micro-architecture for RISC-V systems is implementation
+specific, but must not introduce such vulnerabilities. +
+ +
 This is an evolving area of research. +
  +
  For example: +
@@ -328,7 +369,7 @@ https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20
 vulnerability]
 | Fence.t, or similar future extensions, could at least partially mitigate against Spectre v1.
 
-| CAT_NNN
+| SR_LGC_003
 | Interface abuse
 | Chained +
 Logical
@@ -338,7 +379,7 @@ a| * RISC V privilege levels
 * RISC-V isolation
 | High assurance cryptography
 
-| CAT_NNN
+| SR_LGC_004
 | Event counting
 | Direct +
 Logical
@@ -349,7 +390,7 @@ a| * Data-independent timing instructions
 (sscofpmf, smcntrpmf)
 |
 
-| CAT_NNN
+| SR_LGC_005
 | Redirect control flow
 | Chained +
 Logical
@@ -363,6 +404,7 @@ a| * Shadow stacks (Zicfiss)
 
 ==== Physical and remote
 
+[#cat_sr_sub_phy]
 [width=100%]
 [%header, cols="5,10,10,15,15"]
 |===
@@ -372,7 +414,7 @@ a| * Shadow stacks (Zicfiss)
 | Description
 | RISC-V recommendations
 
-| CAT_NNN
+| SR_PHY_001
 | Analysis of physical leakage
 | Direct or indirect +
 Physical or remote
@@ -380,7 +422,7 @@ Physical or remote
 a| * Implement robust power management and radiation control
 * Data Independent Execution Latency (Zkt, Zvkt)
 
-| CAT_NNN
+| SR_PHY_002
 | Physical memory manipulation
 | Direct +
 Logical or physical
@@ -395,7 +437,7 @@ or physical tamper resistance
 derive memory encryption contexts at domain or workload granularity
 * Provide a degree of tamper resistance
 
-| CAT_NNN
+| SR_PHY_003
 | Boot attacks
 | Chained +
 Logical or physical
@@ -404,7 +446,7 @@ a| * Glitching to bypass secure boot
 a| * Implement robust power management
 * Implement cryptographic memory protection with at least boot freshness
 
-| CAT_NNN
+| SR_PHY_004
 | Subverting supply chains
 | Remote
 | Infiltration or collusion to subvert security provisioning chains, software
@@ -430,13 +472,14 @@ This is discussed more in use case examples later in this specification.
 
 ==== Secure identity
 
+[cat_sr_sub_idn]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_IDN_001
 | A security platform MUST be securely identifiable
 |===
 
@@ -462,13 +505,14 @@ provisioned assets.
 
 ==== Security lifecycle
 
+[#cat_sr_sub_lfc]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_LFC_001
 | A secure system MUST manage a security lifecycle.
 |===
 
@@ -476,22 +520,33 @@ provisioned assets.
 [title= "Generic security lifecycle"]
 image::img_ch2_security-lifecycle.png[]
 
+[#security-lifecycle]
 A security lifecycle reflects the trustworthiness of a system during its
 lifetime and reflects the lifecycle state of hardware provisioned assets.
 
-It can be extended as indicated below to cover additional security provisioning steps such as device onboarding, device activation, user management, and RMA processes. These are use case or ecosystem specific and out of scope of this
+It can be extended as indicated below to cover additional security provisioning
+steps such as device onboarding, device activation, user management, and RMA
+processes. These are use case or ecosystem specific and out of scope of this
 specification.
 
-For the purpose of this specification, _revealing debug_ includes any HW or FW debug capability which 
+For the purpose of this specification, _revealing debug_ includes any HW or FW
+debug capability which
 
-* Could break security guarantees or could expose assets 
-* Is not part of an attested trust contract with a relying party 
+* Could break security guarantees or could expose assets
+* Is not part of an attested trust contract with a relying party
 
-Examples of revealing debug include revealing logging, external debug or boundary scans, dedicated debug builds of software components, or enabling self-hosted debug for a component.
+Examples of revealing debug include revealing logging, external debug or
+boundary scans, dedicated debug builds of software components, or enabling
+self-hosted debug for a component.
 
-Depending on use case, an attested software component can include debug capabilities managed through an ecosystem defined governance process - _trusted debug_. For example, self-hosted debug enabled following an ecosystem specific authorization process. In this case the debug capability, and the associated governance, is part of the trust contract with a relying party.
+Depending on use case, an attested software component can include debug
+capabilities managed through an ecosystem defined governance process
+- _trusted debug_. For example, self-hosted debug enabled following an ecosystem
+specific authorization process. In this case the debug capability, and the
+associated governance, is part of the trust contract with a relying party.
 
-For the purpose of this specification, a minimum security lifecycle includes at least the following states:
+For the purpose of this specification, a minimum security lifecycle includes at
+least the following states:
 
 * Manufacture - The system may not yet be locked down and has no hardware
 provisioned assets
@@ -501,21 +556,27 @@ Depending on ecosystem requirement, security provisioning could be performed in
 multiple stages through a supply chain and may require additional sub-states.
 These types of application specific extensions are out of scope of this
 specification.
-* Secured - hardware provisioned assets are locked (immutable), only authorized software can be used, and revealing debug is not enabled. +
+* Secured - hardware provisioned assets are locked (immutable), only authorized
+software can be used, and revealing debug is not enabled. +
 Additional specific provisioning stages can take place in this
 state - for example network onboarding and device activation, TSS/App/Device
 attestation or user identity management. This is out of scope of this
 specification.
 * Recoverable debug - part of the system is in a revealing debug state +
-At least the RoT is not compromised and hardware provisioned secrets remain protected. +
-This state is both attestable and recoverable. For example, revealing debug is enabled for a domain without compromising another domain or any RoT services.
+At least the RoT is not compromised and hardware provisioned secrets remain
+protected. +
+This state is both attestable and recoverable. For example, revealing debug is
+enabled for a domain without compromising another domain or any RoT services.
 * Terminated - any system change which could expose hardware provisioned assets
 +
 Typically hardware provisioned assets are made permanently inaccessible and
-revoked before entering this state. This also protects any derived assets such as attestation and sealing keys.
+revoked before entering this state. This also protects any derived assets such
+as attestation and sealing keys.
 
 A system could support re-provisioning from a terminated state, for example
-following repair/RMA. This can be viewed as equivalent to starting over from the security provisioning state, and creates a new instance with a new secure identifier.
+following repair/RMA. This can be viewed as equivalent to starting over from the
+security provisioning state, and creates a new instance with a new secure
+identifier.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -523,11 +584,11 @@ following repair/RMA. This can be viewed as equivalent to starting over from the
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_LFC_002
 | Hardware provisioned assets MUST only be accessible while the system is in
 secured state, or a recoverable debug state.
 
-| CAT_NNN
+| SR_LFC_003
 | Derived assets MUST only be available if a component is in secured state.
 |===
 
@@ -537,15 +598,17 @@ secured state, or a recoverable debug state.
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_LFC_004
 | Hardware provisioned assets MUST only be accessible while the system is in
-secured state, or a recoverable debug state (with the recoverable debug state in attestation evidence).
+secured state, or a recoverable debug state (with the recoverable debug state in
+attestation evidence).
 
-| CAT_NNN
+| SR_LFC_005
 | Derived assets MUST only be available if a component is in secured state.
 |===
 
-A derived asset in this context is any asset derived from hardware provisioned assets. For example attestation keys, or sealing keys for a supervisor domain.
+A derived asset in this context is any asset derived from hardware provisioned
+assets. For example attestation keys, or sealing keys for a supervisor domain.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -553,19 +616,25 @@ A derived asset in this context is any asset derived from hardware provisioned a
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_LFC_006
 | Revealing debug MUST be reflected in attestation.
 
 |===
 
-_Attestable states_ are ones where the RoT and hardware provisioned assets are not compromised by debug and a valid attestation can be generated reflecting that state:
+_Attestable states_ are ones where the RoT and hardware provisioned assets are
+not compromised by debug and a valid attestation can be generated reflecting
+that state:
 
 * Secured
 * Recoverable debug
 
-In other states the system is not able to generate a valid attestation key. It is still _indirectly attestable_ as any generated attestation will not be signed correctly and can be rejected by a relying party.
+In other states the system is not able to generate a valid attestation key. It
+is still _indirectly attestable_ as any generated attestation will not be signed
+correctly and can be rejected by a relying party.
 
-Trusted debug is part of a trust contract with a relying party, and application specific. The presence of trusted debug can be determined indirectly by a relying party through other attested properties, for example measurements.
+Trusted debug is part of a trust contract with a relying party, and application
+specific. The presence of trusted debug can be determined indirectly by a
+relying party through other attested properties, for example measurements.
 
 ==== Attestable services
 
@@ -573,13 +642,14 @@ For the purpose of this specification a confidential service can be any
 isolated component on a system. For example, a hosted confidential workload, or
 an isolated application security service.
 
+[#cat_sr_sub_att]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_ATT_001
 | A confidential service, and all software and hardware components it depends
 on, MUST be attestable.
 |===
@@ -611,42 +681,46 @@ examples later in this specification.
 | ID#
 | Requirement
 
-| CAT_NNN
-| A security platform attestation MUST be signed by a HW RoT, if present, or else by
-a FW RoT
+| SR_ATT_002
+| A security platform attestation MUST be signed by a HW RoT, if present, or
+else by a FW RoT
 
-| CAT_NNN
+| SR_ATT_003
 | A security platform attestation MUST be signed using a hardware provisioned
 (directly or derived) secure identity
 
-| CAT_NNN
+| SR_ATT_004
 | A layered attestation MAY be signed by lower privileged software, itself
 attested by a security platform attestation
 
-| CAT_NNN 
-a| Layered attestations MUST be cryptographically bound such that a relying party can determine that they 
+| SR_ATT_005
+a| Layered attestations MUST be cryptographically bound such that a relying
+party can determine that they:
 
 * Were generated on the same system
-* Are fresh. 
+* Are fresh.
 
 |===
 
-NOTE: Software interfaces should only support either direct attestation or layered attestation workflows, never both, to prevent impersonation attacks.
+NOTE: Software interfaces should only support either direct attestation or
+layered attestation workflows, never both, to prevent impersonation attacks.
 
 ==== Authorized software
 
 Running unauthorized software can compromise the security state of the system.
 
+[#cat_sr_sub_aut]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
-| A system in secured or recoverable debug states MUST only load authorized software.
+| SR_AUT_001
+| A system in secured or recoverable debug states MUST only load authorized
+software.
 
-| CAT_NNN
+| SR_AUT_002
 | A system in security provisioning state SHOULD only load authorized software.
 
 |===
@@ -689,16 +763,17 @@ authorization.
 The measurement is included in derivations of other assets, for example sealing
 keys, binding assets to a measured state.
 
+[#cat_sr_sub_msm]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_MSM_001
 | A security platform MUST be measured.
 
-| CAT_NNN
+| SR_MSM_002
 | A security platform MUST be verified, either directly or indirectly, before
 launching services which depend on the security platform.
 
@@ -712,7 +787,7 @@ Verification ensures the system has loaded authorized software
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_MSM_003
 | A system MUST only use authorizations from trusted authority.
 |===
 
@@ -720,7 +795,8 @@ Verification ensures the system has loaded authorized software
 authority before loading an image +
 For example, a signed image, or a separately signed authorization
 message.
-* Indirect verification requires a signed authorization from a trusted authority for migrating assets bound to a previously measured state +
+* Indirect verification requires a signed authorization from a trusted authority
+for migrating assets bound to a previously measured state +
 For example, a signed provisioning message.
 
 Either way, only authorizations from trusted authorities should be used. For
@@ -732,7 +808,8 @@ authorities.
 |===
 | ID#
 | Requirement
-| CAT_NNN
+
+| SR_MSM_004
 | Local verification MUST be rooted in immutable boot code.
 |===
 
@@ -745,13 +822,14 @@ Over time, any non-immutable component may need updates to address
 vulnerabilities or functionality improvements. A system update can concern
 software, firmware, microcode, or any other updatable component on a system.
 
+[#cat_sr_sub_upd]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_UPD_001
 | All components on a system which are not immutable MUST be updatable.
 |===
 
@@ -769,7 +847,7 @@ any system update.
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_UPD_002
 | A system update MUST be measured and verified before launch.
 |===
 
@@ -789,10 +867,10 @@ The update can be effected without restarting any dependent components.
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_UPD_003
 | Updates affecting a security platform SHOULD be deferred.
 
-| CAT_NNN
+| SR_UPD_004
 | Updates MAY be live if live update capability, and suitable governance, is
 part of an already attested trust contract between a relying party and the
 system.
@@ -809,10 +887,10 @@ or not, as well as affect any derived assets such as sealing keys.
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_UPD_005
 | System updates MUST be monotonic
 
-| CAT_NNN
+| SR_UPD_006
 | System updates SHOULD be robust against update failures
 |===
 
@@ -837,7 +915,7 @@ and a dedicated recovery loader.
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_UPD_007
 | System updates, and authorization messages, SHOULD only be received from
 trusted sources.
 
@@ -860,13 +938,14 @@ and integration actors often share mutual distrust:
 Use cases later in this specification provide examples of RISC-V isolation
 models.
 
+[#cat_sr_sub_iso]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_ISO_001
 | Isolated software components SHOULD be supported
 |===
 
@@ -879,7 +958,7 @@ accessible to other components.
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_ISO_002
 | Devices MUST not access memory belonging to an isolated component without
 permission
 |===
@@ -888,28 +967,36 @@ Isolation can also extend to other features, such as interrupts and debug.
 
 ==== Sealing
 
-Sealing is the process of protecting confidential assets on a system, typically using sealing keys derived in different ways for different use cases as discussed in this section. For example, from a hardware provisioned root key, from a boot state (measurements, security lifecycle state), or provisioned at runtime by a remote provisioning system.
+Sealing is the process of protecting confidential assets on a system, typically
+using sealing keys derived in different ways for different use cases as
+discussed in this section. For example, from a hardware provisioned root key,
+from a boot state (measurements, security lifecycle state), or provisioned at
+runtime by a remote provisioning system.
 
 Sealing can be:
 
 * Local +
-Local sealing binds assets to a local device (hardware unique sealing) or to a measured boot state.
+Local sealing binds assets to a local device (hardware unique sealing) or to a
+measured boot state.
 * Remote +
 Remote sealing binds assets to credentials provided by a remote provisioning
 service following successful attestation.
 
+[#cat_sr_sub_slg]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_SLG_001
 | Sealed assets SHOULD only be possible to unseal in a secured state
 
 |===
 
-For example, local sealing key derivations should take the security lifecycle state of the system into account. And remote sealing key provisioning should always attest the system before releasing unsealing credentials or keys.
+For example, local sealing key derivations should take the security lifecycle
+state of the system into account. And remote sealing key provisioning should
+always attest the system before releasing unsealing credentials or keys.
 
 Local sealing can be:
 
@@ -925,12 +1012,14 @@ privileged software.
 | ID#
 | Requirement
 
-| CAT_NNN
-| Locally sealed assets MUST only be possible to unseal on the same physical instance of a system that they were sealed on.
+| SR_SLG_002
+| Locally sealed assets MUST only be possible to unseal on the same physical
+instance of a system that they were sealed on.
 
 |===
 
-For example, using sealing keys derived from a hardware provisioned _hardware unique key (HUK)_. 
+For example, using sealing keys derived from a hardware provisioned _hardware
+unique key (HUK)_.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -938,8 +1027,10 @@ For example, using sealing keys derived from a hardware provisioned _hardware un
 | ID#
 | Requirement
 
-| CAT_NNN
-| Locally sealed assets bound to a boot measurement MUST only be possible to unseal if that measurement has not changed, or the system has received an authorized update.
+| SR_SLG_003
+| Locally sealed assets bound to a boot measurement MUST only be possible to
+unseal if that measurement has not changed, or the system has received an
+authorized update.
 
 |===
 

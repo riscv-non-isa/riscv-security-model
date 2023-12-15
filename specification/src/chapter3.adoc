@@ -54,9 +54,14 @@ MMU, PMP/ePMP, and sPMP are discussed later in this chapter.
 https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged
 ISA]
 
-_Physical memory attributes (PMA)_ are intended to capture inherent properties of the underlying hardware. For example, read-only ROM regions, or non-cachable device regions. Often PMA can be fixed at design time or at boot, but sometimes runtime PMA can be required.
+_Physical memory attributes (PMA)_ are intended to capture inherent properties
+of the underlying hardware. For example, read-only ROM regions, or non-cachable
+device regions. Often PMA can be fixed at design time or at boot, but sometimes
+runtime PMA can be required.
 
-A separate hardware checker - _PMA checker_ - enforces PMA rules at runtime once a physical address is known. PMA rules are always checked on every physical access, and typically configured by region.
+A separate hardware checker - _PMA checker_ - enforces PMA rules at runtime once
+a physical address is known. PMA rules are always checked on every physical
+access, and typically configured by region.
 
 ==== PMP and ePMP
 
@@ -66,13 +71,14 @@ ISA]
 _Physical memory protection (PMP)_ enables M-mode to access-control physical
 memory for supervisor or HS modes.
 
+[#cat_sr_sub_pmp]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_PMP_001
 | PMP configurations MUST only be directly accessible to machine mode
 |===
 
@@ -89,7 +95,7 @@ against privilege escalation attacks, for example.
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_PMP_002
 | If PMP is supported then ePMP MUST be supported.
 |===
 
@@ -114,9 +120,9 @@ memory allocations to its workloads.
 | ID#
 | Requirement
 
-| CAT_NNN
-| Either sPMP, 1st-stage or G-stage page tables MUST be used to protect
-Supervisor domain H/S-mode from lower privilege levels.
+| SR_PMP_003
+| if Sv is not supported, sPMP SHOULD be used to protect Supervisor domain
+S-mode from lower privilege levels.
 |===
 
 ==== MMU
@@ -131,15 +137,20 @@ translation)
 * Isolating a hypervisor from a guest, on a system with H-extension (two-stage
 translation)
 
+[#cat_sr_sub_mmu]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_MMU_001
 | Either PMP/ePMP or MTT MUST be used to protect M-mode from lower privilege
 levels.
+
+| SR_MMU_002
+| if Sv is supported 1st-stage and/or G-stage page tables MUST used to protect
+Supervisor domain H/S-mode from lower privilege levels.
 |===
 
 ==== Supervisor domains
@@ -154,15 +165,17 @@ memory, execution state, and devices - from other supervisor domains regardless
 of privilege level (below M-mode). Isolation and context switching between
 supervisor domains are managed by M-mode firmware.
 
-A supervisor domain is identified at architecture level by a _supervisor domain id (SDID)_, managed by M-mode firmware.
+A supervisor domain is identified at architecture level by a _supervisor domain
+id (SDID)_, managed by M-mode firmware.
 
+[cat_sr_sub_sud]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NN
+| SR_SUD_001
 | PMP/ePMP or MTT MUST be used to enforce physical memory isolation
 boundaries for supervisor domains, and to protect machine mode from any
 supervisor domain.
@@ -174,7 +187,12 @@ PMP can be used for more static and deterministic use cases.
 MTT can be used where more fine grained dynamic resource management across
 supervisor domain boundaries is required.
 
-NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode can enforce that its own resources are never assigned to another domain. PMP/ePMP still add further protections for M-mode, such as the ability to implement temporal isolation boundaries within M-mode (for example, protect early boot code), or to prevent itself from accessing or executing from memory assigned to lower privilege levels (privilege escalation).
+NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode
+can enforce that its own resources are never assigned to another domain.
+PMP/ePMP still add further protections for M-mode, such as the ability to
+implement temporal isolation boundaries within M-mode (for example, protect
+early boot code), or to prevent itself from accessing or executing from memory
+assigned to lower privilege levels (privilege escalation).
 
 [width=100%]
 [%header, cols="5,20"]
@@ -183,10 +201,10 @@ NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode 
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_SUD_002
 | A system supporting supervisor domains MUST support supervisor domain
-extensions for interrupts (Smsdia) and performance counters (TBD), and SHOULD
-support supervisor domain extensions for external debug (Smsdsd TBD).
+extensions for interrupts (Smsdia) and SHOULD support supervisor domain
+extensions for external debug (TBD).
 
 |===
 
@@ -217,21 +235,27 @@ enable fine grained dynamic memory management across supervisor domain
 boundaries, with policy typically set by a hypervisor in a hosting domain
 responsible for resource management.
 
+[#cat_sr_sub_mtt]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_MTT_001
 | Either PMP/ePMP or MTT MUST be used to protect M-mode from lower privilege
 levels
 
-| CAT_NNN
+| SR_MTT_002
 | MTT configurations MUST only be directly accessible to machine mode
 |===
 
-NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode can enforce that its own resources are never assigned to another domain. PMP/ePMP still add further protections for M-mode, such as the ability to implement temporal isolation boundaries within M-mode (for example, protect early boot code), or to prevent itself from accessing or executing from memory assigned to lower privilege levels (privilege escalation).
+NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode
+can enforce that its own resources are never assigned to another domain.
+PMP/ePMP still add further protections for M-mode, such as the ability to
+implement temporal isolation boundaries within M-mode (for example, protect
+early boot code), or to prevent itself from accessing or executing from memory
+assigned to lower privilege levels (privilege escalation).
 
 ==== IOPMP
 
@@ -240,21 +264,24 @@ https://github.com/riscv-non-isa/iopmp-spec
 IOPMP is a system level component providing physical memory access control for
 device-initiated transactions, complementing PMP and sPMP rules.
 
+[#cat_sr_sub_iop]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_IOP_001
 | A system which supports PMP/ePMP, or sPMP, MUST implement IOPMP for device
 access control.
 
-| CAT_NNN
+| SR_IOP_002
 | IOPMP configurations MUST only be directly accessible to machine mode.
 |===
 
-NOTE: IOPMP defines multiple "models" for different system configurations. Unless specified differently in the use cases in this specification, system designers are free to choose any IOPMP model.
+NOTE: IOPMP defines multiple "models" for different system configurations.
+Unless specified differently in the use cases in this specification, system
+designers are free to choose any IOPMP model.
 
 ==== IOMTT
 
@@ -269,26 +296,32 @@ device-initiated transactions, complementing MTT rules.
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_IOM_001
 | A system which supports MTT MUST implement IOMTT for access-control for
 device-initiated memory accesses.
 
-| CAT_NNN
+| SR_IOM_002
 | IOMTT configurations MUST only be directly accessible to machine mode.
 
-| CAT_NNN
+| SR_IOM_003
 | A system which implements IOMTT MAY also implement IOPMP to access-control
 device-initiated access to M-mode memory.
 
 |===
 
-NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that M-mode can enforce that its own resources are never assigned to another domain. Use of IOPMP or similar still adds further protections. For example, a system may require that Root devices are not able to access memory assigned to TEE domain.
+NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that
+M-mode can enforce that its own resources are never assigned to another domain.
+Use of IOPMP or similar still adds further protections. For example, a system
+may require that Root devices are not able to access memory assigned to TEE
+domain.
 
 ==== IOMMU
 
 https://github.com/riscv-non-isa/riscv-iommu
 
-IOMMU is a system level component performing memory address translation from IO Virtual Address to Physical Address, allowing devices to access virtual memory locations. It complements MMU configurations.
+IOMMU is a system level component performing memory address translation from IO
+Virtual Address to Physical Address, allowing devices to access virtual memory
+locations. It complements MMU configurations.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -296,10 +329,10 @@ IOMMU is a system level component performing memory address translation from IO 
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_IOM_004
 | Systems supporting MMU SHOULD also support IOMMU
 
-| CAT_NNN
+| SR_IOM_005
 | Systems supporting IOMMU MUST also enforce physical memory access control for
 M-mode memory against device-initiated transactions (IOMTT or IOPMP).
 
@@ -373,11 +406,11 @@ recommendations and references.
 | ID#
 | Requirement
 
-| CAT_NNN
+| SR_CPT_001
 | RISC-V systems SHOULD support either scalar or vector cryptographic ISA
 extensions
 
-| CAT_NNN
+| SR_CPT_002
 | The entropy source ISA extension MUST be supported if either scalar or vector
 cryptographic ISA extensions are supported.
 
