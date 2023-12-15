@@ -254,7 +254,7 @@ For example, a hosting environment is free to apply their own resource
 allocation policy to any workloads. Including denying service. This applies in
 the same way to confidential workloads.
 
-[@cat_sr_sub_dos]
+[#cat_sr_sub_dos]
 [width=100%]
 [%header, cols="5,20"]
 |===
