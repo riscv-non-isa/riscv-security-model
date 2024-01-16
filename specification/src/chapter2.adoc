@@ -344,10 +344,10 @@ models and requirements.
 | Unrestricted access
 | Direct +
 Logical
-| Direct access to unauthroized resources in normal operation.
+| Unauthorized direct access to resources between isolated components.
 a| * RISC-V privilege levels
-* RISC-V isolation (for example: PMP/sPMP, MTT, supervisor domains)
-* RISC-V hardware virtualization (H extension, MMU)
+* RISC-V isolation (for example: PMP/ePMP, sPMP, MTT, supervisor domains)
+* RISC-V hardware enforced virtualization (H extension, MMU)
 |
 
 | SR_LGC_002
@@ -399,6 +399,19 @@ control flow to code controlled by an attacker.
 a| * Shadow stacks (Zicfiss)
 * Landing pads (Zicfilp)
 |
+
+| SR_LGC_006
+| Memory safety
+| Logical
+| Unauthorized access to resources within an isolated component. For example, pointer or allocation errors (temporal memory safety), or buffer overflows (spacial memory safety).
+| RISC-V pointer masking (J-extension) +
+Shadow stacks (Zicfiss) +
+Landing pads (Zicfilp) +
+ +
+Memory safe programming, for example: +
+https:/www.cisa.gov/sites/default/files/2023-12/CSAC_TAC_Recommendations-Memory-Safety_Final_20231205_508.pdf +
+| Architectural sandboxing, such as HFI. +
+Capability based architecture, such as CHERI.
 
 |===
 
