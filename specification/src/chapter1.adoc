@@ -46,7 +46,7 @@ A requirement or a group of requirements may be followed by non-normative text
 providing context or justification for the requirement. The non-normative text
 may also be used to reference sources that are the origin of the requirement.
 
-Trackable requirements are intended for ease of reference across dependant
+Trackable requirements are intended for ease of reference across dependent
 specifications.
 
 === Relationship to external profiles
@@ -62,10 +62,10 @@ Some profiles cover some or all of:
 * Security reference architectures and taxonomy
 * Hardware and software security requirements
 * Interfaces and programming models
-* Protection profiles and certification programmes
+* Protection profiles and certification programs
 * Reference firmware/software
 
-Other profiles are focussed on processes and methodology.
+Other profiles are focused on processes and methodology.
 
 Examples of external profiles include:
 
