@@ -64,7 +64,7 @@ a system is its _root of trust (RoT)_. A RoT supports fundamental security
 services, for example:
 
 * Boot and attestation
-* Security lifecycle management
+* Security life cycle management
 * Key derivations and sealing
 * Security provisioning
 
@@ -86,7 +86,7 @@ For the purpose of this document, these should be treated as _secondary roots of
 trust_. +
  +
 The HW RoT acts as a _primary root of trust_ on the system. For example, the HW
-RoT governs boot, and can load firmware and manage the security lifecycle of a
+RoT governs boot, and can load firmware and manage the security life cycle of a
 secondary root of trust.
 
 [#cat_sr_sub_rot]
@@ -268,8 +268,8 @@ privileged software, or other isolated workloads at the same privilege level.
 |===
 
 Higher privileged software always has to be able to enforce its own resource
-management policy without interference. Including scheduling, resource
-assignment and recovation policies.
+management policy without interference, including scheduling, resource
+assignment and revocation policies.
 
 === Adversarial model
 
@@ -478,7 +478,7 @@ that can be used to enforce and establish trust in an ecosystem.
 
 These features are defined here at a functional level only. Technical
 requirements are typically use case specific and defined by external
-certification programmes.
+certification programs.
 
 In some cases RISC-V non-ISA specifications can provide guidance or protocols.
 This is discussed more in use case examples later in this specification.
@@ -498,7 +498,7 @@ This is discussed more in use case examples later in this specification.
 
 Identifies the immutable part of the security platform - immutable hardware,
 configurations, and firmware. Immutable components cannot change after
-completed security provisioning (see also security lifecycle management).
+completed security provisioning (see also security life cycle management).
 
 A _secure identity_ is one capable of generating a cryptographic signature
 which can be verified by a remote party. Usually an asymmetric key pair, but
@@ -516,7 +516,7 @@ anonymization service
 It can be directly hardware provisioned, or derived from other hardware
 provisioned assets.
 
-==== Security lifecycle
+==== Security life cycle
 
 [#cat_sr_sub_lfc]
 [width=100%]
@@ -526,16 +526,16 @@ provisioned assets.
 | Requirement
 
 | SR_LFC_001
-| A secure system MUST manage a security lifecycle.
+| A secure system MUST manage a security life cycle.
 |===
 
 [caption="Figure {counter:image}: ", reftext="Figure {image}"]
-[title= "Generic security lifecycle"]
+[title= "Generic security life cycle"]
 image::img_ch2_security-lifecycle.png[]
 
 [#security-lifecycle]
-A security lifecycle reflects the trustworthiness of a system during its
-lifetime and reflects the lifecycle state of hardware provisioned assets.
+A security life cycle reflects the trustworthiness of a system during its
+lifetime and reflects the life cycle state of hardware provisioned assets.
 
 It can be extended as indicated below to cover additional security provisioning
 steps such as device onboarding, device activation, user management, and RMA
@@ -558,7 +558,7 @@ capabilities managed through an ecosystem defined governance process
 specific authorization process. In this case the debug capability, and the
 associated governance, is part of the trust contract with a relying party.
 
-For the purpose of this specification, a minimum security lifecycle includes at
+For the purpose of this specification, a minimum security life cycle includes at
 least the following states:
 
 * Manufacture - The system may not yet be locked down and has no hardware
@@ -671,7 +671,7 @@ Attestation allows a remote relying party to determine the trustworthiness of a
 confidential service before submitting assets to it.
 
 * Verify the security state of a confidential service
-* Verify the security state of all software and hardware a conidential service
+* Verify the security state of all software and hardware a confidential service
 depends on
 * Establish an attested secure connection to a confidential service
 
@@ -983,7 +983,7 @@ Isolation can also extend to other features, such as interrupts and debug.
 Sealing is the process of protecting confidential assets on a system, typically
 using sealing keys derived in different ways for different use cases as
 discussed in this section. For example, from a hardware provisioned root key,
-from a boot state (measurements, security lifecycle state), or provisioned at
+from a boot state (measurements, security life cycle state), or provisioned at
 runtime by a remote provisioning system.
 
 Sealing can be:
@@ -1007,7 +1007,7 @@ service following successful attestation.
 
 |===
 
-For example, local sealing key derivations should take the security lifecycle
+For example, local sealing key derivations should take the security life cycle
 state of the system into account. And remote sealing key provisioning should
 always attest the system before releasing unsealing credentials or keys.
 

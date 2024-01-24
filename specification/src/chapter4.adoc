@@ -37,7 +37,7 @@ and assets (physical isolation). There is no current mechanism in RISC-V for
 isolation within M-mode itself other than temporal boundaries +
  +
 To minimize the TCB of the FW RoT RISC-V recommends that secure systems
-implement S mode, and de-privilege non-RoT firmware such as an OS or
+implement S mode, and deprivilege non-RoT firmware such as an OS or
 non-security services.
 
 ==== Isolation model
@@ -154,7 +154,7 @@ domain.
 
 === Debug and performance management
 
-See xref:chapter2.adoc#_security_lifecycle[security lifecycle]. +
+See xref:chapter2.adoc#_security_lifecycle[security life cycle]. +
 See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
 
 [width=100%]
@@ -258,7 +258,7 @@ image::img_ch4_gp-tee.png[]
 
 https://globalplatform.org/[Global platform] defines technical standards,
 interface specifications and programming models, open source firmware, and
-certification programmes for _trusted execution environments (TEE)_.
+certification programs for _trusted execution environments (TEE)_.
 
 A TEE is an isolated environment providing security services. TEE services can
 be available to software on multiple Harts. For example:
@@ -565,7 +565,7 @@ granularity.
 
 === Debug and performance management
 
-See xref:chapter2.adoc#_security_lifecycle[security lifecycle]. +
+See xref:chapter2.adoc#_security_lifecycle[security life cycle]. +
 See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
 
 [width=100%]
@@ -686,7 +686,7 @@ _confidential workloads_.
 _CoVE (Confidential VM Extensions)_
 https://github.com/riscv-non-isa/riscv-ap-tee/tree/main/specification[specification]
 defines a confidential compute platform for RISC-V systems, including
-interfaces and programming models, covering lifecycle management, attestation,
+interfaces and programming models, covering life cycle management, attestation,
 resource management and devices assignment, for confidential workloads. It is
 based on principles defined by
 https://confidentialcomputing.io/[Confidential Computing Consortium].
@@ -994,7 +994,7 @@ https://github.com/riscv-non-isa/riscv-ap-tee-io
 
 ==== Debug and performance management
 
-See xref:chapter2.adoc#_security_lifecycle[security lifecycle]. +
+See xref:chapter2.adoc#_security_lifecycle[security life cycle]. +
 See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
 
 [width=100%]
