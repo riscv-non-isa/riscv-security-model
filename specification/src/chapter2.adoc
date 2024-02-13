@@ -3,7 +3,7 @@
 ==  RISC-V security model overview
 
 The aim of this chapter is to define common taxonomies and principles for
-secure systems as used in the rest of this and other RISC V specifications. It
+secure systems as used in the rest of this and other RISC-V specifications. It
 is divided into the following sections:
 
 * Reference model +
@@ -375,7 +375,7 @@ vulnerability]
 Logical
 | Abusing interfaces across privilege or isolation boundaries, for example to
 elevate privilege or to gain unauthorized access to resources.
-a| * RISC V privilege levels
+a| * RISC-V privilege levels
 * RISC-V isolation
 | High assurance cryptography
 
@@ -502,7 +502,7 @@ completed security provisioning (see also security life cycle management).
 
 A _secure identity_ is one capable of generating a cryptographic signature
 which can be verified by a remote party. Usually an asymmetric key pair, but
-sometimes symmetric signing schemes can be used). It is typically used as part
+sometimes symmetric signing schemes can be used. It is typically used as part
 of an attestation process.
 
 Its scope and uniqueness depends on use case. For example:
