@@ -584,7 +584,7 @@ specification.
 * Secured - hardware provisioned assets are locked (immutable), only authorized
 software can be used, and revealing debug is not enabled. +
 Additional specific provisioning stages can take place in this
-state - for example network onboarding and device activation, TSS/App/Device
+state - for example network onboarding and device activation, App/Device
 attestation or user identity management. This is out of scope of this
 specification.
 * Recoverable debug - part of the system is in a revealing debug state +
