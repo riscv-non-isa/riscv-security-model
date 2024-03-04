@@ -69,7 +69,7 @@ https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged
 ISA]
 
 _Physical memory protection (PMP)_ enables M-mode to access-control physical
-memory for supervisor or HS modes.
+memory for supervisor and U modes (with or without H-extension).
 
 [#cat_sr_sub_pmp]
 [width=100%]
@@ -121,8 +121,7 @@ memory allocations to its workloads.
 | Requirement
 
 | SR_PMP_003
-| if Sv is not supported, sPMP SHOULD be used to protect Supervisor domain
-S-mode from lower privilege levels.
+| If MMU is not supported, sPMP SHOULD be used to protect S-mode from lower privilege levels.
 |===
 
 ==== MMU
@@ -210,7 +209,7 @@ extensions for external debug (TBD).
 
 Interrupts: https://github.com/riscv/riscv-smmtt +
 External debug: https://github.com/riscv-non-isa/riscv-external-debug-security +
-Performance counters:
+Performance counters: https://lists.riscv.org/g/tech-privileged
 
 These extensions enable management of interrupts, external debug, and
 performance counters across supervisor domain boundaries. M-mode firmware
@@ -273,7 +272,9 @@ device-initiated transactions, complementing PMP and sPMP rules.
 
 | SR_IOP_001
 | A system which supports PMP/ePMP, or sPMP, MUST implement IOPMP for device
-access control.
+access control unless the system supports IOMTT.
+
+Depending in system design, IOMTT can enforce the same access control policies as IOPMP.
 
 | SR_IOP_002
 | IOPMP configurations MUST only be directly accessible to machine mode.
