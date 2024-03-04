@@ -755,8 +755,7 @@ software.
 Two complementary processes can be used to authorize software:
 
 * Measuring +
-A measurement is a cryptographic fingerprint, such as a running hash of memory
-contents and launch state.
+In the context of this document, a measurement is a record of a present state of the system, which can be used by a remote party to verify the security state of the system. It is typically a cryptographic fingerprint, such as a running hash of memory combined with security lifecycle state and other attributes. Although depending on use case other kinds of measurements can be used.
 * Verification +
 Verification is a process of establishing that a measurement is correct
 (expected)
