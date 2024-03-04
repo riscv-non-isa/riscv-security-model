@@ -3,7 +3,7 @@
 ==  RISC-V security model overview
 
 The aim of this chapter is to define common taxonomies and principles for
-secure systems as used in the rest of this and other RISC V specifications. It
+secure systems as used in the rest of this and other RISC-V specifications. It
 is divided into the following sections:
 
 * Reference model +
@@ -29,7 +29,9 @@ intended to describe any particular implementation and only aims to define a
 common taxonomy for the purpose of this and other RISC-V specifications.
 
 Most systems are made up of different software components, often from different
-supply chains, each managing _assets_ that need to be protected.
+supply chains, each managing _assets_ that need to be protected. The security reference model uses the generic term _domain_ to identify a logically isolated region, with at least some private resources and execution state not accessible to at least some other domain(s). The figure above is only provided for illustration and does not imply or limit the number of domains or the type of use cases a RISC-V system could support. See xref:chapter4.adoc[Use case examples] for more comprehensive and specific examples. 
+
+Logically isolated domains at the software level are typically reflected in logically isolated domains at the system level, where resources including devices can be assigned or restricted to specific domains. For example, device DMA transfers can be restricted to memory assigned to a particular domain.
 
 ==== Assets
 
@@ -188,11 +190,15 @@ break security guarantees, either directly or indirectly. For example:
 | SR_INV_002
 | Invasive subsystems SHOULD be enabled separately for M-mode &
 non-M-mode software.
+
+| SR_INV_003
+| Invasive subsystems SHOULD be enabled separately for individual domains
+
 |===
 
 ==== Event counters
 
-Event counters are commonly used for performance management and resource
+Event counters are commonly used on any system for performance management and resource
 allocation.
 
 However, they can also pose a security risk. For example, one workload
@@ -218,8 +224,7 @@ domain, without consent.
 
 ==== Platform quality of service
 
-Server platforms can provide _platform quality of service (QoS)_ features,
-consisting of Hart and system hardware and firmware aimed at managing access to
+More complex systems, such as server platforms, can provide _platform quality of service (QoS)_ features beyond the capabilities of basic event counters. Platform QoS features include any Hart and system hardware and firmware aimed at managing access to
 shared physical resources across workloads, minimizing contention. For example:
 
 * Memory bandwidth management
@@ -227,7 +232,7 @@ shared physical resources across workloads, minimizing contention. For example:
 * Hart allocation policies across workloads
 
 These types of features rely on monitoring resource utilization of workloads,
-similar to event counters, and optimizing resource allocation policies.
+similar to event counters, and optimization of resource allocation policies.
 
 [#cat_sr_sub_qos]
 [width=100%]
@@ -237,11 +242,11 @@ similar to event counters, and optimizing resource allocation policies.
 | Requirement
 
 | SR_QOS_001
-| Lower privileged software MUST NOT be able to monitor higher privileged
+| Lower privileged software MUST NOT be able to observe QoS events or attributes concerning higher privileged
 software.
 
 | SR_QOS_002
-| Software in one domains MUST NOT be able to monitor software in a different
+| Software in one domain MUST NOT be able to observe QoS events or attributes concerning a different
 domain, without consent.
 
 |===
@@ -265,11 +270,16 @@ the same way to confidential workloads.
 | Lower privileged software MUST NOT be able to deny service to higher
 privileged software, or other isolated workloads at the same privilege level.
 
+| SR_DOS_002
+| Software in one domain SHOULD NOT be able to deny service to software in a different domain
+
 |===
 
 Higher privileged software always has to be able to enforce its own resource
 management policy without interference, including scheduling, resource
 assignment and revocation policies.
+
+Similarly, a hosting domain owning resource allocation and host management across a system normally has to be able to enforce its own policies across domains. Including denying service. But other domains should not be able to deny service to the hosting domain, or to other domains.
 
 === Adversarial model
 
@@ -292,6 +302,8 @@ the same system. For example: probing, interposers, glitching, and disassembly.
 The victim is a process on a system, and the attacker does not have physical or
 logical access to the system. For example, radiation or power fluctuations, or
 protocol level attacks on connected services.
+
+At implementation level there can be further distinctions, for example the degree of proximity or vicinity required to execute a remote or a physical attack. For the purpose of this document we are not making more fine grained distinctions than the ones listed above. 
 
 Attacks can be direct or indirect:
 
