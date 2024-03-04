@@ -303,7 +303,7 @@ The victim is a process on a system, and the attacker does not have physical or
 logical access to the system. For example, radiation or power fluctuations, or
 protocol level attacks on connected services.
 
-At implementation level there can be further distinctions, for example the degree of proximity or vicinity required to execute a remote or a physical attack. For the purpose of this document we are not making more fine grained distinctions than the ones listed above. 
+At implementation level there can be further distinctions, for example the degree of proximity or vicinity required to execute a remote or a physical attack as defined above. For the purpose of this document we are not making more fine grained distinctions than logical, physical and remote. 
 
 Attacks can be direct or indirect:
 
@@ -356,11 +356,11 @@ models and requirements.
 | Unrestricted access
 | Direct +
 Logical
-| Unauthorized direct access to resources between isolated components.
+| Unauthorized direct access to resources in normal operation.
 a| * RISC-V privilege levels
 * RISC-V isolation (for example: PMP/ePMP, sPMP, MTT, supervisor domains)
 * RISC-V hardware enforced virtualization (H extension, MMU)
-|
+| CHERI
 
 | SR_LGC_002
 | Transient execution attacks
@@ -410,7 +410,7 @@ Logical
 control flow to code controlled by an attacker.
 a| * Shadow stacks (Zicfiss)
 * Landing pads (Zicfilp)
-|
+| CHERI
 
 | SR_LGC_006
 | Memory safety
@@ -616,6 +616,8 @@ secured state, or a recoverable debug state.
 | SR_LFC_003
 | Derived assets MUST only be available if a component is in secured state.
 |===
+
+For example, returning garbage or some known test and debug value when attempting to read a hardware provisioned asset, unless the system is in a secured state, or a recoverable debug state. Derived assets would then also become unavailable in these states, though test and debug versions could be available.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -843,7 +845,7 @@ immutable boot code.
 
 ==== System updates
 
-Over time, any non-immutable component may need updates to address
+Over time, any mutable component may need updates to address
 vulnerabilities or functionality improvements. A system update can concern
 software, firmware, microcode, or any other updatable component on a system.
 
