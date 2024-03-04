@@ -49,15 +49,10 @@ non-security services.
 | Requirement
 
 | SR_GEN_001
-| PMP/ePMP, or MTT, MUST be used to isolate M-mode from lower privilege levels.
+| PMP/ePMP, MUST be used to isolate M-mode from lower privilege levels.
 
 | SR_GEN_002
-| if Sv is not supported, sPMP SHOULD be used to protect Supervisor domain
-S-mode from lower privilege levels.
-
-| SR_GEN_003
-| if Sv is supported 1st-stage and/or G-stage page tables MUST used to protect
-Supervisor domain H/S-mode from lower privilege levels.
+| sPMP or MMU MUST be used to protect Supervisor mode from lower privilege levels (with or without H-extension)
 
 |===
 
@@ -71,10 +66,9 @@ assigned to lower privilege levels (privilege escalation).
 Using sPMP is typically a more static model and can achieve a more
 deterministic system, for example in automotive or automation use cases.
 
-MMU is typically required for Linux based systems, for example MMI use cases or
-edge devices.
+MMU is typically required for Linux based systems, and for virtualized systems.
 
-Either MMU and sPMP can be used both with or without hypervisor extension. For
+Either MMU or sPMP can be used both with or without hypervisor extension. For
 example, the hypervisor extension with sPMP can support static partition
 hypervisors, commonly used in automotive. And a single stage MMU can be used
 without hypervisor extension for full Linux support.
@@ -152,7 +146,7 @@ Use of IOPMP or similar may still add further protections. For example, a system
 may require that Root devices cannot access memory assigned to Confidential
 domain.
 
-=== Debug and performance management
+==== Debug and performance management
 
 See xref:chapter2.adoc#_security_lifecycle[security life cycle]. +
 See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
@@ -169,16 +163,6 @@ RoT (non M-mode external debug).
 
 | SR_GEN_008
 | External debug SHOULD be enabled separately for M-mode & non-M-mode software.
-|===
-
-Enables recoverable external debug of non M-mode software. In turn enabling
-supply chain separation.
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
 
 | SR_GEN_009
 | Self-hosted debug MAY be used for debug of non M-mode software.
@@ -188,9 +172,7 @@ supply chain separation.
 
 |===
 
-For example, within normal domain an S-mode OS can enable self-hosted debug for
-a user application. Only M-mode firmware should enable self-hosted debug for the
-S-mode OS.
+For example, external debug can be enabled for non-M-mode software without affecting M-mode (recoverable debug). And an S-mode OS can enable self-hosted debug for a user application without affecting other applications or S-mode itself. 
 
 [width=100%]
 [%header, cols="5,20"]
@@ -556,14 +538,14 @@ Possible use cases include:
 * Tagging interrupts, debug accesses, or coherent memory accesses
 * Device assignment (IOPMP/IOMTT integration), static or dynamic
 
-The attributes can be derived, for example, from SDID and privilege level, from
-PMA, or from dynamic meta-data during Sv address translation (MTT svpam).
+The attributes can be derived, for example, from SDID and privilege level, or from
+PMA.
 
 For some use cases security attributes can be extended to reflect finer
 granularity, for example for cryptographic memory protection with TA
 granularity.
 
-=== Debug and performance management
+==== Debug and performance management
 
 See xref:chapter2.adoc#_security_lifecycle[security life cycle]. +
 See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
@@ -584,17 +566,6 @@ See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC
 | External debug MUST only be enabled by a HW RoT (Root domain external debug)
 or by Root domain (supervisor domain external debug).
 
-|===
-
-Enables recoverable external debug of a supervisor domain separately from other
-supervisor domains, and Root domain. In turn enabling supply chain separation.
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
 | SR_TEE_021
 | Self-hosted debug MAY be used for debug within a supervisor domain.
 
@@ -611,6 +582,8 @@ self-hosted debug for an S-mode OS or an HS mode hypervisor.
 Within TEE domain a TEE OS can enable self-hosted debug for a TA. An SPM can
 enable self-hosted debug for guest TEE. Only Root domain should enable
 self-hosted debug of SPM (virtualized) or TEE OS (non-virtualized).
+
+A machine mode monitor can enable external debug of individual supervisor domains without affecting M-mode, or any other supervisor domain.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -648,25 +621,7 @@ affected component, to an application specific governance process.
 
 Guarantees the system remains attestable.
 
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_TEE_027
-| Lower privileged software MUST NOT be able to monitor higher privileged
-software.
-
-| SR_TEE_028
-| Software in one domain MUST NOT be able to monitor software in a different
-domain, without consent.
-
-|===
-
-Prevents using event counters to monitor across guest/application, privilege
-and supervisor domain boundaries. Event counters can be managed by higher
-privileged software as part of context switching across boundaries.
+See xref:chapter2.adoc#_event_counters[event counters]
 
 === Confidential computing on RISC-V (CoVE)
 ==== Overview
@@ -702,7 +657,7 @@ CoVE divides software into physically isolated domains:
 * Normal domain +
 Typically hosting a hypervisor, and Normal guests and services.
 * Confidential domain +
-Hosts a _TSM_ (domain security manager) and confidential guests.
+Hosts a domain security manager (_trusted security manager, TSM_) and confidential guests.
 * Root domain +
 Hosts RoT firmware, including a secure monitor.
 
@@ -954,8 +909,7 @@ Possible use cases include:
 * Tagging interrupts, debug accesses, or coherent memory accesses
 * Device assignment (IOPMP/IOMTT integration), static or dynamic
 
-The attributes can be derived, for example, from dynamic meta-data during Sv
-address translation (MTT Svpam).
+The attributes can be derived, for example, from SDID and privilege mode.
 
 For some use cases security attributes can be extended to reflect finer
 granularity, for example for cryptographic memory protection with confidential
@@ -1013,17 +967,6 @@ See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC
 | External debug MUST only be enabled by a HW RoT (Root domain external debug)
 or by Root domain (supervisor domain external debug).
 
-|===
-
-Enables recoverable external debug of a supervisor domain separately from other
-supervisor domains, and Root domain. In turn enabling supply chain separation.
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
 | SR_CFC_021
 | Self-hosted debug MAY be used for debug within a supervisor domain.
 
@@ -1038,6 +981,8 @@ the HS mode hypervisor.
 
 Within Confidential domain the TSM can enable self-hosted debug for a
 confidential guest. Only Root domain should enable self-hosted debug of TSM.
+
+A machine mode monitor can enable external debug of individual supervisor domains without affecting M-mode, or any other supervisor domain.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -1061,46 +1006,8 @@ affected component, to an application specific governance process.
 
 Guarantees the system remains attestable.
 
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_CFC_026
-| Lower privileged software MUST NOT be able to measure higher privileged
-software.
-
-| SR_CFC_027
-| Software in one domain MUST NOT be able to measure software in a different
-domain, without consent.
-
-|===
-
-Prevents using event counters to measure across guest/application, privilege
-and supervisor domain boundaries.
-
-Event counters can be managed by higher privileged software as part of context
-switching across boundaries.
+See xref:chapter2.adoc#_event_counters[event counters]
 
 ==== Platform QoS
 
 See xref:chapter2.adoc#_platform_quality_of_service[platform quality of service].
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_CFC_028
-| Lower privilege software MUST NOT be able to measure higher privilege software.
-
-| SR_CFC_29
-| Software in one domain MUST NOT be able to measure software in a different
-domain, without consent.
-
-|===
-
-Event counters can be managed by higher privileged software as part of context
-switching across boundaries.
