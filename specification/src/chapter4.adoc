@@ -56,12 +56,9 @@ non-security services.
 
 |===
 
-NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode
-can enforce that its own resources are never assigned to another domain.
-PMP/ePMP still add further protections for M-mode, such as the ability to
-implement temporal isolation boundaries within M-mode (for example, protect
-early boot code), or to prevent itself from accessing or executing from memory
-assigned to lower privilege levels (privilege escalation).
+See xref:chapter3.adoc#_pmp_and_epmp[PMP and ePMP]
+See xref:chapter3.adoc#_spmp[sPMP]
+See xref:chapter3.adoc#_mmu[MMU]
 
 Using sPMP is typically a more static model and can achieve a more
 deterministic system, for example in automotive or automation use cases.
@@ -336,6 +333,12 @@ can be cached when context switching between Normal and TEE domains.
 RISC-V hardware enforced isolation mechanisms can be used as follows to meet
 those guarantees:
 
+See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
+See xref:chapter3.adoc#_pmp_and_epmp[PMP and ePMP]
+See xref:chapter3.adoc#_spmp[sPMP]
+See xref:chapter3.adoc#_mmu[MMU]
+See xref:chapter3.adoc#_mtt[MTT]
+
 [width=100%]
 [%header, cols="5,20"]
 |===
@@ -350,20 +353,6 @@ those guarantees:
 domains.
 
 |===
-
-See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
-
-For static partition TEE, using PMP/ePMP, with supervisor domains can be
-sufficient.
-
-For virtualized TEE, MTT should be used with supervisor domains.
-
-NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode
-can enforce that its own resources are never assigned to another domain.
-PMP/ePMP still add further protections for M-mode, such as the ability to
-implement temporal isolation boundaries within M-mode (for example, protect
-early boot code), or to prevent itself from accessing or executing from memory
-assigned to lower privilege levels (privilege escalation).
 
 [width=100%]
 [%header, cols="5,20"]
@@ -386,7 +375,7 @@ between TA in TEE domain.
 | For a virtualized TEE, hypervisor extension MUST be supported
 
 | SR_TEE_010
-| For a virtualized TEE, MMU MUST be used to enforce isolation between guest
+| For a virtualized TEE, sPMP or MMU MUST be used to enforce isolation between guest
 TEE, and between TA within a TEE.
 |===
 
@@ -715,6 +704,12 @@ consent)
 RISC-V hardware enforced isolation mechanisms can be used as follows to meet
 those guarantees:
 
+See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
+See xref:chapter3.adoc#_pmp_and_epmp[PMP and ePMP]
+See xref:chapter3.adoc#_spmp[sPMP]
+See xref:chapter3.adoc#_mmu[MMU]
+See xref:chapter3.adoc#_mtt[MTT]
+
 [width=100%]
 [%header, cols="5,20"]
 |===
@@ -730,15 +725,6 @@ Confidential domains.
 
 |===
 
-See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
-
-NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode
-can enforce that its own resources are never assigned to another domain.
-PMP/ePMP still add further protections for M-mode, such as the ability to
-implement temporal isolation boundaries within M-mode (for example, protect
-early boot code), or to prevent itself from accessing or executing from memory
-assigned to lower privilege levels (privilege escalation).
-
 [width=100%]
 [%header, cols="5,20"]
 |===
@@ -750,7 +736,7 @@ assigned to lower privilege levels (privilege escalation).
 
 | SR_CFC_011
 | MMU MUST be used to enforce isolation between Confidential guests within
-Confidential domain.
+Confidential domain, and between workloads within guests.
 |===
 
 ==== Root of trust
