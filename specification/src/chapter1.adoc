@@ -9,8 +9,8 @@ aimed at developers of RISC-V technical specifications, as well as at designers
 of secure RISC-V systems.
 
 A few example uses cases based on commonly used deployment models are provided.
-These use cases are not intended to be exhaustive, or to act as protection
-profiles. They are intended as templates to be used as general guidelines,
+These use cases are not intended to be exhaustive, or to act as formal _protection
+profiles_ (https://csrc.nist.gov/glossary/term/protection_profile). They are intended as templates to be used as general guidelines,
 which can be applied to a wide variety of use cases.
 
 The examples may be extended over time as required. Protection profiles for more
@@ -51,13 +51,13 @@ specifications.
 
 === Relationship to external profiles
 
-For the purpose of this specification, external profiles apply to existing
+For the purpose of this specification, external standard or protection profiles apply to existing
 ecosystems or segments, but do not generally mandate implementations or
-architectures. This specification does not aim to establish new profiles. Its
+architectures. This specification does not aim to establish new protection profiles. Its
 main purpose is to provide guidelines for how RISC-V security building blocks
 can be used to build RISC-V products which can comply with existing profiles.
 
-Some profiles cover some or all of:
+Some protection profiles cover some or all of:
 
 * Security reference architectures and taxonomy
 * Hardware and software security requirements
@@ -65,9 +65,9 @@ Some profiles cover some or all of:
 * Protection profiles and certification programs
 * Reference firmware/software
 
-Other profiles are focused on processes and methodology.
+Other protection profiles are focused on processes and methodology.
 
-Examples of external profiles include:
+Examples of external protection profiles include:
 
 [width=100%]
 [%header, cols="5,15"]

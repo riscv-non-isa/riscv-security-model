@@ -69,7 +69,7 @@ https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged
 ISA]
 
 _Physical memory protection (PMP)_ enables M-mode to access-control physical
-memory for supervisor or HS modes.
+memory for supervisor and U modes (with or without H-extension).
 
 [#cat_sr_sub_pmp]
 [width=100%]
@@ -121,8 +121,7 @@ memory allocations to its workloads.
 | Requirement
 
 | SR_PMP_003
-| if Sv is not supported, sPMP SHOULD be used to protect Supervisor domain
-S-mode from lower privilege levels.
+| If MMU is not supported, sPMP SHOULD be used to protect S-mode from lower privilege levels.
 |===
 
 ==== MMU
@@ -152,78 +151,6 @@ levels.
 | if Sv is supported 1st-stage and/or G-stage page tables MUST used to protect
 Supervisor domain H/S-mode from lower privilege levels.
 |===
-
-==== Supervisor domains
-
-https://github.com/riscv/riscv-smmtt
-
-Supervisor domains allow software components on the same hart to be developed,
-certified, deployed and attested independently of each other.
-
-A supervisor domain is a compartment above M-mode, physically isolated -
-memory, execution state, and devices - from other supervisor domains regardless
-of privilege level (below M-mode). Isolation and context switching between
-supervisor domains are managed by M-mode firmware.
-
-A supervisor domain is identified at architecture level by a _supervisor domain
-id (SDID)_, managed by M-mode firmware.
-
-[cat_sr_sub_sud]
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_SUD_001
-| PMP/ePMP or MTT MUST be used to enforce physical memory isolation
-boundaries for supervisor domains, and to protect machine mode from any
-supervisor domain.
-
-|===
-
-PMP can be used for more static and deterministic use cases.
-
-MTT can be used where more fine grained dynamic resource management across
-supervisor domain boundaries is required.
-
-NOTE: MTT can be sufficient for protecting Root domain in the sense that M-mode
-can enforce that its own resources are never assigned to another domain.
-PMP/ePMP still add further protections for M-mode, such as the ability to
-implement temporal isolation boundaries within M-mode (for example, protect
-early boot code), or to prevent itself from accessing or executing from memory
-assigned to lower privilege levels (privilege escalation).
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-
-| ID#
-| Requirement
-
-| SR_SUD_002
-| A system supporting supervisor domains MUST support supervisor domain
-extensions for interrupts (Smsdia) and SHOULD support supervisor domain
-extensions for external debug (TBD).
-
-|===
-
-Interrupts: https://github.com/riscv/riscv-smmtt +
-External debug: https://github.com/riscv-non-isa/riscv-external-debug-security +
-Performance counters:
-
-These extensions enable management of interrupts, external debug, and
-performance counters across supervisor domain boundaries. M-mode firmware
-should context switch hart HPM event/counters to manage isolation of
-performance counters:
-
-* External debug can be enabled for one supervisor domain without affecting
-other supervisor domains
-* M-mode firmware manage interrupt routing and preemption across supervisor
-domain boundaries
-* M-mode firmware can ensure that performance counters cannot be used by
-software in one supervisor domain to measure operations in other supervisor
-domains
 
 ==== MTT
 
@@ -257,6 +184,71 @@ implement temporal isolation boundaries within M-mode (for example, protect
 early boot code), or to prevent itself from accessing or executing from memory
 assigned to lower privilege levels (privilege escalation).
 
+==== Supervisor domains
+
+https://github.com/riscv/riscv-smmtt
+
+Supervisor domains allow software components on the same hart to be developed,
+certified, deployed and attested independently of each other.
+
+A supervisor domain is a compartment above M-mode, physically isolated -
+memory, execution state, and devices - from other supervisor domains regardless
+of privilege level (below M-mode). Isolation and context switching between
+supervisor domains are managed by M-mode firmware.
+
+A supervisor domain is identified at architecture level by a _supervisor domain
+id (SDID)_ CSR, managed by M-mode firmware.
+
+[cat_sr_sub_sud]
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| SR_SUD_001
+| PMP/ePMP or MTT MUST be used to enforce physical memory isolation
+boundaries for supervisor domains, and to protect machine mode from any
+supervisor domain.
+
+|===
+
+PMP can be used for more static and deterministic use cases.
+
+MTT can be used where more fine grained dynamic resource management across
+supervisor domain boundaries is required.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+
+| ID#
+| Requirement
+
+| SR_SUD_002
+| A system supporting supervisor domains MUST support supervisor domain
+extensions for interrupts (Smsdia) and SHOULD support supervisor domain
+extensions for external debug (TBD).
+
+|===
+
+Interrupts: https://github.com/riscv/riscv-smmtt +
+External debug: https://github.com/riscv-non-isa/riscv-external-debug-security +
+Performance counters: https://lists.riscv.org/g/tech-privileged
+
+These extensions enable management of interrupts, external debug, and
+performance counters across supervisor domain boundaries. M-mode firmware
+should context switch hart HPM event/counters to manage isolation of
+performance counters:
+
+* External debug can be enabled for one supervisor domain without affecting
+other supervisor domains
+* M-mode firmware manage interrupt routing and preemption across supervisor
+domain boundaries
+* M-mode firmware can ensure that performance counters cannot be used by
+software in one supervisor domain to measure operations in other supervisor
+domains
+
 ==== IOPMP
 
 https://github.com/riscv-non-isa/iopmp-spec
@@ -273,7 +265,9 @@ device-initiated transactions, complementing PMP and sPMP rules.
 
 | SR_IOP_001
 | A system which supports PMP/ePMP, or sPMP, MUST implement IOPMP for device
-access control.
+access control unless the system supports IOMTT.
+
+Depending in system design, IOMTT can enforce the same access control policies as IOPMP.
 
 | SR_IOP_002
 | IOPMP configurations MUST only be directly accessible to machine mode.
