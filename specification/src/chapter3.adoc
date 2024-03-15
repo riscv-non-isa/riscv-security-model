@@ -417,7 +417,7 @@ operation can be viewed as a vector of size 1.
 
 ==== Capability based architecture
 
-* CHERI - a mature technique that uses capability-based memory protection for spatial and temporal memory safety, highly efficient compartmentalisation, and control-flow robustness.  Source code has to be recompiled to capture memory safety properties inherent in the source language.
+* CHERI - an ISA technique that uses capability-based memory protection for spatial and temporal memory safety, compartmentalization, and control-flow enforcement.  Source code has to be recompiled to capture memory safety properties inherent in the source language.
 * Capstone
 
 ==== Hardware enforced memory tagging
