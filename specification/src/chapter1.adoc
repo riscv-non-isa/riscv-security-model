@@ -3,24 +3,23 @@
 
 == Introduction
 
-This specification provides guidelines for how RISC-V security building blocks
-can be used to build secure systems for different use cases. It is
-aimed at developers of RISC-V technical specifications, as well as at designers
-of secure RISC-V systems.
+This specification provides guidelines for building secure RISC-V systems using RISC-V security building blocks. It is
+aimed at developers of RISC-V technical specifications as well as designers of secure RISC-V systems.
 
-A few example uses cases based on commonly used deployment models are provided.
-These use cases are not intended to be exhaustive, or to act as formal _protection
-profiles_ (https://csrc.nist.gov/glossary/term/protection_profile). They are intended as templates to be used as general guidelines,
-which can be applied to a wide variety of use cases.
+A few example use cases are provided which are based on commonly used security deployment models.
+These are not intended to be exhaustive. They are accompanied by use case specific security
+guidelines which may help readers implement their own guidelines for their specific use cases.
 
-The examples may be extended over time as required. Protection profiles for more
-specific use cases are expected to be provided within relevant certification
-bodies, or as separate RISC-V specifications if required.
+The examples may be extended over time as required.
+
+The examples are not definitions of formal Protection Profiles (See: https://csrc.nist.gov/glossary/term/protection_profile).
+Such protection profiles for specific use cases are expected to be provided within relevant certification
+bodies or as separate RISC-V specifications, if required.
 
 === Requirements and tracking
 
-Where this specification makes formal recommendations, those are captured as
-trackable requirements using the following format:
+This is a non-normative specification. However, the specification makes formal recommendations where appropriate. Those
+are expressed as trackable requirements using the following format:
 
 [width=100%]
 [%header, cols="5,20"]
@@ -49,25 +48,21 @@ may also be used to reference sources that are the origin of the requirement.
 Trackable requirements are intended for ease of reference across dependent
 specifications.
 
-=== Relationship to external profiles
+=== Relationship with external protection profiles
 
-For the purpose of this specification, external standard or protection profiles apply to existing
-ecosystems or segments, but do not generally mandate implementations or
-architectures. This specification does not aim to establish new protection profiles. Its
-main purpose is to provide guidelines for how RISC-V security building blocks
-can be used to build RISC-V products which can comply with existing profiles.
+To assist with articulating security guidelines relevant to the included examples, this specification references external
+protection profiles as appropriate. Such references are not intended to mandate any specific implementations.
 
-Some protection profiles cover some or all of:
+Typically, protection profiles cover some or all of:
 
 * Security reference architectures and taxonomy
 * Hardware and software security requirements
 * Interfaces and programming models
-* Protection profiles and certification programs
 * Reference firmware/software
+* Certification programs
+* Misc Processes and methodology
 
-Other protection profiles are focused on processes and methodology.
-
-Examples of external protection profiles include:
+The following are examples of some external protection profiles that are referenced by this specification:
 
 [width=100%]
 [%header, cols="5,15"]
@@ -88,13 +83,11 @@ https://globalplatform.org/
 PSA Certified. +
 https://www.psacertified.org/
 
-
 | Trusted computing group (TCG)
 | Trusted platform module (TPM) and Device identifier composition engine (DICE)
 for trusted platforms. +
 TCG certification. +
 https://trustedcomputinggroup.org/
-
 
 | Confidential computing consortium
 | Common principles and protocols for protecting data in use (confidential
