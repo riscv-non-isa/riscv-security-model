@@ -1,6 +1,6 @@
 = RISC-V Platform Security Model Specification
 
-This repository holds specifications which defines a platform security model for RISC-V platforms.
+This repository holds specifications which define a platform security model for RISC-V platforms.
 
 = License
 
@@ -9,12 +9,12 @@ See the https://github.com/riscv/docs-spec-template/blob/main/LICENSE[LICENSE] f
 
 = Contributors
 
-Contributors to this specification are contained in the link:specification/src/contributors.adoc[contributors.adoc] file.
+Contributors to this specification are listed link:specification/src/contributors.adoc[here].
 
 = Dependencies
 
-This project is built using AsciiDoctor (Ruby). The repository has been setup to build the PDF on
-checkin using GitHub actions.  Workflow dependencies are located in the `dependencies` directory.
+This project is built using AsciiDoctor (Ruby). The project's repository has been setup to automatically build a PDF
+version on a commit using GitHub actions.  Workflow dependencies are located in the `dependencies` directory.
 
 For more information on AsciiDoctor, specification guidelines, or building locally, see the
 https://github.com/riscv/docs-dev-guide[RISC-V Documentation Developer Guide].
@@ -25,23 +25,35 @@ This project uses https://git-scm.com/book/en/v2/Git-Tools-Submodules[GitHub Sub
 to include the https://github.com/riscv/docs-resources[RISC-V docs-resources project]
 to achieve a common look and feel.
 
-When cloning this repository for the first time, you must either use
-`git clone --recurse-submodules` or execute `git submodule init` and `git submodule update` after the clone to populate the docs-resources directory.  Failure to clone the submodule, will result
-in the PDF build fail with an error message like the following:
+The project repository uses git submodules which must be cloned explicitly. This can be done when cloning the repository
+the first time by executing either:
 
-    $ make
-    asciidoctor-pdf \
-    -a toc \
-    -a compress \
-    -a pdf-style=docs-resources/themes/riscv-pdf.yml \
-    -a pdf-fontsdir=docs-resources/fonts \
-    --failure-level=ERROR \
-    -o profiles.pdf profiles.adoc
-    asciidoctor: ERROR: could not locate or load the built-in pdf theme `docs-resources/themes/riscv-pdf.yml'; reverting to default theme
-    No such file or directory - notoserif-regular-subset.ttf not found in docs-resources/fonts
-      Use --trace for backtrace
-    make: *** [Makefile:7: profiles.pdf] Error 1
+`git clone --recurse-submodules`
+
+or:
+
+`git submodule init` followed by `git submodule update`
+
+Failure to do so will result in an error while building the pdf:
+
+```
+$ make
+  asciidoctor-pdf \
+  -a toc \
+  -a compress \
+  -a pdf-style=docs-resources/themes/riscv-pdf.yml \
+  -a pdf-fontsdir=docs-resources/fonts \
+  --failure-level=ERROR \
+  -o profiles.pdf profiles.adoc
+
+  asciidoctor: ERROR: could not locate or load the built-in pdf theme
+  docs-resources/themes/riscv-pdf.yml; reverting to default theme
+
+  No such file or directory - notoserif-regular-subset.ttf not found in docs-resources/fonts
+    Use --trace for backtrace
+  make: *** [Makefile:7: profiles.pdf] Error 1
+```
 
 = Building the document
 
-The final specification form of PDF can be generated using the `make` command.
+The final specification can be generated in PDF form using the `make` command at the project root.
