@@ -2,14 +2,8 @@
 
 == Use case examples
 
-This chapter provides a selection of example uses cases based on commonly used
-deployment models. These use cases are not intended to be exhaustive, or to act
-as protection profiles. They are intended as templates which can be used as
-general guidelines, which can be applied to a wide variety of use cases.
-
-The examples may be extended over time as required. Protection profiles for more
-specific use cases are expected to be provided within relevant certification
-bodies,or as separate RISC-V specifications if required.
+This chapter provides a selection of non-exhaustive example security usecases based on commonly used
+deployment security models. The examples may be extended over time as required.
 
 === Generic system without supervisor domains
 
@@ -30,7 +24,7 @@ A system level HW RoT is recommended.
 
 NOTE: The RISC-V architecture also caters for systems with just M and U modes,
 commonly used in embedded systems, helper cores, and similar use cases. On
-secure systems not supporting S mode a FW RoT has to share M-mode with an OS.
+secure systems not supporting S-mode a FW RoT has to share M-mode with an OS.
 RISC-V does not exclude such implementations - for example, implementations
 using a certified OS and FW RoT, or using a HW RoT to isolate sensitive code
 and assets (physical isolation). There is no current mechanism in RISC-V for
@@ -49,26 +43,27 @@ non-security services.
 | Requirement
 
 | SR_GEN_001
-| PMP/ePMP, MUST be used to isolate M-mode from lower privilege levels.
+| PMP/Smepmp, MUST be used to isolate M-mode from lower privilege levels.
 
 | SR_GEN_002
 | sPMP or MMU MUST be used to protect Supervisor mode from lower privilege levels (with or without H-extension)
 
 |===
 
-See xref:chapter3.adoc#_pmp_and_epmp[PMP and ePMP]
+See xref:chapter3.adoc#_pmp_and_epmp[PMP and Smepmp]
+
 See xref:chapter3.adoc#_spmp[sPMP]
+
 See xref:chapter3.adoc#_mmu[MMU]
 
-Using sPMP is typically a more static model and can achieve a more
-deterministic system, for example in automotive or automation use cases.
+The sPMP is typically used in relatively static deployments such as determinism sensitive use cases like automotives.
 
-MMU is typically required for Linux based systems, and for virtualized systems.
+The MMU is typically required for Linux based systems and for virtualized systems.
 
-Either MMU or sPMP can be used both with or without hypervisor extension. For
-example, the hypervisor extension with sPMP can support static partition
-hypervisors, commonly used in automotive. And a single stage MMU can be used
-without hypervisor extension for full Linux support.
+Either MMU or sPMP can be used both with or without the hypervisor extension. For
+example, the hypervisor extension with sPMP can support static partitioning
+hypervisors commonly used in automotive. A single stage MMU can be used
+without the hypervisor extension for full Linux support.
 
 ==== Root of Trust
 
@@ -169,7 +164,7 @@ RoT (non M-mode external debug).
 
 |===
 
-For example, external debug can be enabled for non-M-mode software without affecting M-mode (recoverable debug). And an S-mode OS can enable self-hosted debug for a user application without affecting other applications or S-mode itself. 
+For example, external debug can be enabled for non-M-mode software without affecting M-mode (recoverable debug). And an S-mode OS can enable self-hosted debug for a user application without affecting other applications or S-mode itself.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -271,7 +266,7 @@ domain boundaries, including event management.
 For the purpose of this specification, TEE deployment models can be separated
 as:
 
-* Static partition TEE +
+* Static partitioning TEE +
 A single TEE provides security services to Normal domain. TA are typically
 installed at boot by RoT FW and TEE OS, though Global Platform does also define
 protocols for installation of TA at runtime. System configuration and resource
@@ -334,7 +329,7 @@ RISC-V hardware enforced isolation mechanisms can be used as follows to meet
 those guarantees:
 
 See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
-See xref:chapter3.adoc#_pmp_and_epmp[PMP and ePMP]
+See xref:chapter3.adoc#_pmp_and_epmp[PMP and Smepmp]
 See xref:chapter3.adoc#_spmp[sPMP]
 See xref:chapter3.adoc#_mmu[MMU]
 See xref:chapter3.adoc#_mtt[MTT]
@@ -346,7 +341,7 @@ See xref:chapter3.adoc#_mtt[MTT]
 | Requirement
 
 | SR_TEE_006
-| PMP/ePMP, or MTT, MUST be used to isolate Root domain from other domains.
+| PMP/Smepmp, or MTT, MUST be used to isolate Root domain from other domains.
 
 | SR_TEE_007
 | Supervisor domains MUST be used to enforce isolation between Normal and TEE
@@ -705,7 +700,7 @@ RISC-V hardware enforced isolation mechanisms can be used as follows to meet
 those guarantees:
 
 See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
-See xref:chapter3.adoc#_pmp_and_epmp[PMP and ePMP]
+See xref:chapter3.adoc#_pmp_and_epmp[PMP and Smepmp]
 See xref:chapter3.adoc#_spmp[sPMP]
 See xref:chapter3.adoc#_mmu[MMU]
 See xref:chapter3.adoc#_mtt[MTT]
@@ -717,7 +712,7 @@ See xref:chapter3.adoc#_mtt[MTT]
 | Requirement
 
 | SR_CFC_008
-| PMP/ePMP or MTT MUST be used to isolate Root domain from other domains.
+| PMP/Smepmp or MTT MUST be used to isolate Root domain from other domains.
 
 | SR_CFC_009
 | Supervisor domains MUST be used to enforce isolation between Normal and
