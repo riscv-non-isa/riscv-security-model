@@ -29,7 +29,7 @@ model. The model is not tied to any particular implementation.
 
 Most systems are built with multiple software components each managing _assets_ that need to be protected. These components
 are often sourced from multiple different supply chains. The security reference model uses the generic term _domain_ to identify a logically isolated region, with at least some private resources and execution state not accessible to at least some other domain(s). The figure above
-uses two domains for illustrative purposes but some use-cases may require more. This specification does not imply or limit the number of domains or the type of use cases a RISC-V system could support. See xref:chapter4.adoc[Use case examples] for more comprehensive and specific examples.
+uses two domains for illustrative purposes but some use-cases can require more. This specification does not imply or limit the number of domains or the type of use cases a RISC-V system could support. See xref:chapter4.adoc[Use case examples] for more comprehensive and specific examples.
 
 Logically isolated domains at the software level are typically reflected in logically isolated domains at the system hardware level, where hardware resources can be assigned or restricted to specific software domains. For example, device DMA transfers can be restricted to memory assigned to a particular domain.
 
@@ -52,7 +52,7 @@ identities.
 The _Trusted Computing Base (TCB)_ of any system function is the minimum amount of
 software and hardware that is critical to the security of that function.
 
-The following are examples of software components that may be a part of some function's TCB:
+The following are examples of software components that can be a part of some function's TCB:
 
 * An operating system
 * A hypervisor and a guest operating system
@@ -88,7 +88,7 @@ user identity management. +
 For the purpose of this document, these should be treated as _secondary roots of
 trust_. +
  +
-The HW RoT may manage the security life cycle of a secondary root of trust (booting etc).
+The HW RoT can manage the security life cycle of a secondary root of trust (booting etc).
 
 [#cat_sr_sub_rot]
 [width=100%]
@@ -199,8 +199,8 @@ non-M-mode software.
 Event counters are commonly used for performance management and resource
 allocation on systems.
 
-However, they can pose a security risk. For example, a workload may maliciously attempt to infer another workload's
-secrets by monitoring that other workload's operation. The victim workload may be at the same, lower, or higher
+However, they can pose a security risk. For example, a workload can maliciously attempt to infer another workload's
+secrets by monitoring that other workload's operation. The victim workload can be at the same, lower, or higher
 privilege than the malicious workload.
 
 [#cat_sr_sub_pmu]
@@ -256,8 +256,8 @@ domain, without consent.
 The RISC-V security model is primarily concerned with protection of assets. It is not concerned with providing service
 guarantees.
 
-For example, a hosting environment is free to apply its own resource allocation policy to relevant workloads. This may
-include denying service to some workloads. This may also be applicable to confidential workloads.
+For example, a hosting environment is free to apply its own resource allocation policy to relevant workloads. This can
+include denying service to some workloads. 
 
 [#cat_sr_sub_dos]
 [width=100%]
@@ -327,12 +327,12 @@ This specification is primarily concerned with ISA level mitigations against
 logical attacks.
 
 Physical or remote attacks in general need to be addressed at system, protocol
-or governance level, and may require additional non-ISA mitigations. However,
+or governance level, and can require additional non-ISA mitigations. However,
 some ISA level mitigations can also help provide some mitigation against
 physical or remote attacks and this is indicated in the tables below.
 
 The required level of protection can vary depending on use case. For example, a
-HW RoT may have stronger requirements on physical resistance than other parts
+HW RoT can have stronger requirements on physical resistance than other parts
 of an SoC.
 
 Finally, this specification does not attempt to rate attacks by severity, or by
@@ -514,10 +514,10 @@ the completion of security provisioning (see also security life cycle management
 
 A _secure identity_ is an element capable of generating a cryptographic signature
 which can be verified by a remote party. This is usually an asymmetric key pair, but
-symmetric signing schemes may also be used. Secure identities are typically used as part
+symmetric signing schemes can also be used. Secure identities are typically used as part
 of an attestation process.
 
-A secure identity's scope and uniqueness is use case dependent. For example, a secure identity may be:
+A secure identity's scope and uniqueness is use case dependent. For example, a secure identity can be:
 
 * Unique to a system
 * Shared among multiple systems with the same immutable security properties
@@ -919,7 +919,7 @@ or not, as well as affect any derived assets such as sealing keys.
 | System updates SHOULD be robust against update failures
 |===
 
-Earlier versions may be carrying known vulnerabilities, or may affect the safe
+Earlier versions can be carrying known vulnerabilities, or could affect the safe
 operation of a system in other ways.
 
 For example, using derived anti-rollback counters (counter tree) rooted in a
