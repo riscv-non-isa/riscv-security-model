@@ -3,7 +3,7 @@
 == Use case examples
 
 This chapter provides a selection of non-exhaustive example security usecases based on commonly used
-deployment security models. The examples may be extended over time as required.
+deployment security models. The examples could be extended over time as required.
 
 === Generic system without supervisor domains
 
@@ -134,8 +134,8 @@ the hypervisor configuring MMU and IOMMU translation rules.
 
 NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that
 M-mode can enforce that its own resources are never assigned to another domain.
-Use of IOPMP or similar may still add further protections. For example, a system
-may require that Root devices cannot access memory assigned to Confidential
+Use of IOPMP or similar could still add further protections. For example, a system
+could require that Root devices cannot access memory assigned to Confidential
 domain.
 
 ==== Debug and performance management
@@ -499,8 +499,8 @@ For a virtualized TEE, IOMTT enforces supervisor domain level access rules
 
 NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that
 M-mode can enforce that its own resources are never assigned to another domain.
-Use of IOPMP or similar may still add further protections. For example, a system
-may require that Root devices cannot be used to access memory assigned to
+Use of IOPMP or similar could still add further protections. For example, a system
+could require that Root devices cannot be used to access memory assigned to
 Confidential domain.
 
 ==== System integration
@@ -869,7 +869,7 @@ device assignment to a Confidential guest.
 NOTE: IOMTT can also be sufficient for protecting Root devices in the sense
 that M-mode can enforce that its own resources are never assigned to another
 domain. Use of IOPMP or similar still adds further protections. For example,
-a system may require that Root devices cannot be used to access memory assigned
+a system could require that Root devices cannot be used to access memory assigned
 to Confidential domain.
 
 ==== System integration
