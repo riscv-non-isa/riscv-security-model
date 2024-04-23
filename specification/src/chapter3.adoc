@@ -188,7 +188,7 @@ levels
 |===
 
 NOTE: The M-Mode resident software responsible for managing context switches and communication between supervisor
-domains is called the Root Domain. An MTT may be sufficient for protecting the Root Domain by enabling M-mode
+domains is called the Root Domain. An MTT can be sufficient for protecting the Root Domain by enabling M-mode
 to ensure that its own resources are never assigned to any another domain.
 The use of PMP/Smepmp will add yet further protections for M-mode, such as the ability to
 implement temporal isolation boundaries within M-mode (to protect
@@ -325,7 +325,7 @@ device-initiated access to M-mode memory.
 NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that
 M-mode can enforce that its own resources are never assigned to another domain.
 Use of IOPMP or similar still adds further protections. For example, a system
-may require that Root devices are not able to access memory assigned to TEE
+could require that Root devices are not able to access memory assigned to TEE
 domain.
 
 ==== IOMMU
