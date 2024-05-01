@@ -869,7 +869,7 @@ device assignment to a Confidential guest.
 NOTE: IOMTT can also be sufficient for protecting Root devices in the sense
 that M-mode can enforce that its own resources are never assigned to another
 domain. Use of IOPMP or similar still adds further protections. For example,
-a system could require that Root devices cannot be used to access memory assigned
+a system may require that Root devices cannot be used to access memory assigned
 to Confidential domain.
 
 ==== System integration
