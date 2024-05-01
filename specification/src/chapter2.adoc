@@ -340,7 +340,7 @@ some ISA level mitigations can also help provide some mitigation against
 physical or remote attacks and this is indicated in the tables below.
 
 The required level of protection can vary depending on use case. For example, a
-HW RoT can have stronger requirements on physical resistance than other parts
+HW RoT may have stronger requirements on physical resistance than other parts
 of an SoC.
 
 Finally, this specification does not attempt to rate attacks by severity, or by
