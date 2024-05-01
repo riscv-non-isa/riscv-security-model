@@ -51,7 +51,7 @@ specifications.
 === Relationship with external protection profiles
 
 To assist with articulating security guidelines relevant to the included examples, this specification references external
-protection profiles as appropriate. Such references are not intended to mandate any specific implementations.
+protection profiles as appropriate. Such references are not intended to mandate any specific implementations, but to provide guidelines on how RISC-V security building blocks may be used to comply with those protection profiles.
 
 Typically, protection profiles cover some or all of:
 
