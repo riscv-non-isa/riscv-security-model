@@ -240,7 +240,7 @@ For example:
 * Hart allocation policies across workloads
 
 These types of features rely on monitoring the resource utilization of workloads,
-similar to event counters and on the optimization of resource allocation policies.
+similar to event counters, and on the optimization of resource allocation policies.
 
 [#cat_sr_sub_qos]
 [width=100%]
