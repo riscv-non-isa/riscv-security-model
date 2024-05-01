@@ -499,8 +499,8 @@ For a virtualized TEE, IOMTT enforces supervisor domain level access rules
 
 NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that
 M-mode can enforce that its own resources are never assigned to another domain.
-Use of IOPMP or similar could still add further protections. For example, a system
-could require that Root devices cannot be used to access memory assigned to
+Use of IOPMP or similar may still add further protections. For example, a system
+may require that Root devices cannot be used to access memory assigned to
 Confidential domain.
 
 ==== System integration
