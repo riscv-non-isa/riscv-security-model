@@ -55,8 +55,10 @@ identities.
 
 ==== Trusted Computing Base (TCB)
 
-The _Trusted Computing Base (TCB)_ of any system function is the minimum amount of
-software and hardware that is critical to the security of that function.
+The _Trusted Computing Base (TCB)_ of any system function is the totality of
+protection mechanisms within a computer system, including hardware,
+firmware, and software - the combination responsible for enforcing a security
+policy.
 
 The following are examples of software components that can be a part of some function's TCB:
 
