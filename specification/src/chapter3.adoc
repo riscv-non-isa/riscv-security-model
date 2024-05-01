@@ -363,7 +363,7 @@ against pointer misuse such as "use-after-free". Pointer masking implementations
 the proposed RISC-V pointer masking extension (Smmpm, Smnpm, Ssnpm).
 
 With software based memory tagging the access rules encoded in tags are
-enforced by software, such as the compiler and the C library.
+enforced by software, such as the compiler and the application runtime.
 
 See also hardware enforced memory tagging below.
 
