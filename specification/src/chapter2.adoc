@@ -113,7 +113,7 @@ The HW RoT can manage the security life cycle of a secondary root of trust (boot
 
 |===
 
-An example of a complex system is one with multiple, out-of-order, cache coherent Harts.
+An example of a complex system is one with multiple, out-of-order, cache-coherent harts.
 
 An example of a simpler system is one with a single, in-order, Hart such as in a microcontroller.
 
