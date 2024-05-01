@@ -69,7 +69,7 @@ The following are examples of software components that can be a part of some fun
 
 ==== Root of trust
 
-A _root of trust (RoT)_ is the foundation on which all secure operations of a system depend. An RoT is typically a combination of a minimal amount of hardware and software that has to be implicitly trusted by all system components.
+A _root of trust (RoT)_ is the foundation on which all secure operations of a system depend. A RoT is typically a combination of a minimal amount of hardware and software that has to be implicitly trusted by all system components.
 
 A RoT supports fundamental security services, for example:
 
