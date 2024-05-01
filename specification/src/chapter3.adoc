@@ -11,8 +11,8 @@ examples of how RISC-V security building blocks can be combined.
 
 === Isolation
 
-Isolation enables the separation of software components executing on a Hart, as well
-as separate device assignment. RISC-V enables:
+Isolation enables access restrictions on software components executing on a hart, as well
+as on device accesses. RISC-V enables:
 
 * Privilege based isolation
 * Physical memory access control (hart and device-initiated accesses)
