@@ -24,8 +24,8 @@ trustworthy devices in an ecosystem.
 [title= "Generic security reference model"]
 image::img_ch2_reference-model.png[]
 
-The figure above outlines a generic security reference model. This specification is oriented around this reference
-model. The model is not tied to any particular implementation.
+The figure above outlines a generic security reference model and taxonomy. This specification 
+is oriented around this reference model. The model is not tied to any particular implementation.
 
 Most systems are built with multiple software components each managing _assets_ that need to be protected. These components
 are often sourced from multiple different supply chains. The security reference model uses the generic term _domain_ to identify a logically isolated region, with at least some private resources and execution state not accessible to at least some other domain(s). The figure above
