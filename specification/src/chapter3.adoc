@@ -472,7 +472,7 @@ stage of discussion for RISC-V.
 ==== System integration
 
 WorldGuard introduces a concept of World IDs, which are unique system-wide identifiers.
-The World Ids may be statically-assigned to RISC-V hardware, and thus software at various
+The World Ids may be statically-assigned to RISC-V hardware, and thus to software operating at various
 privilege levels. System resources can be then be associated with World IDs in order to
 control accesses to those resources in a fine-grained manner.
 
