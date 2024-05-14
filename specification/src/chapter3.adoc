@@ -325,7 +325,7 @@ device-initiated access to M-mode memory.
 NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that
 M-mode can enforce that its own resources are never assigned to another domain.
 Use of IOPMP or similar still adds further protections. For example, a system
-may require that Root devices are not able to access memory assigned to TEE
+could require that Root devices are not able to access memory assigned to TEE
 domain.
 
 ==== IOMMU
@@ -434,49 +434,9 @@ cryptographic ISA extensions are supported.
 It is not necessary to support both scalar and vector operations, as a scalar
 operation can be viewed as a vector of size 1.
 
-=== Roadmap
+==== Post quantum cryptography
 
-There are a number of technologies that are being considered for possible future inclusion into the RISC-V Security
-Model roadmap. The technologies that are currently in focus are enumerated here. These are subject to change.
-
-==== Capability based architecture
-
-===== CHERI
-
-*See the https://github.com/riscv/riscv-cheri[RISC-V Specification for CHERI Extensions] specification.*
-
-CHERI - an ISA technique that uses capability-based memory protection for spatial and temporal memory safety, compartmentalization, and control-flow enforcement.  Source code has to be recompiled to capture memory safety properties inherent in the source language.
-
-===== Capstone
-
-*See the https://github.com/project-starch/capstone-spec[Capstone-RISCV ISA Reference].*
-
-Capstone is another ISA technique aiming to enable a capability architecture in software and hardwre.
-
-==== Hardware enforced memory tagging
-
-Hardware enforced memory tagging extends software based memory tagging (see
-above) by moving enforcement of tagged rules to hardware. At present this technology is at a very early
-stage of discussion for RISC-V.
-
-==== Hardware-assisted Fault Isolation
-
-_Hardware-assisted fault isolation (HFI)_ aims to provide lightweight in-process isolation to mitigate against errors
-in one process compromising other processes within the same workload.
-
-==== Lightweight isolation
-
-Lighweight isolation aims to enable the isolation of M-Mode runtimes and libraries. At present this technology is at a very early
-stage of discussion for RISC-V.
-
-==== System integration
-
-WorldGuard introduces a concept of World IDs, which are unique system-wide identifiers.
-The World Ids may be statically-assigned to RISC-V hardware, and thus to software operating at various
-privilege levels. System resources can be then be associated with World IDs in order to
-control accesses to those resources in a fine-grained manner.
-
-==== Cryptography enhancements
+*See the https://github.com/riscv/riscv-pqc[RISC-V Specification for Post-quantum Cryptography] specification.*
 
 The _RISC-V Post Quantum Cryptography_ initiative aims to specify ISA extensions that enhance performance and
 implementation efficiency for contemporary public-key cryptography, with a focus on standard Post-Quantum Cryptography
@@ -484,9 +444,19 @@ algorithms like Kyber, Dilithium, and others. The ISA design and evaluation prio
 networked devices, ensuring that the Post-Quantum Cryptography (PQC) extensions effectively complement existing scalar
 and vector cryptography extensions.
 
-At present this technology is at a very early stage of discussion for RISC-V.
+==== High assurance cryptography
+
+*See the https://github.com/riscv/riscv-hac[RISC-V Specification for High Assurance Cryptography]
 
 The _RISC-V High Assurance Cryptography_ initiative aims to specify ISA extensions for cryptography with additional
 security features such as side-channel resistance.
 
-At present this technology is at a very early stage of discussion for RISC-V.
+=== Capability based architecture
+
+==== CHERI
+
+*See the https://github.com/riscv/riscv-cheri[RISC-V Specification for CHERI Extensions] specification.*
+
+CHERI - an ISA technique that uses capability-based memory protection for spatial and temporal memory safety, compartmentalization, and control-flow enforcement.  Source code has to be recompiled to capture memory safety properties inherent in the source language.
+
+
