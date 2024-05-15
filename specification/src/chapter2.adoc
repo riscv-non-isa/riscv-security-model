@@ -34,7 +34,7 @@ _domain_ to identify a logically isolated region, with at least some private
 resources and execution state not accessible to at least some other domain(s).
 The figure above uses two domains for illustrative purposes but some
 use-cases can require more. This specification does not imply or limit the number
-of domains or the type of use cases a RISC-V system could support. See
+of domains or the type of use cases a RISC-V system can support. See
 xref:chapter4.adoc[Use case examples] for more comprehensive and specific examples.
 
 Logically isolated domains at the software level are typically reflected in logically isolated domains at the system hardware level, where hardware resources can be assigned or restricted to specific software domains. For example, device DMA transfers can be restricted to memory assigned to a particular domain.
@@ -387,7 +387,7 @@ https://www.intel.com/content/www/us/en/developer/topic-technology/software-secu
 security guidance] +
 https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20Security%20Center,Speculative%20Processor%20Vulnerability[Arm speculative
 vulnerability]
-| Fence.t, or similar future extensions, could at least partially mitigate against Spectre v1.
+| Fence.t, or similar future extensions, may at least partially mitigate against Spectre v1.
 
 | SR_LGC_003
 | Interface abuse
@@ -466,7 +466,7 @@ physical memory
 provisioned assets
 a| * Implement robust memory error detection, cryptographic memory protection,
 or physical tamper resistance
-* Supervisor domain ID, privilege level, or MTT attributes, could be used to
+* Supervisor domain ID, privilege level, or MTT attributes, may be used to
 derive memory encryption contexts at domain or workload granularity
 * Provide a degree of tamper resistance
 
@@ -585,7 +585,7 @@ least the following states:
 provisioned assets
 * Security provisioning - The process of provisioning hardware provisioned
 assets +
-Depending on ecosystem requirement, security provisioning could be performed in
+Depending on ecosystem requirement, security provisioning may be performed in
 multiple stages through a supply chain and may require additional sub-states.
 These types of application specific extensions are out of scope of this
 specification.
@@ -606,7 +606,7 @@ Typically hardware provisioned assets are made permanently inaccessible and
 revoked before entering this state. This also protects any derived assets such
 as attestation and sealing keys.
 
-A system could support re-provisioning from a terminated state, for example
+A system may support re-provisioning from a terminated state, for example
 following repair/RMA. This can be viewed as equivalent to starting over from the
 security provisioning state, and creates a new instance with a new secure
 identifier.
@@ -625,7 +625,7 @@ secured state, or a recoverable debug state.
 | Derived assets MUST only be available if a component is in secured state.
 |===
 
-For example, returning garbage or some known test and debug value when attempting to read a hardware provisioned asset, unless the system is in a secured state, or a recoverable debug state. Derived assets would then also become unavailable in these states, though test and debug versions could be available.
+For example, returning garbage or some known test and debug value when attempting to read a hardware provisioned asset, unless the system is in a secured state, or a recoverable debug state. Derived assets would then also become unavailable in these states, though test and debug versions may be available.
 
 [width=100%]
 [%header, cols="5,20"]
