@@ -448,8 +448,7 @@ and vector cryptography extensions.
 
 *See the https://github.com/riscv/riscv-hac[RISC-V Specification for High Assurance Cryptography]
 
-The _RISC-V High Assurance Cryptography_ initiative aims to specify ISA extensions for cryptography with additional
-security features such as side-channel resistance.
+The _RISC-V High Assurance Cryptography_ initiative aims to specify enhanced vector cryptography extensions, offering advanced key management, and ensuring resistance to side-channel attacks for cryptographic algorithms, like AES, by executing all internal rounds through a singular instruction.
 
 === Capability based architecture
 
