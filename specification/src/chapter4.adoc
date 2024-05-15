@@ -3,7 +3,7 @@
 == Use case examples
 
 This chapter provides a selection of non-exhaustive example security usecases based on commonly used
-deployment security models. The examples could be extended over time as required.
+deployment security models. The examples may be extended over time as required.
 
 === Generic system without supervisor domains
 
@@ -135,7 +135,7 @@ the hypervisor configuring MMU and IOMMU translation rules.
 NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that
 M-mode can enforce that its own resources are never assigned to another domain.
 Use of IOPMP or similar could still add further protections. For example, a system
-could require that Root devices cannot access memory assigned to Confidential
+may require that Root devices cannot access memory assigned to Confidential
 domain.
 
 ==== Debug and performance management
@@ -500,7 +500,7 @@ For a virtualized TEE, IOMTT enforces supervisor domain level access rules
 NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that
 M-mode can enforce that its own resources are never assigned to another domain.
 Use of IOPMP or similar could still add further protections. For example, a system
-could require that Root devices cannot be used to access memory assigned to
+may require that Root devices cannot be used to access memory assigned to
 Confidential domain.
 
 ==== System integration
@@ -615,8 +615,8 @@ image::img_ch4_cove.png[]
 
 In hosting environments, tenant workloads rely on isolation primitives that are
 managed by host privileged software. This can lead to a large TCB for tenants
-which could include, for example, a hypervisor, orchestration services, and
-host management services. It could also include other tenants exploiting
+which may include, for example, a hypervisor, orchestration services, and
+host management services. It may also include other tenants exploiting
 vulnerabilities in complex hosting software.
 
 Confidential compute aims to achieve a minimal and certifiable TCB for
@@ -869,7 +869,7 @@ device assignment to a Confidential guest.
 NOTE: IOMTT can also be sufficient for protecting Root devices in the sense
 that M-mode can enforce that its own resources are never assigned to another
 domain. Use of IOPMP or similar could still add further protections. For example,
-a system could require that Root devices cannot be used to access memory assigned
+a system may require that Root devices cannot be used to access memory assigned
 to Confidential domain.
 
 ==== System integration
