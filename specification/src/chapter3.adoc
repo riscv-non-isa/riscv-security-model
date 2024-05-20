@@ -446,7 +446,7 @@ and vector cryptography extensions.
 
 ==== High assurance cryptography
 
-*See the https://github.com/riscv-admin/high-assurance-cryptography[RISC-V Specification for High Assurance Cryptography]
+*See the https://github.com/riscv/riscv-hac[RISC-V Specification for High Assurance Cryptography]
 
 The High Assurance Cryptography task group will create instruction set extensions (ISEs) that facilitate higher levels of assurance than the existing Scalar and Vector Crypto ISEs. One initial focus will be on full-rounds vector AES extensions that allow (do not prevent) effective side-channel resistant implementations and that may perform better than the existing round-based instructions, with future work on other algorithms. A second intimately related focus area will be ISEs that manage secret keys -- not restricted to just AES keys -- in ways that better protect them from unauthorized users and from side-channel analysis.
 
