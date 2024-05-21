@@ -57,21 +57,21 @@
 
         # Build Files
         - name: Build Files
-          run: make
+          run: cd ./specification && make
 
         # Upload the built PDF files as a single artifact
         - name: Upload Build Artifacts
           uses: actions/upload-artifact@v4
           with:
             name: Build Artifacts
-            path: ${{ github.workspace }}/build/*.pdf
+            path: ${{ github.workspace }}/specification/*.pdf
             retention-days: 30
 
         # Create Release
         - name: Create Release
           uses: softprops/action-gh-release@v2
           with:
-            files: ${{ github.workspace }}/build/*.pdf
+            files: ${{ github.workspace }}/specification/*.pdf
             tag_name: v${{ github.event.inputs.version }}
             name: Release ${{ github.event.inputs.version }}
             draft: ${{ github.event.inputs.draft }}
