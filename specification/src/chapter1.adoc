@@ -3,18 +3,25 @@
 
 == Introduction
 
-This specification provides guidelines for building secure RISC-V systems using RISC-V security building blocks. It is
-aimed at developers of RISC-V technical specifications as well as designers of secure RISC-V systems.
+This specification provides guidelines for building secure RISC-V systems using RISC-V security building blocks. It is aimed at developers of RISC-V technical specifications, as well as at designers of secure RISC-V systems.
 
-A few example use cases are provided which are based on commonly used security deployment models.
-These are not intended to be exhaustive. They are accompanied by use case specific security
-guidelines which may help readers implement their own guidelines for their specific use cases.
+A few example use cases are provided, which are based on commonly used security deployment models.
+These are not intended to be exhaustive but are common enough to represent a wide range of deployments of secure products. They are accompanied by use case specific security
+guidelines which are intended to help readers implement secure products for their specific use cases.
 
 The examples may be extended over time as required.
 
 The examples are not definitions of formal Protection Profiles (See: https://csrc.nist.gov/glossary/term/protection_profile).
-Such protection profiles for specific use cases are expected to be provided within relevant certification
-bodies or as separate RISC-V specifications, if required.
+Formal protection profiles are typically provided by third party certification
+bodies for different ecosystems. The guidelines provided within the examples in this specification are intended to help readers adapt RISC-V security features to meet security requirements of commonly used third party protection profiles.
+
+RISC-V is currently not intending to create a security certification programme. This specification is provided as non-normative guidance for developing secure RISC-V systems which are certifiable within existing third party security certification programmes. As such, there is no RISC-V proof of concept or RISC-V testing associated with this specification.
+
+This specification does not contain threat modelling or security assessment of individual RISC-V technical specifications. Individual RISC-V technical specifications are expected to use the Security Model as a guide to develop their own specific security analysis, including formal threat modeling where appropriate. For this purpose, all guidelines in this document are labelled to enable referencing from other specifications. Specific security analysis in the context of a RISC-V technical specification may require testing and a proof of concept as per normal RISC-V development processes for RISC-V technical specifications.
+
+Security is an evolving area where new use cases and new threats can emerge at any time. This specification represents the RISC-V security model and best practice as of the date of publication of this document. 
+
+New versions of this document may be developed and released as and when required.
 
 === Requirements and tracking
 
