@@ -476,8 +476,11 @@ derive memory encryption contexts at domain or workload granularity
 Logical or physical
 a| * Glitching to bypass secure boot
 * Retrieving residual confidential memory after a system reset
-a| * Implement robust power management
-* Implement cryptographic memory protection with at least boot freshness
+a| Implement robust power management, and adopt glitch-safe software techniques. +
+Industry best practice should be followed. For example: ensuring un-initialized variables are not used; implementing integrity checking of critical data and hardware provisioned parameters; implementing redundancy in encoding, verification, branching, and critical logic. +
+ +
+Adopt randomization techniques between boot sessions. +
+For example: cryptographic memory protection with at least boot freshness; register ranomization. 
 
 | SR_PHY_004
 | Subverting supply chains
