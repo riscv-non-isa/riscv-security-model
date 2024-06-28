@@ -452,7 +452,7 @@ The High Assurance Cryptography task group will create instruction set extension
 
 === Architectural metadata storage
 
-Some RISC-V architectural features require storage for metadata - _architectural metadata storage_. For example,  MTT metadata, metadata for memory tagging, or CHERI metadata.
+Some RISC-V architectural features require storage for metadata - _architectural metadata storage_. For example:  MTT metadata, metadata for memory tagging, or CHERI metadata.
 
 Architectural metadata storage is implementation defined, but the following rules should be considered by any implementation. 
 
