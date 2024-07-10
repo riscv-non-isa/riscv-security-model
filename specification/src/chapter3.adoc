@@ -452,11 +452,11 @@ The High Assurance Cryptography task group will create instruction set extension
 
 === Architectural metadata storage
 
-Some RISC-V architectural features require storage for metadata - _architectural metadata storage_. For example:  MTT metadata, metadata for memory tagging, or CHERI metadata.
+In the context of this document, _architectural metadata_ refers to any data that is implicitly trusted by the architecture. Storage of such data is referred to as _architectural metadata storage_.
+
+Examples (not exhaustive) where architectural metadata is required in the RISC-V architecture include:  MTT, memory tagging, and CHERI.
 
 Architectural metadata storage is implementation defined, but the following rules should be considered by any implementation. 
-
-See xref:chapter2.adoc#_adversarial_model[adversarial model] 
 
 [width=100%]
 [%header, cols="5,20"]
@@ -475,6 +475,8 @@ See xref:chapter2.adoc#_adversarial_model[adversarial model]
 
 |===
 
+See xref:chapter2.adoc#_adversarial_model[adversarial model] 
+
 For example, architectural metadata storage may be implemented in on-chip memory, or in cryptographically protected external DDR.
 
 [width=100%]
@@ -484,11 +486,11 @@ For example, architectural metadata storage may be implemented in on-chip memory
 | Requirement
 
 | SR_AMS_004
-| Architectural metadata MUST be isolated by privilege level, and along isolation boundaries
+| Architectural metadata MUST be isolated by privilege level, and within supervisor domain boundaries
 
 |===
 
-Depending on use case, architectural metadata may be visible to or managed by, for example, a supervisor level kernel, a kernel or a hypervisor within a supervisor domain, or by a machine mode monitor. But it should be considered private within an isolation boundary and not accessible or guessable by lower privilege levels or by code in a different supervisor domain.
+Depending on use case, architectural metadata may be visible to or managed by, for example, a supervisor level kernel or hypervisor, a kernel or a hypervisor within a supervisor domain, or by a machine mode monitor. But it should be considered private within an isolation boundary and not accessible or guessable by lower privilege levels, or by code in a different supervisor domain.
 
 [width=100%]
 [%header, cols="5,20"]
@@ -497,19 +499,19 @@ Depending on use case, architectural metadata may be visible to or managed by, f
 | Requirement
 
 | SR_AMS_005
-| Cryptographically protected architectural metadata storage MUST provide privacy protection
+| Cryptographically protected architectural metadata storage MUST provide privacy protection, including at least location freshness and boot freshness
 
 | SR_AMS_006
-| Cryptographically protected architectural metadata storage MUST provide integrity protection
+| Cryptographically protected architectural metadata storage MUST provide at least error detection, and SHOULD provide integrity protection
 
 | SR_AMS_007
-| Cryptographically protected architectural metadata storage SHOULD provide replay protection
+| Cryptographically protected architectural metadata storage SHOULD provide replay protection or temporal freshness
 
 |===
 
-Architectural metadata needs to be protected against both unauthorized access, and errors (accidental or malicious).
+Architectural metadata needs to be protected against both unauthorized access (read or modify), boot attacks, relocation attacks, and errors (accidental or malicious).
 
-On systems where architectural metadata is stored in external memory, and external memory attacks are in scope (for example, directly accessible or replacable external memory), then cryptographic replay protection is strongly recommended.
+On systems where architectural metadata is stored in external memory, and external memory attacks are in scope (for example, directly accessible or replaceable external memory), then cryptographic protection with replay protection or temporal freshness is strongly recommended. 
 
 [width=100%]
 [%header, cols="5,20"]
