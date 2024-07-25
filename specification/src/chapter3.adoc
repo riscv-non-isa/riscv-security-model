@@ -450,6 +450,82 @@ and vector cryptography extensions.
 
 The High Assurance Cryptography task group will create instruction set extensions (ISEs) that facilitate higher levels of assurance than the existing Scalar and Vector Crypto ISEs. One initial focus will be on full-rounds vector AES extensions that allow (do not prevent) effective side-channel resistant implementations and that may perform better than the existing round-based instructions, with future work on other algorithms. A second intimately related focus area will be ISEs that manage secret keys -- not restricted to just AES keys -- in ways that better protect them from unauthorized users and from side-channel analysis.
 
+=== Architectural metadata storage
+
+In the context of this document, _architectural metadata_ refers to any data that is implicitly trusted by the architecture. Storage of such data is referred to as _architectural metadata storage_.
+
+Examples (not exhaustive) where architectural metadata is required in the RISC-V architecture include:  MTT, memory tagging, and CHERI.
+
+Architectural metadata storage is implementation defined, but the following rules should be considered by any implementation. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| SR_AMS_001
+| Architectural metadata storage MUST be protected against logical attacks
+
+| SR_AMS_002
+| Architectural metadata storage MUST be protected against physical attacks
+
+| SR_AMS_003
+| Architectural metadata storage MUST be protected against direct attacks
+
+|===
+
+See xref:chapter2.adoc#_adversarial_model[adversarial model] 
+
+For example, architectural metadata storage may be implemented in on-chip memory, or in cryptographically protected external DDR.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| SR_AMS_004
+| Architectural metadata MUST be isolated by privilege level, and within supervisor domain boundaries
+
+|===
+
+Depending on use case, architectural metadata may be visible to or managed by, for example, a supervisor level kernel or hypervisor, a kernel or a hypervisor within a supervisor domain, or by a machine mode monitor. But it should be considered private within an isolation boundary and not accessible or guessable by lower privilege levels, or by code in a different supervisor domain.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| SR_AMS_005
+| Cryptographically protected architectural metadata storage MUST provide privacy protection, including at least location freshness and boot freshness
+
+| SR_AMS_006
+| Cryptographically protected architectural metadata storage MUST provide at least error detection, and SHOULD provide integrity protection
+
+| SR_AMS_007
+| Cryptographically protected architectural metadata storage SHOULD provide replay protection or temporal freshness
+
+|===
+
+Architectural metadata needs to be protected against both unauthorized access (read or modify), boot attacks, relocation attacks, and errors (accidental or malicious).
+
+On systems where architectural metadata is stored in external memory, and external memory attacks are in scope (for example, directly accessible or replaceable external memory), then cryptographic protection with replay protection or temporal freshness is strongly recommended. 
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| SR_AMS_008
+| Architectural metadata storage SHOULD be protected against indirect attacks
+
+|===
+
+In general, protection against indirect attacks is a system implementation problem not specific to architectural metadata storage. For example, systems supporting speculative execution should also implement appropriate mitigations against speculation based attacks. Any such mitigations should also be applied to the implementaiton of architectural metadata storage.
+
 === Capability based architecture
 
 ==== CHERI
