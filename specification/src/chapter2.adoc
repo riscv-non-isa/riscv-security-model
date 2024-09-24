@@ -163,14 +163,6 @@ Examples of confidential workloads include:
 management, payment clients, DRM clients
 * Hosted confidential third party workloads
 
-
-
-
-
-
-
-
-
 RISC-V has a range of isolation mechanisms available and in development.
 
 [#cat_sr_sub_iso]
@@ -185,7 +177,7 @@ RISC-V has a range of isolation mechanisms available and in development.
 | Limitations
 
 | PMP, ePMP
-| Boot code isolation,  code and date isolation by privilege level. +
+| Boot code isolation,  code and data isolation by privilege level. +
  Building block for simple trusted execution isolation using high privilege security monitor
 | M
 | Physical
@@ -193,8 +185,8 @@ RISC-V has a range of isolation mechanisms available and in development.
 | Switching overhead, limited resource
 
 | SPMP
-| OS managed code and date isolation by privilege level. +
- Building block to all multiple OS to manage U mode isolation
+| OS managed code and data isolation by privilege level. +
+ Building block to allow multiple OS to manage U mode isolation
 | S
 | Physical
 | Fine Grained
@@ -202,10 +194,10 @@ RISC-V has a range of isolation mechanisms available and in development.
 
 | Virtual Memory
 MMU
-| Isolation between S and U, and tasks on U mode. 
-Guest – Guset Isolation (VS – VS)
-Host – Guset Isolation (HS-VS)
-| S
+| S - U,  U - U isolation +
+Guest – Guest isolation (VS–VS) +
+Host – Guest isolation (HS-VS)
+| S +
 HS/VS
 | Virtual
 | Page Based
@@ -226,14 +218,14 @@ HS/VS
 |
 
 | Smmtt, SDID
-| Building block for Confidential compute, trusted execution 
-| S-S Isolation
+| Building block for confidential computing, trusted execution 
+| S-S isolation
 | Physical
 | Page or larger
 | 
 
 | Hardware Fault Isolation
-| Simple memory range based task Isolation. Accelerates isolation of containers for webasm etc. 
+| Simple memory range based task isolation. Accelerates isolation of containers for webasm etc. 
 | U
 | Virtual
 | Fine Grained
@@ -245,7 +237,8 @@ used for debug, garbage collection, security isolation
 | S U
 | Virtual
 | tbd
-| Probabilistic, performance impact, tag storage overhead
+| Probabilistic, performance impact, +
+tag storage overhead
 
 | CHERI
 | Full Capability based access for memory safety and isolation
