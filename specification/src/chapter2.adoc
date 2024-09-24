@@ -218,8 +218,9 @@ HS/VS
 |
 
 | Smmtt, SDID
-| Building block for confidential computing, trusted execution 
-| S-S isolation
+| Building block for confidential computing, trusted execution. +
+S-S isolation
+| S
 | Physical
 | Page or larger
 | 
