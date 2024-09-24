@@ -163,6 +163,99 @@ Examples of confidential workloads include:
 management, payment clients, DRM clients
 * Hosted confidential third party workloads
 
+
+
+
+
+
+
+
+
+RISC-V has a range of isolation mechanisms available and in development.
+
+[#cat_sr_sub_iso]
+[width=100%]
+[%header, cols="10,25,5,5,5,10"]
+|===
+| Technololgy
+| Use Case
+| Privilege level
+| Memory 
+| Granularity
+| Limitations
+
+| PMP, ePMP
+| Boot code isolation,  code and date isolation by privilege level. +
+ Building block for simple trusted execution isolation using high privilege security monitor
+| M
+| Physical
+| Fine Grained
+| Switching overhead, limited resource
+
+| SPMP
+| OS managed code and date isolation by privilege level. +
+ Building block to all multiple OS to manage U mode isolation
+| S
+| Physical
+| Fine Grained
+| Switching overhead, limited resource
+
+| Virtual Memory
+MMU
+| Isolation between S and U, and tasks on U mode. 
+Guest – Guset Isolation (VS – VS)
+Host – Guset Isolation (HS-VS)
+| S
+HS/VS
+| Virtual
+| Page Based
+|
+
+| IOPMP
+| System Level PMP
+| n/a
+| Physical
+| Page Based
+|
+
+| Pointer Masking
+| Simple SW based memory tagging, memory range restriction
+| S U
+| Both
+| Coarse
+|
+
+| Smmtt, SDID
+| Building block for Confidential compute, trusted execution 
+| S-S Isolation
+| Physical
+| Page or larger
+| 
+
+| Hardware Fault Isolation
+| Simple memory range based task Isolation. Accelerates isolation of containers for webasm etc. 
+| U
+| Virtual
+| Fine Grained
+| 
+
+| Memory Tagging
+| Faults on access to an incorrect TAG. 
+used for debug, garbage collection, security isolation 
+| S U
+| Virtual
+| tbd
+| Probabilistic, performance impact, tag storage overhead
+
+| CHERI
+| Full Capability based access for memory safety and isolation
+| M S U
+| Both
+| Fine Grained
+| HW/SW impact
+
+|===
+
 ==== Device assignment
 
 Isolation policy needs to extend to device assignment:
