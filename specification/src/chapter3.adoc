@@ -81,10 +81,13 @@ memory for supervisor and U modes (with or without H-extension).
 
 | SR_PMP_001
 | PMP configurations MUST only be directly accessible to machine mode
+| SR_PMP_002
+| PMP/smepmp MUST be used to isolate M-mode from lower privilege levels
 |===
 
 Individual access controlled regions can be locked until the next system reset
 to create temporal isolation boundaries, such as protecting immutable boot code.
+Depending on the use case, MTT may be an acceptable additional or alternative mechanism to the PMP/smepmp
 
 ==== Smepmp
 
@@ -100,7 +103,7 @@ used to mitigate against privilege escalation attacks.
 | ID#
 | Requirement
 
-| SR_PMP_002
+| SR_PMP_003
 | If PMP is supported then Smepmp MUST be supported.
 |===
 
@@ -125,9 +128,13 @@ memory allocations to its workloads.
 | ID#
 | Requirement
 
-| SR_PMP_003
-| If MMU is not supported, sPMP SHOULD be used to protect S-mode from lower privilege levels.
+| SR_PMP_004
+| sPMP SHOULD be used to protect S-mode from lower privilege levels.
+| SR_PMP_005
+| sPMP MUST be used to protect S-mode from lower privilege levels.
 |===
+
+Dependent on the use case, it may be recommended or mandatory to protect supervisor mode from lower privilege levels (with or without the H-extension). The MMU may be an additional or alternative mechanism. 
 
 ==== MMU
 
@@ -147,10 +154,6 @@ translation)
 |===
 | ID#
 | Requirement
-
-| SR_MMU_001
-| Either PMP/Smepmp or MTT MUST be used to protect M-mode from lower privilege
-levels.
 
 | SR_MMU_002
 | if the Sv extension is supported then 1st-stage page tables MUST used to protect
@@ -180,17 +183,20 @@ responsible for resource management.
 | Requirement
 
 | SR_MTT_001
-| Either PMP/Smepmp or MTT MUST be used to protect M-mode from lower privilege
+| MTT MUST be used to protect M-mode from lower privilege
 levels
 
 | SR_MTT_002
 | MTT configurations MUST only be directly accessible to machine mode
 |===
 
+
+
 NOTE: The M-Mode resident software responsible for managing context switches and communication between supervisor
-domains is called the Root Domain. An MTT can be sufficient for protecting the Root Domain by enabling M-mode
+domains is called the Root Domain. Depending on the use case, MTT can be sufficient for protecting the Root Domain by enabling M-mode
 to ensure that its own resources are never assigned to any another domain.
-The use of PMP/Smepmp will add yet further protections for M-mode, such as the ability to
+
+PMP/Smepmp may be an additional or alternative protection for M-mode, enabling the ability to
 implement temporal isolation boundaries within M-mode (to protect
 early boot code, for example), or to prevent itself from accessing or executing from memory
 assigned to lower privilege levels (privilege escalation).
