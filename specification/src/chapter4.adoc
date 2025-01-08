@@ -17,11 +17,12 @@ image::img_ch4_priv.png[]
 A generic vertically integrated system can be either virtualized or
 non-virtualized.
 
+
 M-mode hosts a FW RoT. An OS or a Hypervisor in S or HS mode controls
 applications or guests. Guests and applications execute in U or VS/VU modes and
 trust the OS or Hypervisor to provide isolation guarantees.
 
-width=100%]
+[width=100%]
 [%header, cols="5,20"]
 |===
 | Reference
