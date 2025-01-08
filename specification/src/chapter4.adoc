@@ -25,13 +25,12 @@ trust the OS or Hypervisor to provide isolation guarantees.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| Reference
 | Reason
+| Reference
 
+| A system level HW RoT is recommended
 | SR_ROT_001, 
 SR_ROT_002
-| A system level HW RoT is recommended
-
 
 |===
 
