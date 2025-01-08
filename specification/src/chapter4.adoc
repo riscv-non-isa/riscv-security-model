@@ -21,7 +21,22 @@ M-mode hosts a FW RoT. An OS or a Hypervisor in S or HS mode controls
 applications or guests. Guests and applications execute in U or VS/VU modes and
 trust the OS or Hypervisor to provide isolation guarantees.
 
-A system level HW RoT is recommended.
+width=100%]
+[%header, cols="5,20"]
+|===
+| Reference
+| Reason
+
+| SR_ROT_001, 
+SR_ROT_002
+| A system level HW RoT is recommended
+
+
+|===
+
+
+
+
 
 NOTE: The RISC-V architecture also caters for systems with just M and U modes,
 commonly used in embedded systems, helper cores, and similar use cases. On
