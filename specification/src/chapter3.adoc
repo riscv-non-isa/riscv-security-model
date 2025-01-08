@@ -85,7 +85,7 @@ memory for supervisor and U modes (with or without H-extension).
 | PMP/smepmp MUST be used to isolate M-mode from lower privilege levels
 |===
 
-Individual access controlled regions can be locked until the next system reset
+NOTE: Individual access controlled regions can be locked until the next system reset
 to create temporal isolation boundaries, such as protecting immutable boot code.
 Depending on the use case, MTT may be an acceptable additional or alternative mechanism to the PMP/smepmp
 
@@ -134,7 +134,7 @@ memory allocations to its workloads.
 | sPMP MUST be used to protect S-mode from lower privilege levels.
 |===
 
-Dependent on the use case, it may be recommended or mandatory to protect supervisor mode from lower privilege levels (with or without the H-extension). The MMU may be an additional or alternative mechanism. 
+NOTE: Dependent on the use case, it may be recommended or mandatory to protect supervisor mode from lower privilege levels (with or without the H-extension). The MMU may be an additional or alternative mechanism. 
 
 ==== MMU
 
@@ -229,8 +229,7 @@ supervisor domain.
 
 |===
 
-PMP can be used for more static and deterministic use cases.
-
+NOTE: PMP can be used for more static and deterministic use cases.
 MTT can be used where more fine grained dynamic resource management across
 supervisor domain boundaries is required.
 
