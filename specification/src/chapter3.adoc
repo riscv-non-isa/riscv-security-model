@@ -250,7 +250,7 @@ extensions for external debug (TBD).
 *See chapter 6 (Smsdia) of the https://github.com/riscv/riscv-smmtt[RISC-V Supervisor
 Domains Access Protection] specification.*
 
-==== Supervisor domains: Interrupts, External debug and Performance counters
+==== Interrupts, External debug and Performance counters
 
 *See the https://github.com/riscv-non-isa/riscv-external-debug-security[RISC-V External Debug Security Extension]
 specification.*
