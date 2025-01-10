@@ -142,12 +142,9 @@ memory allocations to its workloads.
 | Requirement
 
 | SR_PMP_004
-| sPMP SHOULD be used to protect S-mode from lower privilege levels.
-
-| SR_PMP_005
 | sPMP MUST be used to protect S-mode from lower privilege levels.
 
-| SR_PMP_006
+| SR_PMP_005
 | sPMP MUST be used to protect resources assigned to one workload from other workloads
 |===
 
@@ -178,15 +175,15 @@ translation)
 | ID#
 | Requirement
 
-| SR_MMU_002
+| SR_MMU_001
 | if the Sv extension is supported then 1st-stage page tables MUST used to protect
 the S-Mode Supervisor domain from accesses made by U-Mode.
 
-| SR_MMU_003
+| SR_MMU_002
 | if the H extension is supported 1st-stage and/or G-stage page tables MUST used to protect
 Supervisor domain H/S-mode from lower privilege levels.
 
-| SR_MMU_004
+| SR_MMU_003
 | MMU MUST be used to protect resources assigned to one workload from other workloads
 |===
 
@@ -270,10 +267,10 @@ supervisor domain boundaries is required.
 | ID#
 | Requirement
 
-| SR_SUD_001
+| SR_SUD_002
 | Resources assigned to a trusted supervisor domain MUST be inaccessible to an untrusted supervisor domain
 
-| SR_SUD_001
+| SR_SUD_003
 | Resources assigned to an untrusted supervisor domain MUST be accessible to a trusted supervisor domain 
 |===
 
@@ -288,7 +285,7 @@ Supervisor domains allow sharing between domains under the control of M-mode fir
 | ID#
 | Requirement
 
-| SR_SUD_002
+| SR_SUD_004
 | A system supporting supervisor domains MUST support supervisor domain
 extensions for interrupts (Smsdia) and SHOULD support supervisor domain
 extensions for external debug (TBD).
@@ -303,23 +300,24 @@ Domains Access Protection] specification.*
 *See the https://github.com/riscv-non-isa/riscv-external-debug-security[RISC-V External Debug Security Extension]
 specification.*
 
+[cat_sr_sub_dbg]
 [width=100%]
 [%header, cols="5,20"]
 |===
 | ID#
 | Requirement
 
-| SR_GEN_007
+| SR_DBG_001
 | External debug MUST only be enabled by HW RoT (M-mode external debug) or by FW
 RoT (non M-mode external debug).
 
-| SR_GEN_008
+| SR_DBG_002
 | External debug SHOULD be enabled separately for M-mode & non-M-mode software.
 
-| SR_GEN_009
+| SR_DBG_003
 | Self-hosted debug MAY be used for debug of non M-mode software.
 
-| SR_GEN_010
+| SR_DBG_004
 | Self-hosted debug MUST only be enabled by a higher privileged component.
 
 |===
@@ -332,7 +330,7 @@ For example, external debug can be enabled for non-M-mode software without affec
 | ID#
 | Requirement
 
-| SR_GEN_011
+| SR_DBG_005
 | FW RoT MAY disable self-hosted debug for all non M-mode software.
 
 |===
@@ -346,15 +344,15 @@ reasons.
 | ID#
 | Requirement
 
-| SR_GEN_012
+| SR_DBG_006
 | External debug MUST only be enabled following system reset (part of measuring)
 of the affected component, moderated by a RoT.
 
-| SR_GEN_013
+| SR_DBG_007
 | Revealing self-hosted debug MUST only be enabled following reboot (part of
 measuring) of the affected component.
 
-| SR_GEN_014
+| SR_DBG_008
 | Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the
 affected component, to an application specific governance process.
 
@@ -371,11 +369,11 @@ counters.*
 | ID#
 | Requirement
 
-| SR_GEN_015
+| SR_DBG_009
 | Lower privileged software MUST NOT be able to monitor higher privileged
 software.
 
-| SR_GEN_016
+| SR_DBG_010
 | Software in one domain MUST NOT be able to monitor software in a different
 domain, without consent.
 
