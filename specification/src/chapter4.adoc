@@ -113,8 +113,8 @@ physical device can present one or more logical devices, each with its own
 Isolation guarantees provided to software also apply to device initiated
 transaction.
 
-
-[%autowidth]
+[width=100%]
+[%header, cols="1,^1"]
 |===
 | Requirement | Reference
 
@@ -124,7 +124,7 @@ transaction.
 |  SR_IOM_005, +
   (SR_IOP_001, SR_IOP_002, SR_IOP_003) +
   OR +
-  (SR_IOM_001, SR_IOM_002, SR_IOM_003) +
+  (SR_IOM_001, SR_IOM_002, SR_IOM_003)
  
  
 | Enforce access rules for devices assigned 
