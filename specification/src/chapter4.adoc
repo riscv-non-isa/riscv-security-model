@@ -114,13 +114,12 @@ Isolation guarantees provided to software also apply to device initiated
 transaction.
 
 
-[%header, cols="5,20"]
+[%autowidth]
 |===
-| Requirement 
-| Reference
+| Requirement | Reference
 
-| Guarantee that devices assigned to lower +
-  privilege levels cannot access resources +
+| Guarantee that devices assigned to lower 
+  privilege levels cannot access resources 
   assigned to M-mode.
 |  SR_IOM_005, +
   (SR_IOP_001, SR_IOP_002, SR_IOP_003) +
@@ -128,8 +127,8 @@ transaction.
   (SR_IOM_001, SR_IOM_002, SR_IOM_003) +
  
  
-| Enforce access rules for devices assigned +
-  to user applications or guests on a virtualized +
+| Enforce access rules for devices assigned 
+  to user applications or guests on a virtualized 
   system.
 | SR_IOP_004 OR SR_IOM_004 
 
