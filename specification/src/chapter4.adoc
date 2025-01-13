@@ -191,7 +191,7 @@ reasons.
 | Requirement
 | Reference
 
-| Debug controls must be included in boot time measurement for attestation purpose.
+| Include debug controls in boot time measurement for attestation purpose.
 | SR_DBG_006, SR_DBG_007, SR_DBG_008
 
 |===
@@ -205,7 +205,7 @@ Guarantees the system remains attestable.
 | Requirement
 | Reference
 
-| An application or domain must be protected against monitoring by other applications or domains
+| Protect an application or domain against monitoring by other applications or domains
 | SR_DBG_009, SR_DBG_010
 
 |===
