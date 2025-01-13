@@ -22,21 +22,6 @@ M-mode hosts a FW RoT. An OS or a Hypervisor in S or HS mode controls
 applications or guests. Guests and applications execute in U or VS/VU modes and
 trust the OS or Hypervisor to provide isolation guarantees.
 
-[width=100%]
-[%header, cols="5,20"]
-|===
-| Reason
-| Reference
-
-| A system level HW RoT is recommended
-| SR_ROT_001, 
-SR_ROT_002
-
-|===
-
-
-
-
 
 NOTE: The RISC-V architecture also caters for systems with just M and U modes,
 commonly used in embedded systems, helper cores, and similar use cases. On
@@ -55,14 +40,14 @@ non-security services.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_GEN_001
-| PMP/Smepmp, MUST be used to isolate M-mode from lower privilege levels.
+| Protect M-mode from lower privilege levels.
+| SR_PMP_001, SR_PMP_002
 
-| SR_GEN_002
-| sPMP or MMU MUST be used to protect Supervisor mode from lower privilege levels (with or without H-extension)
+| Protect Supervisor mode from lower privilege levels (with or without H-extension)
+| SR_PMP_004
 
 |===
 
@@ -88,13 +73,15 @@ See xref:chapter2.adoc#_reference_model[reference model].
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_GEN_004
-| A secure system SHOULD implement a HW RoT
+| A system level HW RoT is recommended
+| SR_ROT_001, 
+SR_ROT_002
 
 |===
+
 
 ==== Authorized Boot
 
@@ -127,18 +114,21 @@ Isolation guarantees provided to software also apply to device initiated
 transaction.
 
 [width=100%]
-[%header, cols="5,20"]
+[%header, cols="10,10"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_GEN_005
-| IOPMP or IOMTT MUST be used to guarantee that devices assigned to lower
+| Guarantee that devices assigned to lower
 privilege levels cannot access resources assigned to M-mode.
-
-| SR_GEN_006
-| IOPMP, or IOMTT with IOMMU, MUST be used to enforce access rules for devices
+| (SR_IOP_001, SR_IOP_002, SR_IOP_003) +
+  OR +
+  (SR_IOM_001, SR_IOM_002, SR_IOM_003), +
+  SR_IOM_005 
+ 
+| Enforce access rules for devices
 assigned to user applications or guests on a virtualized system.
+| SR_IOP_004 OR SR_IOM_004 
 
 |===
 
@@ -162,21 +152,17 @@ See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_GEN_007
-| External debug MUST only be enabled by HW RoT (M-mode external debug) or by FW
-RoT (non M-mode external debug).
+| Securely control debug access
+| SR_DBG_001
 
-| SR_GEN_008
-| External debug SHOULD be enabled separately for M-mode & non-M-mode software.
+| Allow Debug of non-M-mode software while blocking debug of higher privilege code
+| SR_DBG_002
 
-| SR_GEN_009
-| Self-hosted debug MAY be used for debug of non M-mode software.
-
-| SR_GEN_010
-| Self-hosted debug MUST only be enabled by a higher privileged component.
+| Allow Self-hosted of non M-mode software
+| SR_DBG_003, SR_DBG_004
 
 |===
 
@@ -185,11 +171,11 @@ For example, external debug can be enabled for non-M-mode software without affec
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_GEN_011
-| FW RoT MAY disable self-hosted debug for all non M-mode software.
+| Allow a FW RoT to prevent debug of a production system
+| SR_DBG_005
 
 |===
 
@@ -199,20 +185,11 @@ reasons.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_GEN_012
-| External debug MUST only be enabled following system reset (part of measuring)
-of the affected component, moderated by a RoT.
-
-| SR_GEN_013
-| Revealing self-hosted debug MUST only be enabled following reboot (part of
-measuring) of the affected component.
-
-| SR_GEN_014
-| Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the
-affected component, to an application specific governance process.
+| Debug controls must be included in boot time measurement for attestation purpose.
+| SR_DBG_006, SR_DBG_007, SR_DBG_008
 
 |===
 
@@ -221,16 +198,12 @@ Guarantees the system remains attestable.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
+
 | Requirement
+| Reference
 
-| SR_GEN_015
-| Lower privileged software MUST NOT be able to monitor higher privileged
-software.
-
-| SR_GEN_016
-| Software in one domain MUST NOT be able to monitor software in a different
-domain, without consent.
+| An application or domain must be protected against monitoring by other applications or domains
+| SR_DBG_009, SR_DBG_010
 
 |===
 
