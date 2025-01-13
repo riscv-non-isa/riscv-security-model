@@ -113,21 +113,24 @@ physical device can present one or more logical devices, each with its own
 Isolation guarantees provided to software also apply to device initiated
 transaction.
 
-[width=100%]
-[%header, cols="10,10"]
+
+[%header, cols="5,20"]
 |===
-| Requirement
+| Requirement 
 | Reference
 
-| Guarantee that devices assigned to lower
-privilege levels cannot access resources assigned to M-mode.
-| (SR_IOP_001, SR_IOP_002, SR_IOP_003) +
+| Guarantee that devices assigned to lower +
+  privilege levels cannot access resources +
+  assigned to M-mode.
+|  SR_IOM_005, +
+  (SR_IOP_001, SR_IOP_002, SR_IOP_003) +
   OR +
-  (SR_IOM_001, SR_IOM_002, SR_IOM_003), +
-  SR_IOM_005 
+  (SR_IOM_001, SR_IOM_002, SR_IOM_003) +
  
-| Enforce access rules for devices
-assigned to user applications or guests on a virtualized system.
+ 
+| Enforce access rules for devices assigned +
+  to user applications or guests on a virtualized +
+  system.
 | SR_IOP_004 OR SR_IOM_004 
 
 |===
