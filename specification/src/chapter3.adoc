@@ -100,7 +100,7 @@ memory for supervisor and U modes (with or without H-extension).
 
 NOTE: Individual access controlled regions can be locked until the next system reset
 to create temporal isolation boundaries, such as protecting immutable boot code.
-Depending on the use case, MTT may be an acceptable additional or alternative mechanism to the PMP/smepmp
+Depending on the use case, MPT may be an acceptable additional or alternative mechanism to the PMP/smepmp
 
 ==== Smepmp
 
