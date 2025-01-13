@@ -419,7 +419,7 @@ Depending on system design, IOMTT can enforce the same access control policies a
 
 NOTE: IOPMP defines multiple "models" for different system configurations.
 Unless specified differently in the use cases in this specification, system
-designers are free to choose any IOPMP model. Depending on the use case, IOMTT may be an alternative or addition to IOPMP
+designers are free to choose any IOPMP model. Depending on the use case, IOMPT may be an alternative or addition to IOPMP
 
 ==== IOMPT
 
@@ -442,13 +442,13 @@ device-initiated memory accesses.
 | SR_IOM_002
 | IOMPT configurations MUST only be directly accessible to machine mode.
 
-| SR_IOM_002
+| SR_IOM_003
 | IOMPT MUST be used to guarantee that devices assigned to lower privilege levels cannot access resources assigned to M-mode.
 
-| SR_IOP_003
+| SR_IOP_004
 | IOMPT MUST be used to guarantee that devices assigned to a domain cannot be accessed by other domains.
 
-| SR_IOM_004
+| SR_IOM_005
 | A system which implements IOMPT MAY also implement IOPMP to access-control
 device-initiated access to M-mode memory.
 
@@ -472,10 +472,10 @@ locations. It complements the MMU.
 | ID#
 | Requirement
 
-| SR_IOM_004
+| SR_IOM_006
 | Systems supporting MMU SHOULD also support IOMMU
 
-| SR_IOM_005
+| SR_IOM_007
 | Systems supporting IOMMU MUST also enforce physical memory access control for
 M-mode memory against device-initiated transactions (IOMTT or IOPMP).
 
