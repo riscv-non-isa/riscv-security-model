@@ -363,26 +363,6 @@ Guarantees the system remains attestable.
 *Browse the https://lists.riscv.org/g/tech-privileged[tech-privileged mailing list] for relevant background on performance
 counters.*
 
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_DBG_009
-| Lower privileged software MUST NOT be able to monitor higher privileged
-software.
-
-| SR_DBG_010
-| Software in one domain MUST NOT be able to monitor software in a different
-domain, without consent.
-
-|===
-
-Prevents using event counters to monitor across application or privilege
-boundaries. Event counters can be managed by higher privileged software as part
-of context switching across boundaries.
-
 These extensions enable management of interrupts, external debug, and
 performance counters across supervisor domain boundaries.
 
