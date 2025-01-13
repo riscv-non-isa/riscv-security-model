@@ -124,7 +124,7 @@ transaction.
 |  SR_IOM_005, +
   (SR_IOP_001, SR_IOP_002, SR_IOP_003) +
   OR +
-  (SR_IOM_001, SR_IOM_002, SR_IOM_003)
+  (SR_IOM_001, SR_IOM_002, SR_IOM_003) +
  
  
 | Enforce access rules for devices assigned 
@@ -191,7 +191,7 @@ reasons.
 | Reference
 
 | Include debug controls in boot time measurement for attestation purpose.
-| SR_DBG_006, SR_DBG_007, SR_DBG_008
+| SR_DBG_006, SR_DBG_007, SR_DBG_008, SR_LFC_006
 
 |===
 
@@ -204,8 +204,8 @@ Guarantees the system remains attestable.
 | Requirement
 | Reference
 
-| Protect an application or domain against monitoring by other applications or domains
-| SR_DBG_009, SR_DBG_010
+| Protect an application or domain against monitoring or DOS by other applications or domains
+| SR_PMU_001, SR_PMU_002, SR_QOS_001, SR_QOS_002, SR_DOS_001, SR_DOS_002
 
 |===
 
@@ -279,27 +279,30 @@ A Global Platform TEE requires the following isolation guarantees:
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_001
-| Root domain MAY access resources assigned to any domain, but SHOULD prevent
+| Allow Root domain to access resources assigned to any domain, while preventing
 itself from unintended access to resources assigned to a different domain
 (privilege escalation).
+| SR_PMP_003
 
-| SR_TEE_002
-| No other domains can access resources assigned to Root domain
+| Prevent other domains from accessing resources assigned to Root domain
+| (SR_PMP_001, SR_PMP002) OR (SR_MPT_001, SR_MPT_002), +
+  SR_SUD_001
 
-| SR_TEE_003
-| Resources assigned to TEE domain MUST NOT be accessible to Normal domain
 
-| SR_TEE_004
-| Resources assigned to Normal domain MUST be accessible to Normal domain
+| Block resources assigned to TEE domain from access by Normal domain
+| SR_SUD_001, SR_SUD_002
+
+| Allow resources assigned to Normal domain to be accessible to Normal domain
 (r/w/x), and to TEE domain (r/w) (default sharing rule)
+| SR_SUD_003
 
-| SR_TEE_005
-| Resources assigned to a single TA, or a guest TEE, MUST not be accessible by a
+
+| Ensure resources assigned to a single TA, or a guest TEE, are not be accessible by a
 different TA, or guest TEE, without consent.
+| SR_PMP_005 OR SR_MMU_003
 
 |===
 
@@ -328,41 +331,23 @@ See xref:chapter3.adoc#_mtt[MTT]
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_006
-| PMP/Smepmp, or MTT, MUST be used to isolate Root domain from other domains.
+| Use Supervisor domains to enforce isolation between Normal and TEE domains, and to protect machine mode from other domains
+| SR_SUD_001, SR_MPT_001, SR_MPT_002
 
-| SR_TEE_007
-| Supervisor domains MUST be used to enforce isolation between Normal and TEE
-domains.
-
-|===
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_TEE_008
-| For a static partition TEE, sPMP or MMU MUST be used to enforce isolation
+| For a static partition TEE, use sPMP or MMU to enforce isolation
 between TA in TEE domain.
-|===
+| SR_PMP_005 OR SR_MMU_003
 
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
+| For a virtualized TEE, use hypervisor extension 
+| SR_HYP_001,SR_MMU_001, SR_MMU_002,
 
-| SR_TEE_009
-| For a virtualized TEE, hypervisor extension MUST be supported
-
-| SR_TEE_010
 | For a virtualized TEE, sPMP or MMU MUST be used to enforce isolation between guest
 TEE, and between TA within a TEE.
+| SR_PMP_005 OR SR_MMU_003
+
 |===
 
 ==== Root of Trust
@@ -372,11 +357,11 @@ See xref:chapter2.adoc#_reference_model[reference model].
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_011
-| A TEE based system SHOULD implement a HW RoT
+| It is recommended for a TEE based system implement a HW RoT
+| SR_TOT_001, SR_ROT_002
 
 |===
 
@@ -391,6 +376,24 @@ TEE boot is typically based on:
 
 The process can involve multiple stages (layered boot).
 
+[width=100%]
+[%header, cols="5,20"]
+|===
+| Requirement
+| Reference
+
+| Direct or indirect measurement of a system verifies the software is authorised
+| SR_MSM_001, SR_MSM_002, SR_MSM_003
+
+| Immutable code ensures a trusted starting point
+| SR_MSM_004
+
+| Systems allow secure updates to all mutable components
+| SR_UPD_001, SR_UPD_002, SR_UPD_005, SR_UPD_006, SR_UPD_007
+
+|===
+
+
 ==== Attestation
 
 See xref:chapter2.adoc#_attestable_services[attestable services].
@@ -401,15 +404,15 @@ platform attestation.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
-| Requirement
 
-| SR_TEE_012
-a| A direct security platform attestation MUST cover at least:
+| Requirement
+| Reference
+a| Attestation is used to determine trustworthyness across all comonents
 
 * TEE domain
 * Root domain
 * Boot state of all trusted subsystems
+| SR_ATT_001, SR_ATT_002, SR_ATT_003
 
 |===
 
@@ -419,6 +422,17 @@ concern. For example:
 * A security platform attestation, signed by a RoT, covering trusted subsystems,
 Root domain, and SPM
 * Separate guest TEE attestation(s) signed by SPM
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+
+| Requirement
+| Reference
+
+| Layered attestation allows delegation in complex systems
+| SR_ATT_004, SR_ATT_005
+|===
 
 ==== Sealing
 
@@ -432,18 +446,18 @@ exposure of cryptographic materials.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_013
+
 | Local sealing for a TA, or a TEE guest, MUST be unique to TEE domain and to a
 physical instance of a system.
+********
 
-| SR_TEE_014
 | Local sealing for a TA, or a TEE guest, SHOULD also be unique to the TEE guest
 or the TA.
 
-| SR_TEE_015
+
 | Local sealing MAY be layered.
 
 |===
