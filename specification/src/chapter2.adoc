@@ -674,9 +674,11 @@ self-hosted debug for a component.
 
 Depending on use case, an attested software component can include debug
 capabilities managed through an ecosystem defined governance process
-- _trusted debug_. For example, self-hosted debug enabled following an ecosystem
+- _trusted debug_. For example, self-hosted debug, or external debug enabled following an ecosystem
 specific authorization process. In this case the debug capability, and the
 associated governance, is part of the trust contract with a relying party.
+
+*See  https://github.com/riscv-non-isa/riscv-external-debug-security[External Debug Security] specification.*
 
 For the purpose of this specification, a minimum security life cycle includes at
 least the following states:
