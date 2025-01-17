@@ -505,7 +505,8 @@ Logical
 control flow to code controlled by an attacker.
 a| * Shadow stacks (Zicfiss)
 * Landing pads (Zicfilp)
-| CHERI
+| CHERI, +
+  Memory Tagging
 
 | SR_LGC_006
 | Memory safety
@@ -519,6 +520,13 @@ Memory safe programming, for example: +
 https:/www.cisa.gov/sites/default/files/2023-12/CSAC_TAC_Recommendations-Memory-Safety_Final_20231205_508.pdf +
 | Architectural sandboxing, such as HFI. +
 Capability based architecture, such as CHERI.
+
+| SR_LGC_007
+| Architectural Covert Channel
+| Logical
+| Execution environment is unaware of, or doesnt swap/sanitize system registers on context switch, creating covert communication channel between user threads or guest OSs
+| Smstateen, Ssstateen
+|
 
 |===
 
@@ -661,6 +669,8 @@ debug capability which:
 Examples of revealing debug include revealing logging, external debug or
 boundary scans, dedicated debug builds of software components, or enabling
 self-hosted debug for a component.
+
+
 
 Depending on use case, an attested software component can include debug
 capabilities managed through an ecosystem defined governance process
