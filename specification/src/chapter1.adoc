@@ -1,4 +1,3 @@
-
 [[chapter1]]
 
 == Introduction
@@ -56,7 +55,7 @@ A requirement or a group of requirements may be followed by non-normative text
 providing context or justification for the requirement. The non-normative text
 may also be used to reference sources that are the origin of the requirement.
 
-NOTE: Some sections include duplicate requirements, both recommending and mandating the same feature. A specific use case must define if the feature is recommended or required.
+NOTE: Some sections may include duplicate requirements, both recommending and mandating the same feature. A specific use case must define if the feature is recommended or required.
 
 Trackable requirements are intended for ease of reference across dependent
 specifications.
