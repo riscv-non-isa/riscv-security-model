@@ -148,7 +148,7 @@ Virtualization creates and manages _virtual resources_ - compute, memory,
 devices - independent of actual physical hardware. A system, or individual
 domains, can be virtualized.
 
-On complex systems the TCB can grow large and get difficult to certify and
+On complex systems the TCB can grow large and become difficult to certify and
 attest.
 
 Domain isolation enables confidential workloads to be separated from complex
@@ -217,8 +217,8 @@ HS/VS
 | Coarse
 |
 
-| Smmtt, SDID
-| Building block for confidential computing, trusted execution. +
+| Smmpt, SDID
+| Supervisor domains and memory proteciton tables, building block for confidential computing, trusted execution. +
 S-S isolation
 | S
 | Physical
