@@ -360,8 +360,8 @@ affected component, to an application specific governance process.
 
 Guarantees the system remains attestable.
 
-*Browse the https://lists.riscv.org/g/tech-privileged[tech-privileged mailing list] for relevant background on performance
-counters.*
+*See chapters 7 and 9 of the https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged
+ISA] specification on performance counters.*
 
 These extensions enable management of interrupts, external debug, and
 performance counters across supervisor domain boundaries.
@@ -550,7 +550,7 @@ operation can be viewed as a vector of size 1.
 
 The _RISC-V Post Quantum Cryptography_ initiative aims to specify ISA extensions that enhance performance and
 implementation efficiency for contemporary public-key cryptography, with a focus on standard Post-Quantum Cryptography
-algorithms like Kyber, Dilithium, and others. The ISA design and evaluation prioritize the requirements of real-world
+algorithms like ML-KEM (FIPS-203), and ML-DSA (FIPS-204), and others. The ISA design and evaluation prioritize the requirements of real-world
 networked devices, ensuring that the Post-Quantum Cryptography (PQC) extensions effectively complement existing scalar
 and vector cryptography extensions.
 
