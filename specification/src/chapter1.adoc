@@ -30,7 +30,8 @@ New versions of this document may be developed and released as and when required
 
 === Requirements and tracking
 
-This is a normative specification. However, the specification does not mandate the adoption of any requirements. These requirements are intended to be referenced by current and future specifications, both Risc-V and external specifications,  where a set, specific to the use case, certification regime, platform or profile under consideration will be documented. This specification expresses trackable requirements using the following format:
+This is a normative specification. However, the specification does not mandate the adoption of any requirements. These requirements are intended to be referenced by current and future specifications, both Risc-V and external specifications,  where a set, specific to the use case, certification regime, platform or profile under consideration will be documented. A set of in-scope security threats are also defined in this specification. These threats are intended to be referenced by the threat models of current and future specifications, both Risc-V and external specifications. 
+This specification expresses trackable requirements and threats using the following format:
 
 [width=100%]
 [%header, cols="5,20"]
