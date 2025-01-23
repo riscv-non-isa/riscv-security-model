@@ -267,7 +267,7 @@ supervisor domain boundaries is required.
 | ID#
 | Requirement
 
-| SR_MPT_002
+| SR_SUD_002
 | MPT MUST be used to protect resources assigned to one supervisor domain from other supervisor domains
 
 | SR_SUD_003
