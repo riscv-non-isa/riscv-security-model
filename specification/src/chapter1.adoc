@@ -54,7 +54,7 @@ their normal English meanings.
 
 | T_CAT_NNN
 | The `T_CAT` is a "Threat CATegory" prefix that logically groups
-the threats considered in scope (e.g. T_LGC denotes logical attacks) and is followed
+the threats considered in scope (e.g. T_LGC denotes threats categorised by logical attacks) and is followed
 by 3 digits - `NNN` - assigning a numeric ID to the threat.
 
 |===
