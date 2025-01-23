@@ -149,7 +149,7 @@ domain.
 ==== Debug and performance management
 
 See xref:chapter2.adoc#_security_lifecycle[security life cycle]. +
-See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
+See https://github.com/riscv-non-isa/riscv-external-debug-security[RISC-V external debug security]
 
 [width=100%]
 [%header, cols="5,20"]
@@ -542,24 +542,24 @@ See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_018
-| External debug MUST be enabled separately for Root domain.
+| External debug must be enabled separately for Root domain.
+| SR_DBG_001, SR_DBG_002
 
-| SR_TEE_019
-| External debug MUST be enabled separately for each supervisor domain.
+| External debug must be enabled separately for each supervisor domain.
+| SR_SUD_005
 
-| SR_TEE_020
-| External debug MUST only be enabled by a HW RoT (Root domain external debug)
+| External debug must only be enabled by a HW RoT (Root domain external debug)
 or by Root domain (supervisor domain external debug).
+| SR_DBG_001, SR_SUD_005
 
-| SR_TEE_021
-| Self-hosted debug MAY be used for debug within a supervisor domain.
+| Self-hosted debug may be used for debug within a supervisor domain.
+| SR_DBG_003
 
-| SR_TEE_022
-| Self-hosted debug MUST only be enabled by a higher privileged component.
+| Self-hosted debug must only be enabled by a higher privileged component.
+| SR_DBG_004
 
 |===
 
@@ -577,11 +577,11 @@ A machine mode monitor can enable external debug of individual supervisor domain
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_023
-| Root domain MAY disable self-hosted debug for a whole domain.
+| Root domain may disable self-hosted debug for a whole domain.
+| SR_DBG_005
 
 |===
 
@@ -593,18 +593,19 @@ reasons.
 |===
 | ID#
 | Requirement
+| Reference
 
-| SR_TEE_024
 | External debug MUST only be enabled following system reset (part of measuring)
 of the affected component.
+|SR_DBG_006
 
-| SR_TEE_025
 | Revealing self-hosted debug MUST only be enabled following reboot (part of
 measuring) of the affected component.
+|SR_DBG_007
 
-| SR_TEE_026
 | Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the
 affected component, to an application specific governance process.
+|SR_DBG_008
 
 |===
 
