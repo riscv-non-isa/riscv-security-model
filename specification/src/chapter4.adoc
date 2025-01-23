@@ -293,11 +293,11 @@ itself from unintended access to resources assigned to a different domain
 
 
 | Block resources assigned to TEE domain from access by Normal domain
-| SR_SUD_001, SR_SUD_002
+| SR_SUD_001, SR_SUD_002, SR_SUD_003
 
 | Allow resources assigned to Normal domain to be accessible to Normal domain
 (r/w/x), and to TEE domain (r/w) (default sharing rule)
-| SR_SUD_003
+| SR_SUD_004
 
 
 | Ensure resources assigned to a single TA, or a guest TEE, are not be accessible by a
