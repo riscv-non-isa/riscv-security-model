@@ -249,17 +249,17 @@ id (SDID)_ CSR, managed by M-mode firmware.
 | Requirement
 
 | SR_SUD_001
-| PMP/Smepmp or MTT MUST be used to enforce physical memory isolation
+| PMP/Smepmp or MPT MUST be used to enforce physical memory isolation
 boundaries for supervisor domains, and to protect machine mode from any
 supervisor domain.
 
 |===
 
 PMP can be used for more static and deterministic use cases.
-MTT can be used where more fine grained dynamic resource management across
+MPT can be used where more fine grained dynamic resource management across
 supervisor domain boundaries is required.
 
-===== Supervisor Domain Resource Sharing
+===== Supervisor Domain Resource Access and Sharing
 
 [width=100%]
 [%header, cols="5,20"]
@@ -267,14 +267,17 @@ supervisor domain boundaries is required.
 | ID#
 | Requirement
 
-| SR_SUD_002
-| Resources assigned to a trusted supervisor domain MUST be inaccessible to an untrusted supervisor domain
+| SR_MPT_002
+| MPT MUST be used to protect resources assigned to one supervisor domain from other supervisor domains
 
 | SR_SUD_003
+| Resources assigned to a trusted supervisor domain MUST be inaccessible to an untrusted supervisor domain
+
+| SR_SUD_004
 | Resources assigned to an untrusted supervisor domain MUST be accessible to a trusted supervisor domain 
 |===
 
-Supervisor domains allow sharing between domains under the control of M-mode firmware. Trusted Execution environments can require asymmetric sharing models, where one trusted domain has R/W access to other domain's resources
+Supervisor domains allow resource isolation and sharing between domains under the control of M-mode firmware. Trusted Execution environments can require asymmetric sharing models, where one trusted domain has R/W access to other domain's resources.
 
 ===== Supervisor Domain Debug
 
@@ -285,7 +288,7 @@ Supervisor domains allow sharing between domains under the control of M-mode fir
 | ID#
 | Requirement
 
-| SR_SUD_004
+| SR_SUD_005
 | A system supporting supervisor domains MUST support supervisor domain
 extensions for interrupts (Smsdia) and SHOULD support supervisor domain
 extensions for external debug (TBD).
