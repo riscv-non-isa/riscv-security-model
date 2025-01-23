@@ -191,7 +191,7 @@ reasons.
 | Reference
 
 | Include debug controls in boot time measurement for attestation purpose.
-| SR_DBG_006, SR_DBG_007, SR_DBG_008, SR_LFC_006
+| SR_DBG_006, SR_DBG_007, SR_DBG_008, SR_LFC_004
 
 |===
 
