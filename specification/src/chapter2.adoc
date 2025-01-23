@@ -418,21 +418,14 @@ An adversary is able to chain together multiple direct and indirect attacks to
 achieve a goal. For example, using a software interface exploit to affect the call
 stack such that control flow is redirected to the adversary's code.
 
-This specification is primarily concerned with ISA level mitigations against
-logical attacks.
+The threats considered in-scope and the required level of protection will vary depending on use case. For example, a HW RoT would likely have a large set of threats that are considered applicable. Mitigating these threats may require protection against complex or advanced physical attacks. A Software based TEE may limit the threats considered applicable, and therefore the required mitigations. 
 
-Physical or remote attacks in general need to be addressed at system, protocol
-or governance level, and can require additional non-ISA mitigations. However,
-some ISA level mitigations can also help provide some mitigation against
-physical or remote attacks and this is indicated in the tables below.
+This specification is primarily concerned with ISA level mitigations against logical attacks.
 
-The required level of protection can vary depending on use case. For example, a
-HW RoT could have stronger requirements on physical resistance than other parts
-of an SoC.
+Physical or remote attacks in general need to be addressed at system, protocol or governance level, and can require additional non-ISA mitigations. However, some ISA level mitigations can also help provide some mitigation against physical or remote attacks and this is indicated in the tables below.
 
-Finally, this specification does not attempt to rate attacks by severity, or by
-adversary skill level. Ratings tend to depend on use case specific threat
-models and requirements.
+Finally, this specification does not attempt to rate attacks by severity, or by adversary skill level. Ratings tend to depend on use case specific threat models and requirements.
+
 
 ==== Logical
 
@@ -537,7 +530,7 @@ Capability based architecture, such as CHERI.
 [%header, cols="5,10,10,15,15"]
 |===
 | ID#
-| Attack
+| Threat
 | Type
 | Description
 | RISC-V recommendations
