@@ -200,7 +200,6 @@ Guarantees the system remains attestable.
 [width=100%]
 [%header, cols="5,20"]
 |===
-
 | Requirement
 | Reference
 
@@ -298,7 +297,6 @@ itself from unintended access to resources assigned to a different domain
 | Allow resources assigned to Normal domain to be accessible to Normal domain
 (r/w/x), and to TEE domain (r/w) (default sharing rule)
 | SR_SUD_004
-
 
 | Ensure resources assigned to a single TA, or a guest TEE, are not be accessible by a
 different TA, or guest TEE, without consent.
@@ -404,11 +402,10 @@ platform attestation.
 [width=100%]
 [%header, cols="5,20"]
 |===
-
 | Requirement
 | Reference
-a| Attestation is used to determine trustworthyness across all comonents
 
+| Attestation is used to determine trustworthyness across all comonents
 * TEE domain
 * Root domain
 * Boot state of all trusted subsystems
@@ -426,7 +423,6 @@ Root domain, and SPM
 [width=100%]
 [%header, cols="5,20"]
 |===
-
 | Requirement
 | Reference
 
@@ -449,7 +445,6 @@ exposure of cryptographic materials.
 | Requirement
 | Reference
 
-
 | Local sealing for a TA, or a TEE guest, must be unique to TEE domain and to a
 physical instance of a system.
 
@@ -459,7 +454,6 @@ physical instance of a system.
 or the TA.Local sealing MAY be layered
 
 | SR_MMU_003 OR SR_PMP_005
-
 |===
 
 For example:
@@ -490,7 +484,6 @@ and interrupts.
 assigned to Normal or TEE domains, and should use IOPMP to enforce access rules
 for Root devices.
 | SR_IOM_001, SR_IOM_002, SR_IOM_003, SR_IOM_004, SR_IOM_005
-
 |===
 
 For a static partition TEE, domain level granularity can be sufficient as device
@@ -560,7 +553,6 @@ or by Root domain (supervisor domain external debug).
 
 | Self-hosted debug must only be enabled by a higher privileged component.
 | SR_DBG_004
-
 |===
 
 For example, within normal domain an S-mode or VS-mode OS can enable
@@ -582,7 +574,6 @@ A machine mode monitor can enable external debug of individual supervisor domain
 
 | Root domain may disable self-hosted debug for a whole domain.
 | SR_DBG_005
-
 |===
 
 For example, for all of TEE domain on a production system, for certification
@@ -591,7 +582,6 @@ reasons.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
 | Reference
 
@@ -606,7 +596,6 @@ measuring) of the affected component.
 | Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the
 affected component, to an application specific governance process.
 |SR_DBG_008
-
 |===
 
 Guarantees the system remains attestable.
