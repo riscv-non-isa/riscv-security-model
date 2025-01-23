@@ -450,15 +450,15 @@ exposure of cryptographic materials.
 | Reference
 
 
-| Local sealing for a TA, or a TEE guest, MUST be unique to TEE domain and to a
+| Local sealing for a TA, or a TEE guest, must be unique to TEE domain and to a
 physical instance of a system.
-********
 
-| Local sealing for a TA, or a TEE guest, SHOULD also be unique to the TEE guest
-or the TA.
+| SR_SUD_002, SR_SLG_002
 
+| Local sealing for a TA, or a TEE guest, should also be unique to the TEE guest
+or the TA.Local sealing MAY be layered
 
-| Local sealing MAY be layered.
+| SR_MMU_003 OR SR_PMP_005
 
 |===
 
