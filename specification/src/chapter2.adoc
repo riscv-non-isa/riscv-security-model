@@ -721,28 +721,14 @@ identifier.
 
 | SR_LFC_002
 | Hardware provisioned assets MUST only be accessible while the system is in
-secured state, or a recoverable debug state.
+secured state, or a recoverable debug state.(with the recoverable debug state in
+attestation evidence).
 
 | SR_LFC_003
 | Derived assets MUST only be available if a component is in secured state.
 |===
 
 For example, returning garbage or some known test and debug value when attempting to read a hardware provisioned asset, unless the system is in a secured state, or a recoverable debug state. Derived assets would then also become unavailable in these states, though test and debug versions may be available.
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_LFC_004
-| Hardware provisioned assets MUST only be accessible while the system is in
-a secured state, or a recoverable debug state (with the recoverable debug state in
-attestation evidence).
-
-| SR_LFC_005
-| Derived assets MUST only be available if a component is in secured state.
-|===
 
 A derived asset in this context is any asset derived from hardware provisioned
 assets. For example attestation keys, or sealing keys for a supervisor domain.
