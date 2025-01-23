@@ -480,16 +480,16 @@ and interrupts.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_016
-| A static partition TEE MUST use IOPMP to enforce access rules for devices.
+| A static partition TEE must use IOPMP to enforce access rules for devices.
+| SR_IOP_004
 
-| SR_TEE_017
-| A virtualized TEE MUST use IOMTT and IOMMU to enforce access rules for devices
-assigned to Normal or TEE domains, and SHOULD use IOPMP to enforce access rules
+| A virtualized TEE must use IOMTT and IOMMU to enforce access rules for devices
+assigned to Normal or TEE domains, and should use IOPMP to enforce access rules
 for Root devices.
+| SR_IOM_001, SR_IOM_002, SR_IOM_003, SR_IOM_004, SR_IOM_005
 
 |===
 
