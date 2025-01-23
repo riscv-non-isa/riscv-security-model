@@ -739,7 +739,7 @@ assets. For example attestation keys, or sealing keys for a supervisor domain.
 | ID#
 | Requirement
 
-| SR_LFC_006
+| SR_LFC_004
 | Revealing debug MUST be reflected in attestation.
 
 |===
