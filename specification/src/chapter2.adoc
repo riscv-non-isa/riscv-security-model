@@ -505,9 +505,9 @@ a| * Shadow stacks (Zicfiss)
 | Memory safety
 | Logical
 | Unauthorized access to resources within an isolated component. For example, pointer or allocation errors (temporal memory safety), or buffer overflows (spatial memory safety).
-| RISC-V pointer masking (J-extension) +
-Shadow stacks (Zicfiss) +
-Landing pads (Zicfilp) +
+| * RISC-V pointer masking (J-extension) +
+* Shadow stacks (Zicfiss) +
+* Landing pads (Zicfilp) +
  +
 Memory safe programming, for example: +
 https:/www.cisa.gov/sites/default/files/2023-12/CSAC_TAC_Recommendations-Memory-Safety_Final_20231205_508.pdf +
@@ -518,7 +518,8 @@ Capability based architecture, such as CHERI.
 | Architectural Covert Channel
 | Logical
 | Execution environment is unaware of, or doesnt swap/sanitize system registers on context switch, creating covert communication channel between user threads or guest OSs
-| Smstateen, Ssstateen
+| * Smstateen +
+* Ssstateen
 |
 
 |===
