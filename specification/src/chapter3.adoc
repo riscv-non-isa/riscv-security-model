@@ -428,7 +428,7 @@ device-initiated memory accesses.
 | SR_IOM_003
 | IOMPT MUST be used to guarantee that devices assigned to lower privilege levels cannot access resources assigned to M-mode.
 
-| SR_IOP_004
+| SR_IOM_004
 | IOMPT MUST be used to guarantee that devices assigned to a domain cannot be accessed by other domains.
 
 | SR_IOM_005
@@ -460,7 +460,7 @@ locations. It complements the MMU.
 
 | SR_IOM_007
 | Systems supporting IOMMU MUST also enforce physical memory access control for
-M-mode memory against device-initiated transactions (IOMTT or IOPMP).
+M-mode memory against device-initiated transactions using IOMTT or IOPMP
 
 |===
 
