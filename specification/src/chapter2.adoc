@@ -672,8 +672,6 @@ capabilities managed through an ecosystem defined governance process
 specific authorization process. In this case the debug capability, and the
 associated governance, is part of the trust contract with a relying party.
 
-*See  https://github.com/riscv-non-isa/riscv-external-debug-security[External Debug Security] specification.*
-
 For the purpose of this specification, a minimum security life cycle includes at
 least the following states:
 
