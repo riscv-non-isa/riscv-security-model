@@ -847,6 +847,8 @@ In the context of this document, a measurement is a record of a present state of
 Verification is a process of establishing that a measurement is correct
 (expected)
 
+When a system in a security provisioning state doesnt restrict loading to only authorized software, other protection measures such as physical access protection, or device registration would be required.
+
 A boot process is typically layered, allowing software to be measured and
 verified in stages. Different measurement and verification policies can be
 employed at different stages. This is discussed further in use case examples
