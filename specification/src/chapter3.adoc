@@ -146,6 +146,9 @@ memory allocations to its workloads.
 
 | SR_PMP_005
 | sPMP MUST be used to protect resources assigned to one workload from other workloads
+
+| SR_PMP_006
+| sPMP configurations MUST only be directly accessible to machine mode and supervisor mode
 |===
 
 NOTE: Dependent on the use case, it may be recommended or mandatory to protect supervisor mode from lower privilege levels (with or without the H-extension). Trusted execution environments may require the use of sPMP to isolate trusted applications from each other. The MMU may be an additional or alternative mechanism.
