@@ -265,7 +265,7 @@ allocation can be mostly static, making the system more deterministic. +
 _Use case examples:_ edge devices and IoT, automation, and automotive.
 * Virtualized TEE +
 On a virtualized system, TEE can also be virtualized. In this case a _secure
-partition manager_ in TEE domain is responsible for isolation of multiple TEE
+partition manager_ (SPM) in TEE domain is responsible for isolation of multiple TEE
 guests (for example, an OEM TEE and separate third party TEE). This model can
 also support more dynamic resource allocation. +
  +
