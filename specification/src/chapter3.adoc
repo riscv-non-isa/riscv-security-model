@@ -192,10 +192,20 @@ Supervisor domain H/S-mode from lower privilege levels.
 
 NOTE: Dependent on the use case, it may be recommended or mandatory to protect supervisor mode from lower privilege levels (with or without the H-extension). Trusted execution environments may require the use of MMU to isolate trusted applications from each other. The sPMP may be an additional or alternative mechanism.
 
-==== MPT
+==== Supervisor domains and MPT
 
 *See the https://github.com/riscv/riscv-smmtt[RISC-V Supervisor Domains Access
 Protection] specification.*
+
+Supervisor domains allow software components on the same hart to be developed,
+certified, deployed and attested independently of each other.
+
+A supervisor domain is an S-Mode compartment that is physically isolated from other supervisor domains. The memory,
+execution state and devices belonging to a supervisor domains are isolated from other supervisor domains.
+This isolation of supervisor domains and the context switching between them is managed by M-mode firmware.
+
+A supervisor domain is identified at an architecture level by a _supervisor domain
+id (SDID)_ CSR, managed by M-mode firmware.
 
 The _memory protection table (MPT)_ is a memory structure managed by machine
 mode that is used to track memory ownership across supervisor domains. It is designed to
@@ -228,21 +238,6 @@ PMP/Smepmp may be an additional or alternative protection for M-mode, enabling t
 implement temporal isolation boundaries within M-mode (to protect
 early boot code, for example), or to prevent itself from accessing or executing from memory
 assigned to lower privilege levels (privilege escalation).
-
-==== Supervisor domains
-
-*See the https://github.com/riscv/riscv-smmtt[RISC-V Supervisor Domains Access
-Protection] specification.*
-
-Supervisor domains allow software components on the same hart to be developed,
-certified, deployed and attested independently of each other.
-
-A supervisor domain is an S-Mode compartment that is physically isolated from other supervisor domains. The memory,
-execution state and devices belonging to a supervisor domains are isolated from other supervisor domains.
-This isolation of supervisor domains and the context switching between them is managed by M-mode firmware.
-
-A supervisor domain is identified at an architecture level by a _supervisor domain
-id (SDID)_ CSR, managed by M-mode firmware.
 
 [cat_sr_sub_sud]
 [width=100%]
