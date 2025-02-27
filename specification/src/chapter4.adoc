@@ -627,10 +627,7 @@ https://confidentialcomputing.io/[Confidential Computing Consortium].
 Reference firmware for CoVE is being developed as part of the
 https://riseproject.dev/[RISC-V Software Ecosystem] project.
 
-CoVE is primarily aimed at cloud hosting of confidential workloads. But the
-underlying isolation model could potentially be used in other use cases, such
-as some mobile clients or edge devices.
-
+CoVE is primarily aimed at cloud hosting of confidential workloads. In this deployment model
 CoVE divides software into physically isolated domains:
 
 * Normal domain +
@@ -650,6 +647,12 @@ Root domain to manage confidential workloads.
 
 The secure monitor is responsible for context switching and isolation across
 domain boundaries, including event management.
+
+The underlying isolation mechanisms may be used in other deployment models, such
+as some mobile clients or edge devices whose design may might be constrained by real 
+time and formal verification requirements. The TSM and secure monitor function are
+then combined into a single TEE security manager in Root domain.
+
 
 ==== Isolation model
 
