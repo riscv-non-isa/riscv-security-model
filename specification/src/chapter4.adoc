@@ -648,6 +648,12 @@ Root domain to manage confidential workloads.
 The secure monitor is responsible for context switching and isolation across
 domain boundaries, including event management.
 
+More details including a threat model and the security requirements to address that threat
+model can be found in the _CoVE (Confidential VM Extensions)_
+https://github.com/riscv-non-isa/riscv-ap-tee/tree/main/specification[specification]
+
+The information below adds cross references to the security model normative security requirements.
+
 The underlying isolation mechanisms may be used in other deployment models, such
 as some mobile clients or edge devices whose design may might be constrained by real 
 time and formal verification requirements. The TSM and secure monitor function are
@@ -656,7 +662,13 @@ then combined into a single TEE security manager in Root domain.
 
 ==== Isolation model
 
-Confidential workloads require the following isolation guarantees:
+Confidential workloads require isolation guarantees. RISC-V hardware enforced isolation mechanisms can be used as follows to meet those requirments:
+
+See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
+See xref:chapter3.adoc#_pmp_and_epmp[PMP and Smepmp]
+See xref:chapter3.adoc#_spmp[sPMP]
+See xref:chapter3.adoc#_mmu[MMU]
+See xref:chapter3.adoc#_mtt[MTT]
 
 [width=100%]
 [%header, cols="5,20"]
@@ -693,15 +705,6 @@ without consent.
 
 |===
 
-RISC-V hardware enforced isolation mechanisms can be used as follows to meet
-those requirments:
-
-See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
-See xref:chapter3.adoc#_pmp_and_epmp[PMP and Smepmp]
-See xref:chapter3.adoc#_spmp[sPMP]
-See xref:chapter3.adoc#_mmu[MMU]
-See xref:chapter3.adoc#_mtt[MTT]
-
 
 ==== Root of trust
 
@@ -710,32 +713,17 @@ See xref:chapter2.adoc#_reference_model[reference model].
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_CFC_012
-| A CoVE system MUST implement a HW RoT
+| Implement a HW RoT
+| SR_TOT_001, SR_ROT_002
 
 |===
 
 ==== Authorized Boot
 
 See xref:chapter2.adoc#_authorized_software[authorized software].
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_CFC_013
-a| Confidential guests MUST not boot until at least the security platform has
-been verified:
-
-* TSM in Confidential domain
-* Root domain
-* Boot state of all trusted subsystems
-|===
 
 Boot in a cloud hosting context is typically based on:
 
@@ -750,6 +738,30 @@ A _trusted platform module_ (TPM) can be used to measure the security platform.
 Measuring confidential guests can be done by TSM in Confidential domain.
 
 The process can involve multiple stages (layered boot).
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| Requirement
+| Reference
+
+a| Confidential guests must not boot until at least the security platform has
+been verified:
+
+* TSM in Confidential domain
+* Root domain
+* Boot state of all trusted subsystems
+
+Direct or indirect measurement of a system verifies the software is authorised
+| SR_MSM_001, SR_MSM_002, SR_MSM_003
+
+| Immutable code ensures a trusted starting point
+| SR_MSM_004
+
+| Systems allow secure updates to all mutable components
+| SR_UPD_001, SR_UPD_002, SR_UPD_005, SR_UPD_006, SR_UPD_007
+
+|===
 
 ==== Attestation
 
@@ -774,16 +786,16 @@ separation of concern:
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_CFC_014
-a| A security platform attestation MUST cover at least:
+a| A security platform attestation is used, covering at least:
 
 * HW RoT
 * TSM
 * Root domain
 * Boot state of all trusted subsystems
+| SR_ATT_001, SR_ATT_002, SR_ATT_003
 
 |===
 
@@ -815,19 +827,17 @@ DMA and interrupts.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_CFC_015
-| IOMTT and IOMMU MUST be used to enforce access rules for devices assigned to
-Normal or Confidential domains.
+| IOMTT and IOMMU are used to enforce access rules for devices assigned to
+Normal or Confidential domains, and IOPMP is used to enforce access rules
+for Root devices.
+|SR_IOM_001, SR_IOM_002, SR_IOM_003, SR_IOM_004, SR_IOM_005
 
-| SR_CFC_016
-| IOPMP SHOULD be used to enforce access rules for Root devices.
-
-| SR_CFC_017
-| IOPMP and IOMTT configurations MUST only be directly accessible by
+| IOPMP and IOMTT configurations are only directly accessible by
 Root domain.
+| SR_PMP_001, SR_IOM_002
 
 |===
 
@@ -904,24 +914,24 @@ See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_CFC_018
-| External debug MUST be enabled separately for Root domain.
+| External debug must be enabled separately for Root domain.
+| SR_DBG_001, SR_DBG_002
 
-| SR_CFC_019
-| External debug MUST be enabled separately for each supervisor domain.
+| External debug must be enabled separately for each supervisor domain.
+| SR_SUD_005
 
-| SR_CFC_020
-| External debug MUST only be enabled by a HW RoT (Root domain external debug)
+| External debug must only be enabled by a HW RoT (Root domain external debug)
 or by Root domain (supervisor domain external debug).
+| SR_DBG_001, SR_SUD_005
 
-| SR_CFC_021
-| Self-hosted debug MAY be used for debug within a supervisor domain.
+| Self-hosted debug may be used for debug within a supervisor domain.
+| SR_DBG_003
 
-| SR_CFC_022
-| Self-hosted debug MUST only be enabled by a higher privileged component.
+| Self-hosted debug must only be enabled by a higher privileged component.
+| SR_DBG_004
 
 |===
 
@@ -937,20 +947,20 @@ A machine mode monitor can enable external debug of individual supervisor domain
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_CFC_023
-| External debug MUST only be enabled following system reset (part of measuring)
+| External debug must only be enabled following system reset (part of measuring)
 of the affected component.
+| SR_DBG_006
 
-| SR_CFC_024
-| Revealing self-hosted debug MUST only be enabled following reboot (part of
+| Revealing self-hosted debug must only be enabled following reboot (part of
 measuring) of the affected component.
+| SR_DBG_007
 
-| SR_CFC_025
-| Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the
+| Trusted self-hosted debug may be enabled at runtime (after measuring) of the
 affected component, to an application specific governance process.
+| SR_DBG_008
 
 |===
 
