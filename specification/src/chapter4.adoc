@@ -656,46 +656,45 @@ then combined into a single TEE security manager in Root domain.
 
 ==== Isolation model
 
-Confidential workloads are provided the following isolation guarantees:
+Confidential workloads require the following isolation guarantees:
 
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_CFC_001
-| Root domain MAY access resources assigned to any domain, but SHOULD prevent
+
+| Allow Root domain to access resources assigned to any domain, while preventing
 itself from unintended access to resources assigned to a different domain
 (privilege escalation).
+| SR_PMP_003
 
-| SR_CFC_002
-| Resources assigned to Root domain MUST be private to Root domain
+| Prevent other domains from accessing resources assigned to Root domain
+| (SR_PMP_001, SR_PMP002) OR (SR_MPT_001, SR_MPT_002), +
+  SR_SUD_001
 
-| SR_CFC_003
-| Resources assigned only to Confidential domain MUST not be accessible by
-Normal domain
+| Block resources assigned to Confidential domains from access by Normal domain
+| SR_SUD_001, SR_SUD_002, SR_SUD_003, SR_MMU_001, SR_MMU_002
 
-| SR_CFC_004
-| Resources assigned only to Normal domain MUST not be accessible by
-Confidential domain
+| Block resources assigned to Normal domain from access by Confidential domain 
+| SR_SUD_001, SR_SUD_002, SR_SUD_003, SR_MMU_001, SR_MMU_002
 
-| SR_CFC_005
-| Resources MAY be assigned to both Normal and Confidential domains (sharing by
-consent).
+| Allow resources to be assigned to both Normal domain and Confidential domain (sharing by consent)
+| SR_SUD_001, SR_SUD_002, SR_SUD_003
 
-| SR_CFC_006
-| Resources assigned to a single confidential workload MUST NOT be accessible
-by any other confidential workload
+| Ensure resources assigned to a confidential workload are not be accessible by other confidential worloads
+without consent.
+| SR_MMU_003
 
-| SR_CFC_007
-| Resources MAY be assigned to multiple confidential workloads (sharing by
-consent)
+| Implement hypervisor functionality for resource management
+| SR_HYP_001, SR_MMU_001, SR_MMU_002
+
 
 |===
 
 RISC-V hardware enforced isolation mechanisms can be used as follows to meet
-those guarantees:
+those requirments:
 
 See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
 See xref:chapter3.adoc#_pmp_and_epmp[PMP and Smepmp]
@@ -703,34 +702,6 @@ See xref:chapter3.adoc#_spmp[sPMP]
 See xref:chapter3.adoc#_mmu[MMU]
 See xref:chapter3.adoc#_mtt[MTT]
 
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_CFC_008
-| PMP/Smepmp or MTT MUST be used to isolate Root domain from other domains.
-
-| SR_CFC_009
-| Supervisor domains MUST be used to enforce isolation between Normal and
-Confidential domains.
-
-|===
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_CFC_010
-| Hypervisor extension MUST be supported
-
-| SR_CFC_011
-| MMU MUST be used to enforce isolation between Confidential guests within
-Confidential domain, and between workloads within guests.
-|===
 
 ==== Root of trust
 
