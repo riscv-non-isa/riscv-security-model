@@ -203,7 +203,7 @@ Guarantees the system remains attestable.
 | Requirement
 | Reference
 
-| Protect an application or domain against monitoring or DOS by other applications or domains
+| Protect an application or domain against monitoring without consent or DOS by other applications or domains
 | SR_PMU_001, SR_PMU_002, SR_QOS_001, SR_QOS_002, SR_DOS_001, SR_DOS_002
 
 |===
