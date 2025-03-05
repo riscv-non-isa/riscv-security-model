@@ -517,7 +517,7 @@ Capability based architecture, such as CHERI.
 | T_LGC_007
 | Architectural Covert Channel
 | Logical
-| Execution environment is unaware of, or doesnt swap/sanitize system registers on context switch, creating covert communication channel between user threads or guest OSs
+| Execution environment is unaware of, or doesnt swap/sanitize CSRs on context switch, creating covert communication channel between user threads or guest OSs
 a| * Smstateen +
 * Ssstateen
 |
