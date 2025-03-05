@@ -109,7 +109,7 @@ The HW RoT can manage the security life cycle of a secondary root of trust (boot
 | A complex secure system MUST implement a HW RoT
 
 | SR_ROT_002
-| A simpler system MAY not require a HW RoT but one is still recommended
+| A simpler system SHOULD implement a HW RoT
 
 |===
 
