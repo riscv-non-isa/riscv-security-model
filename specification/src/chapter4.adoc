@@ -163,7 +163,7 @@ See https://github.com/riscv-non-isa/riscv-external-debug-security[RISC-V extern
 | Allow Debug of non-M-mode software while blocking debug of higher privilege code
 | SR_DBG_002
 
-| Allow Self-hosted of non M-mode software
+| Allow Self-hosted Debug of non M-mode software
 | SR_DBG_003, SR_DBG_004
 
 |===
