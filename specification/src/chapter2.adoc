@@ -544,13 +544,25 @@ Physical or remote
 a| * Implement robust power management and radiation control
 * Data Independent Execution Latency (Zkt, Zvkt)
 
+// Logical or physical
+// a| * Row-hammer type software attacks to manipulate nearby memory cells
+// * Using NVDIMM, interposers, or physical probing to read, record, or replay
+// physical memory
+// * Physical attacks on hardware shielded locations to extract hardware
+// provisioned assets
+// a| * Implement robust memory error detection, cryptographic memory protection,
+// or physical tamper resistance
+// * Supervisor domain ID, privilege level, or MTT attributes, may be used to
+// derive memory encryption contexts at domain or workload granularity
+// * Provide a degree of tamper resistance
+
 | T_PHY_002
 | Fault Injection
 | Direct +
 Logical or Physical
 a| * Row-hammer type software attacks to manipulate nearby memory cells  
-* Use of NVDIMM, interposers, or physical probing to read, record, or replay physical memory  
-* Fault injection (glitching, laser or electromagnetic) to extract hardware-provisioned assets  
+* Using NVDIMM, interposers, or physical probing to read, record, or replay physical memory  
+* Fault injection attacks (glitching, laser, electromagnetic, ...) to extract hardware-provisioned assets  
 a| * Implement robust memory error detection, cryptographic memory protection, or physical tamper resistance  
 * Use supervisor domain ID, privilege level, or MTT attributes to derive memory encryption contexts at the domain or workload granularity  
 * Provide a level of tamper resistance, e.g. through RoT attestation, adding redundancy during execution, etc.
