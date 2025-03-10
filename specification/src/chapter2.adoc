@@ -1,3 +1,5 @@
+:imagesdir: ../images
+
 [[chapter2]]
 
 ==  RISC-V security model overview
