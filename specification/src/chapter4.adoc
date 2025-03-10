@@ -1,3 +1,5 @@
+:imagesdir: ../images
+
 [[chapter4]]
 
 == Use case examples
