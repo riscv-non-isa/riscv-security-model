@@ -1,3 +1,5 @@
+:imagesdir: ../../images
+
 [[zero_trust]]
 
 == Zero Trust
