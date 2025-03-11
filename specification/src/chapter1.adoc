@@ -3,35 +3,78 @@
 
 == Introduction
 
-This specification provides a superset of normative requirements for building secure RISC-V systems using RISC-V security building blocks. It is aimed at developers of RISC-V technical specifications, as well as at designers of secure RISC-V systems. It is intended to be referenced by other documentation that will define a specific subset of requirements applicable for a given use case, certification regime, platform or profile. 
+This specification provides a superset of normative requirements for building
+secure RISC-V systems using RISC-V security building blocks. It is aimed at
+developers of RISC-V technical specifications, as well as at designers of
+secure RISC-V systems. It is intended to be referenced by other documentation
+that will define a specific subset of requirements applicable for a given use
+case, certification regime, platform or profile.
 
 
-A few non-normative example use cases are provided, based on commonly used security deployment models.
-These are not intended to be exhaustive but are common enough to represent a wide range of deployments of secure products. They are accompanied by an appropriate set of use case specific security
-guidelines which are intended to help readers implement secure products for their specific use cases.
+A few non-normative example use cases are provided, based on commonly used
+security deployment models.
+These are not intended to be exhaustive but are common enough to represent a
+wide range of deployments of secure products. They are accompanied by an
+appropriate set of use case specific security
+guidelines which are intended to help readers implement secure products for
+their specific use cases.
 
 The examples may be extended over time as required.
 
-RISC-V is currently not intending to create a security certification programme. This specification is provided as non-normative guidance for developing secure RISC-V systems which are certifiable within existing third party security certification programmes. 
+RISC-V is currently not intending to create a security certification programme.
+This specification is provided as non-normative guidance for developing secure
+RISC-V systems which are certifiable within existing third party security
+certification programmes.
 
-This specification does not define any new RISC-V ISA or non-ISA extensions. Instead it refers to existing RISC-V extensions, as well as commonly used non-RVI architecture agnostic security features and processes. It aims to show how those can be combined, in commonly used examples, to create systems which are certifiabe within commonly used existing security certification programmes.
+This specification does not define any new RISC-V ISA or non-ISA extensions.
+Instead it refers to existing RISC-V extensions, as well as commonly used
+non-RVI architecture agnostic security features and processes. It aims to show
+how those can be combined, in commonly used examples, to create systems which
+are certifiabe within commonly used existing security certification programmes.
 
-All existing RISC-V extensions are associated with an RVI _proof of concept (PoC)_, providing a viable example implementation. Any non-RVI security feature or process referred to in this document has existing commonly used sample implementations equivalent to an RVI PoC.
+All existing RISC-V extensions are associated with an RVI _proof of concept
+(PoC)_, providing a viable example implementation. Any non-RVI security feature
+or process referred to in this document has existing commonly used sample
+implementations equivalent to an RVI PoC.
 
-The examples are not definitions of formal Protection Profiles (See: https://csrc.nist.gov/glossary/term/protection_profile).
+The examples are not definitions of formal Protection Profiles (See:
+https://csrc.nist.gov/glossary/term/protection_profile).
 Formal protection profiles are typically provided by third party certification
-bodies for different ecosystems. The guidelines provided within the examples in this specification are intended to help readers adapt RISC-V security features to meet security requirements of commonly used third party protection profiles. Mapping documentation or protection profiles may also directly reference this document. 
+bodies for different ecosystems. The guidelines provided within the examples in
+this specification are intended to help readers adapt RISC-V security features
+to meet security requirements of commonly used third party protection profiles.
+Mapping documentation or protection profiles may also directly reference this
+document.
 
-This specification does not contain threat modelling or security assessment of individual RISC-V technical specifications. Individual RISC-V technical specifications are expected to use the Security Model as a guide to develop their own specific security analysis, including formal threat modeling where appropriate. For this purpose, all guidelines in this document are labelled to enable referencing from other specifications. Specific security analysis in the context of a RISC-V technical specification may require testing and a proof of concept as per normal RISC-V development processes for RISC-V technical specifications.
+This specification does not contain threat modelling or security assessment of
+individual RISC-V technical specifications. Individual RISC-V technical
+specifications are expected to use the Security Model as a guide to develop
+their own specific security analysis, including formal threat modeling where
+appropriate. For this purpose, all guidelines in this document are labelled to
+enable referencing from other specifications. Specific security analysis in the
+context of a RISC-V technical specification may require testing and a proof of
+concept as per normal RISC-V development processes for RISC-V technical
+specifications.
 
-Security is an evolving area where new use cases and new threats can emerge at any time. This specification represents the RISC-V security model and best practice as of the date of publication of this document. 
+Security is an evolving area where new use cases and new threats can emerge at
+any time. This specification represents the RISC-V security model and best
+practice as of the date of publication of this document.
 
-New versions of this document may be developed and released as and when required.
+New versions of this document may be developed and released as and when
+required.
 
 === Requirements and tracking
 
-This is a normative specification. However, the specification does not mandate the adoption of any requirements. These requirements are intended to be referenced by current and future specifications, both Risc-V and external specifications,  where a set, specific to the use case, certification regime, platform or profile under consideration will be documented. A set of in-scope security threats are also defined in this specification. These threats are intended to be referenced by the threat models of current and future specifications, both RISC-V and external specifications. 
-This specification expresses trackable requirements and threats using the following format:
+This is a normative specification. However, the specification does not mandate
+the adoption of any requirements. These requirements are intended to be
+referenced by current and future specifications, both RISC-V and external
+specifications,  where a set, specific to the use case, certification regime,
+platform or profile under consideration will be documented. A set of in-scope
+security threats are also defined in this specification. These threats are
+intended to be referenced by the threat models of current and future
+specifications, both RISC-V and external specifications.
+This specification expresses trackable requirements and threats using the
+following format:
 
 [width=100%]
 [%header, cols="5,20"]
@@ -54,7 +97,8 @@ their normal English meanings.
 
 | T_CAT_NNN
 | The `T_CAT` is a "Threat CATegory" prefix that logically groups
-the threats considered in scope (e.g. T_LGC denotes threats categorised by logical attacks) and is followed
+the threats considered in scope (e.g. T_LGC denotes threats categorised by
+logical attacks) and is followed
 by 3 digits - `NNN` - assigning a numeric ID to the threat.
 
 |===
@@ -63,15 +107,20 @@ A requirement or a group of requirements may be followed by non-normative text
 providing context or justification for the requirement. The non-normative text
 may also be used to reference sources that are the origin of the requirement.
 
-NOTE: Some sections may include duplicate requirements, both recommending and mandating the same feature. A specific use case must define if the feature is recommended or required.
+NOTE: Some sections may include duplicate requirements, both recommending and
+mandating the same feature. A specific use case must define if the feature is
+recommended or required.
 
 Trackable requirements are intended for ease of reference across dependent
 specifications.
 
 === Relationship with external protection profiles
 
-To assist with articulating security guidelines relevant to the included examples, this specification references external
-protection profiles as appropriate. Such references are not intended to mandate any specific implementations, but to provide guidelines on how RISC-V security building blocks may be used to comply with those protection profiles.
+To assist with articulating security guidelines relevant to the included
+examples, this specification references external
+protection profiles as appropriate. Such references are not intended to mandate
+any specific implementations, but to provide guidelines on how RISC-V security
+building blocks may be used to comply with those protection profiles.
 
 Typically, protection profiles cover some or all of:
 
@@ -82,7 +131,8 @@ Typically, protection profiles cover some or all of:
 * Certification programs
 * Misc Processes and methodology
 
-The following are examples of some external protection profiles that are referenced by this specification:
+The following are examples of some external protection profiles that are
+referenced by this specification:
 
 [width=100%]
 [%header, cols="5,15"]
@@ -124,3 +174,4 @@ https://www.nist.gov/
 
 This is not an exhaustive list, more examples can be found in the reference
 section of this specification.
+
