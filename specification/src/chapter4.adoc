@@ -2,10 +2,11 @@
 
 [[chapter4]]
 
-== Use case examples
+== Use Case Examples - Non Normative
 
 This chapter provides a selection of non-exhaustive example security usecases based on commonly used
-deployment security models. The examples may be extended over time as required.
+deployment security models. The examples may be extended over time as required. This section is non normative
+guidance only, detailing the recommended combination of security requirements for the associated use case. 
 
 === Generic system without supervisor domains
 
@@ -18,11 +19,11 @@ image::img_ch4_priv.png[]
 A generic vertically integrated system can be either virtualized or
 non-virtualized.
 
+
 M-mode hosts a FW RoT. An OS or a Hypervisor in S or HS mode controls
 applications or guests. Guests and applications execute in U or VS/VU modes and
 trust the OS or Hypervisor to provide isolation guarantees.
 
-A system level HW RoT is recommended.
 
 NOTE: The RISC-V architecture also caters for systems with just M and U modes,
 commonly used in embedded systems, helper cores, and similar use cases. On
@@ -41,14 +42,14 @@ non-security services.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_GEN_001
-| PMP/Smepmp, MUST be used to isolate M-mode from lower privilege levels.
+| Protect M-mode from lower privilege levels.
+| SR_PMP_001, SR_PMP_002
 
-| SR_GEN_002
-| sPMP or MMU MUST be used to protect Supervisor mode from lower privilege levels (with or without H-extension)
+| Protect Supervisor mode from lower privilege levels (with or without H-extension)
+| SR_PMP_004
 
 |===
 
@@ -74,13 +75,15 @@ See xref:chapter2.adoc#_reference_model[reference model].
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_GEN_004
-| A secure system SHOULD implement a HW RoT
+| A system level HW RoT is recommended
+| SR_ROT_001, 
+SR_ROT_002
 
 |===
+
 
 ==== Authorized Boot
 
@@ -113,18 +116,23 @@ Isolation guarantees provided to software also apply to device initiated
 transaction.
 
 [width=100%]
-[%header, cols="5,20"]
+[%header, cols="1,^1"]
 |===
-| ID#
-| Requirement
+| Requirement | Reference
 
-| SR_GEN_005
-| IOPMP or IOMTT MUST be used to guarantee that devices assigned to lower
-privilege levels cannot access resources assigned to M-mode.
-
-| SR_GEN_006
-| IOPMP, or IOMTT with IOMMU, MUST be used to enforce access rules for devices
-assigned to user applications or guests on a virtualized system.
+| Guarantee that devices assigned to lower 
+  privilege levels cannot access resources 
+  assigned to M-mode.
+|  SR_IOM_005, +
+  (SR_IOP_001, SR_IOP_002, SR_IOP_003) +
+  OR +
+  (SR_IOM_001, SR_IOM_002, SR_IOM_003) +
+ 
+ 
+| Enforce access rules for devices assigned 
+  to user applications or guests on a virtualized 
+  system.
+| SR_IOP_004 OR SR_IOM_004 
 
 |===
 
@@ -143,26 +151,22 @@ domain.
 ==== Debug and performance management
 
 See xref:chapter2.adoc#_security_lifecycle[security life cycle]. +
-See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC-V external debug security]
+See https://github.com/riscv-non-isa/riscv-external-debug-security[RISC-V external debug security]
 
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_GEN_007
-| External debug MUST only be enabled by HW RoT (M-mode external debug) or by FW
-RoT (non M-mode external debug).
+| Securely control debug access
+| SR_DBG_001
 
-| SR_GEN_008
-| External debug SHOULD be enabled separately for M-mode & non-M-mode software.
+| Allow Debug of non-M-mode software while blocking debug of higher privilege code
+| SR_DBG_002
 
-| SR_GEN_009
-| Self-hosted debug MAY be used for debug of non M-mode software.
-
-| SR_GEN_010
-| Self-hosted debug MUST only be enabled by a higher privileged component.
+| Allow Self-hosted Debug of non M-mode software
+| SR_DBG_003, SR_DBG_004
 
 |===
 
@@ -171,11 +175,11 @@ For example, external debug can be enabled for non-M-mode software without affec
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_GEN_011
-| FW RoT MAY disable self-hosted debug for all non M-mode software.
+| Allow a FW RoT to prevent debug of a production system
+| SR_DBG_005
 
 |===
 
@@ -185,20 +189,11 @@ reasons.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_GEN_012
-| External debug MUST only be enabled following system reset (part of measuring)
-of the affected component, moderated by a RoT.
-
-| SR_GEN_013
-| Revealing self-hosted debug MUST only be enabled following reboot (part of
-measuring) of the affected component.
-
-| SR_GEN_014
-| Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the
-affected component, to an application specific governance process.
+| Include debug controls in boot time measurement for attestation purpose.
+| SR_DBG_006, SR_DBG_007, SR_DBG_008, SR_LFC_004
 
 |===
 
@@ -207,16 +202,11 @@ Guarantees the system remains attestable.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_GEN_015
-| Lower privileged software MUST NOT be able to monitor higher privileged
-software.
-
-| SR_GEN_016
-| Software in one domain MUST NOT be able to monitor software in a different
-domain, without consent.
+| Protect an application or domain against monitoring without consent or DOS by other applications or domains
+| SR_PMU_001, SR_PMU_002, SR_QOS_001, SR_QOS_002, SR_DOS_001, SR_DOS_002
 
 |===
 
@@ -277,7 +267,7 @@ allocation can be mostly static, making the system more deterministic. +
 _Use case examples:_ edge devices and IoT, automation, and automotive.
 * Virtualized TEE +
 On a virtualized system, TEE can also be virtualized. In this case a _secure
-partition manager_ in TEE domain is responsible for isolation of multiple TEE
+partition manager_ (SPM) in TEE domain is responsible for isolation of multiple TEE
 guests (for example, an OEM TEE and separate third party TEE). This model can
 also support more dynamic resource allocation. +
  +
@@ -290,27 +280,29 @@ A Global Platform TEE requires the following isolation guarantees:
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_001
-| Root domain MAY access resources assigned to any domain, but SHOULD prevent
+| Allow Root domain to access resources assigned to any domain, while preventing
 itself from unintended access to resources assigned to a different domain
 (privilege escalation).
+| SR_PMP_003
 
-| SR_TEE_002
-| No other domains can access resources assigned to Root domain
+| Prevent other domains from accessing resources assigned to Root domain
+| (SR_PMP_001, SR_PMP002) OR (SR_MPT_001, SR_MPT_002), +
+  SR_SUD_001
 
-| SR_TEE_003
-| Resources assigned to TEE domain MUST NOT be accessible to Normal domain
 
-| SR_TEE_004
-| Resources assigned to Normal domain MUST be accessible to Normal domain
+| Block resources assigned to TEE domain from access by Normal domain
+| SR_SUD_001, SR_SUD_002, SR_SUD_003
+
+| Allow resources assigned to Normal domain to be accessible to Normal domain
 (r/w/x), and to TEE domain (r/w) (default sharing rule)
+| SR_SUD_004
 
-| SR_TEE_005
-| Resources assigned to a single TA, or a guest TEE, MUST not be accessible by a
+| Ensure resources assigned to a single TA, or a guest TEE, are not be accessible by a
 different TA, or guest TEE, without consent.
+| SR_PMP_005 OR SR_MMU_003
 
 |===
 
@@ -339,41 +331,23 @@ See xref:chapter3.adoc#_mtt[MTT]
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_006
-| PMP/Smepmp, or MTT, MUST be used to isolate Root domain from other domains.
+| Use Supervisor domains to enforce isolation between Normal and TEE domains, and to protect machine mode from other domains
+| SR_SUD_001, SR_MPT_001, SR_MPT_002
 
-| SR_TEE_007
-| Supervisor domains MUST be used to enforce isolation between Normal and TEE
-domains.
-
-|===
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_TEE_008
-| For a static partition TEE, sPMP or MMU MUST be used to enforce isolation
+| For a static partition TEE, use sPMP or MMU to enforce isolation
 between TA in TEE domain.
-|===
+| SR_PMP_005 OR SR_MMU_003
 
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
+| For a virtualized TEE, use hypervisor extension 
+| SR_HYP_001,SR_MMU_001, SR_MMU_002,
 
-| SR_TEE_009
-| For a virtualized TEE, hypervisor extension MUST be supported
-
-| SR_TEE_010
 | For a virtualized TEE, sPMP or MMU MUST be used to enforce isolation between guest
 TEE, and between TA within a TEE.
+| SR_PMP_005 OR SR_MMU_003
+
 |===
 
 ==== Root of Trust
@@ -383,11 +357,11 @@ See xref:chapter2.adoc#_reference_model[reference model].
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_011
-| A TEE based system SHOULD implement a HW RoT
+| It is recommended for a TEE based system implement a HW RoT
+| SR_TOT_001, SR_ROT_002
 
 |===
 
@@ -402,6 +376,24 @@ TEE boot is typically based on:
 
 The process can involve multiple stages (layered boot).
 
+[width=100%]
+[%header, cols="5,20"]
+|===
+| Requirement
+| Reference
+
+| Direct or indirect measurement of a system verifies the software is authorised
+| SR_MSM_001, SR_MSM_002, SR_MSM_003
+
+| Immutable code ensures a trusted starting point
+| SR_MSM_004
+
+| Systems allow secure updates to all mutable components
+| SR_UPD_001, SR_UPD_002, SR_UPD_005, SR_UPD_006, SR_UPD_007
+
+|===
+
+
 ==== Attestation
 
 See xref:chapter2.adoc#_attestable_services[attestable services].
@@ -412,15 +404,14 @@ platform attestation.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_012
-a| A direct security platform attestation MUST cover at least:
-
+| Attestation is used to determine trustworthyness across all comonents
 * TEE domain
 * Root domain
 * Boot state of all trusted subsystems
+| SR_ATT_001, SR_ATT_002, SR_ATT_003
 
 |===
 
@@ -430,6 +421,16 @@ concern. For example:
 * A security platform attestation, signed by a RoT, covering trusted subsystems,
 Root domain, and SPM
 * Separate guest TEE attestation(s) signed by SPM
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| Requirement
+| Reference
+
+| Layered attestation allows delegation in complex systems
+| SR_ATT_004, SR_ATT_005
+|===
 
 ==== Sealing
 
@@ -443,20 +444,18 @@ exposure of cryptographic materials.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_013
-| Local sealing for a TA, or a TEE guest, MUST be unique to TEE domain and to a
+| Local sealing for a TA, or a TEE guest, must be unique to TEE domain and to a
 physical instance of a system.
 
-| SR_TEE_014
-| Local sealing for a TA, or a TEE guest, SHOULD also be unique to the TEE guest
-or the TA.
+| SR_SUD_002, SR_SLG_002
 
-| SR_TEE_015
-| Local sealing MAY be layered.
+| Local sealing for a TA, or a TEE guest, should also be unique to the TEE guest
+or the TA.Local sealing MAY be layered
 
+| SR_MMU_003 OR SR_PMP_005
 |===
 
 For example:
@@ -477,17 +476,16 @@ and interrupts.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_016
-| A static partition TEE MUST use IOPMP to enforce access rules for devices.
+| A static partition TEE must use IOPMP to enforce access rules for devices.
+| SR_IOP_004
 
-| SR_TEE_017
-| A virtualized TEE MUST use IOMTT and IOMMU to enforce access rules for devices
-assigned to Normal or TEE domains, and SHOULD use IOPMP to enforce access rules
+| A virtualized TEE must use IOMTT and IOMMU to enforce access rules for devices
+assigned to Normal or TEE domains, and should use IOPMP to enforce access rules
 for Root devices.
-
+| SR_IOM_001, SR_IOM_002, SR_IOM_003, SR_IOM_004, SR_IOM_005
 |===
 
 For a static partition TEE, domain level granularity can be sufficient as device
@@ -539,25 +537,24 @@ See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_018
-| External debug MUST be enabled separately for Root domain.
+| External debug must be enabled separately for Root domain.
+| SR_DBG_001, SR_DBG_002
 
-| SR_TEE_019
-| External debug MUST be enabled separately for each supervisor domain.
+| External debug must be enabled separately for each supervisor domain.
+| SR_SUD_005
 
-| SR_TEE_020
-| External debug MUST only be enabled by a HW RoT (Root domain external debug)
+| External debug must only be enabled by a HW RoT (Root domain external debug)
 or by Root domain (supervisor domain external debug).
+| SR_DBG_001, SR_SUD_005
 
-| SR_TEE_021
-| Self-hosted debug MAY be used for debug within a supervisor domain.
+| Self-hosted debug may be used for debug within a supervisor domain.
+| SR_DBG_003
 
-| SR_TEE_022
-| Self-hosted debug MUST only be enabled by a higher privileged component.
-
+| Self-hosted debug must only be enabled by a higher privileged component.
+| SR_DBG_004
 |===
 
 For example, within normal domain an S-mode or VS-mode OS can enable
@@ -574,12 +571,11 @@ A machine mode monitor can enable external debug of individual supervisor domain
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_023
-| Root domain MAY disable self-hosted debug for a whole domain.
-
+| Root domain may disable self-hosted debug for a whole domain.
+| SR_DBG_005
 |===
 
 For example, for all of TEE domain on a production system, for certification
@@ -588,21 +584,20 @@ reasons.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_TEE_024
 | External debug MUST only be enabled following system reset (part of measuring)
 of the affected component.
+|SR_DBG_006
 
-| SR_TEE_025
 | Revealing self-hosted debug MUST only be enabled following reboot (part of
 measuring) of the affected component.
+|SR_DBG_007
 
-| SR_TEE_026
 | Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the
 affected component, to an application specific governance process.
-
+|SR_DBG_008
 |===
 
 Guarantees the system remains attestable.
@@ -634,10 +629,7 @@ https://confidentialcomputing.io/[Confidential Computing Consortium].
 Reference firmware for CoVE is being developed as part of the
 https://riseproject.dev/[RISC-V Software Ecosystem] project.
 
-CoVE is primarily aimed at cloud hosting of confidential workloads. But the
-underlying isolation model could potentially be used in other use cases, such
-as some mobile clients or edge devices.
-
+CoVE is primarily aimed at cloud hosting of confidential workloads. In this deployment model
 CoVE divides software into physically isolated domains:
 
 * Normal domain +
@@ -658,48 +650,21 @@ Root domain to manage confidential workloads.
 The secure monitor is responsible for context switching and isolation across
 domain boundaries, including event management.
 
+More details including a threat model and the security requirements to address that threat
+model can be found in the _CoVE (Confidential VM Extensions)_
+https://github.com/riscv-non-isa/riscv-ap-tee/tree/main/specification[specification]
+
+The information below adds cross references to the security model normative security requirements.
+
+The underlying isolation mechanisms may be used in other deployment models, such
+as some mobile clients or edge devices whose design may might be constrained by real 
+time and formal verification requirements. The TSM and secure monitor function are
+then combined into a single TEE security manager in Root domain.
+
+
 ==== Isolation model
 
-Confidential workloads are provided the following isolation guarantees:
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_CFC_001
-| Root domain MAY access resources assigned to any domain, but SHOULD prevent
-itself from unintended access to resources assigned to a different domain
-(privilege escalation).
-
-| SR_CFC_002
-| Resources assigned to Root domain MUST be private to Root domain
-
-| SR_CFC_003
-| Resources assigned only to Confidential domain MUST not be accessible by
-Normal domain
-
-| SR_CFC_004
-| Resources assigned only to Normal domain MUST not be accessible by
-Confidential domain
-
-| SR_CFC_005
-| Resources MAY be assigned to both Normal and Confidential domains (sharing by
-consent).
-
-| SR_CFC_006
-| Resources assigned to a single confidential workload MUST NOT be accessible
-by any other confidential workload
-
-| SR_CFC_007
-| Resources MAY be assigned to multiple confidential workloads (sharing by
-consent)
-
-|===
-
-RISC-V hardware enforced isolation mechanisms can be used as follows to meet
-those guarantees:
+Confidential workloads require isolation guarantees. RISC-V hardware enforced isolation mechanisms can be used as follows to meet those requirments:
 
 See xref:chapter3.adoc#_supervisor_domains[supervisor domains].
 See xref:chapter3.adoc#_pmp_and_epmp[PMP and Smepmp]
@@ -710,31 +675,38 @@ See xref:chapter3.adoc#_mtt[MTT]
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_CFC_008
-| PMP/Smepmp or MTT MUST be used to isolate Root domain from other domains.
 
-| SR_CFC_009
-| Supervisor domains MUST be used to enforce isolation between Normal and
-Confidential domains.
+| Allow Root domain to access resources assigned to any domain, while preventing
+itself from unintended access to resources assigned to a different domain
+(privilege escalation).
+| SR_PMP_003
+
+| Prevent other domains from accessing resources assigned to Root domain
+| (SR_PMP_001, SR_PMP002) OR (SR_MPT_001, SR_MPT_002), +
+  SR_SUD_001
+
+| Block resources assigned to Confidential domains from access by Normal domain
+| SR_SUD_001, SR_SUD_002, SR_SUD_003, SR_MMU_001, SR_MMU_002
+
+| Block resources assigned to Normal domain from access by Confidential domain 
+| SR_SUD_001, SR_SUD_002, SR_SUD_003, SR_MMU_001, SR_MMU_002
+
+| Allow resources to be assigned to both Normal domain and Confidential domain (sharing by consent)
+| SR_SUD_001, SR_SUD_002, SR_SUD_003
+
+| Ensure resources assigned to a confidential workload are not be accessible by other confidential worloads
+without consent.
+| SR_MMU_003
+
+| Implement hypervisor functionality for resource management
+| SR_HYP_001, SR_MMU_001, SR_MMU_002
+
 
 |===
 
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_CFC_010
-| Hypervisor extension MUST be supported
-
-| SR_CFC_011
-| MMU MUST be used to enforce isolation between Confidential guests within
-Confidential domain, and between workloads within guests.
-|===
 
 ==== Root of trust
 
@@ -743,32 +715,17 @@ See xref:chapter2.adoc#_reference_model[reference model].
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_CFC_012
-| A CoVE system MUST implement a HW RoT
+| Implement a HW RoT
+| SR_TOT_001, SR_ROT_002
 
 |===
 
 ==== Authorized Boot
 
 See xref:chapter2.adoc#_authorized_software[authorized software].
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_CFC_013
-a| Confidential guests MUST not boot until at least the security platform has
-been verified:
-
-* TSM in Confidential domain
-* Root domain
-* Boot state of all trusted subsystems
-|===
 
 Boot in a cloud hosting context is typically based on:
 
@@ -783,6 +740,30 @@ A _trusted platform module_ (TPM) can be used to measure the security platform.
 Measuring confidential guests can be done by TSM in Confidential domain.
 
 The process can involve multiple stages (layered boot).
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| Requirement
+| Reference
+
+a| Confidential guests must not boot until at least the security platform has
+been verified:
+
+* TSM in Confidential domain
+* Root domain
+* Boot state of all trusted subsystems
+
+Direct or indirect measurement of a system verifies the software is authorised
+| SR_MSM_001, SR_MSM_002, SR_MSM_003
+
+| Immutable code ensures a trusted starting point
+| SR_MSM_004
+
+| Systems allow secure updates to all mutable components
+| SR_UPD_001, SR_UPD_002, SR_UPD_005, SR_UPD_006, SR_UPD_007
+
+|===
 
 ==== Attestation
 
@@ -807,16 +788,16 @@ separation of concern:
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_CFC_014
-a| A security platform attestation MUST cover at least:
+a| A security platform attestation is used, covering at least:
 
 * HW RoT
 * TSM
 * Root domain
 * Boot state of all trusted subsystems
+| SR_ATT_001, SR_ATT_002, SR_ATT_003
 
 |===
 
@@ -848,19 +829,17 @@ DMA and interrupts.
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_CFC_015
-| IOMTT and IOMMU MUST be used to enforce access rules for devices assigned to
-Normal or Confidential domains.
+| IOMTT and IOMMU are used to enforce access rules for devices assigned to
+Normal or Confidential domains, and IOPMP is used to enforce access rules
+for Root devices.
+|SR_IOM_001, SR_IOM_002, SR_IOM_003, SR_IOM_004, SR_IOM_005
 
-| SR_CFC_016
-| IOPMP SHOULD be used to enforce access rules for Root devices.
-
-| SR_CFC_017
-| IOPMP and IOMTT configurations MUST only be directly accessible by
+| IOPMP and IOMTT configurations are only directly accessible by
 Root domain.
+| SR_PMP_001, SR_IOM_002
 
 |===
 
@@ -937,24 +916,24 @@ See https://github.com/riscv-non-isa/riscv-external-debug-security[enhanced RISC
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_CFC_018
-| External debug MUST be enabled separately for Root domain.
+| External debug must be enabled separately for Root domain.
+| SR_DBG_001, SR_DBG_002
 
-| SR_CFC_019
-| External debug MUST be enabled separately for each supervisor domain.
+| External debug must be enabled separately for each supervisor domain.
+| SR_SUD_005
 
-| SR_CFC_020
-| External debug MUST only be enabled by a HW RoT (Root domain external debug)
+| External debug must only be enabled by a HW RoT (Root domain external debug)
 or by Root domain (supervisor domain external debug).
+| SR_DBG_001, SR_SUD_005
 
-| SR_CFC_021
-| Self-hosted debug MAY be used for debug within a supervisor domain.
+| Self-hosted debug may be used for debug within a supervisor domain.
+| SR_DBG_003
 
-| SR_CFC_022
-| Self-hosted debug MUST only be enabled by a higher privileged component.
+| Self-hosted debug must only be enabled by a higher privileged component.
+| SR_DBG_004
 
 |===
 
@@ -970,20 +949,20 @@ A machine mode monitor can enable external debug of individual supervisor domain
 [width=100%]
 [%header, cols="5,20"]
 |===
-| ID#
 | Requirement
+| Reference
 
-| SR_CFC_023
-| External debug MUST only be enabled following system reset (part of measuring)
+| External debug must only be enabled following system reset (part of measuring)
 of the affected component.
+| SR_DBG_006
 
-| SR_CFC_024
-| Revealing self-hosted debug MUST only be enabled following reboot (part of
+| Revealing self-hosted debug must only be enabled following reboot (part of
 measuring) of the affected component.
+| SR_DBG_007
 
-| SR_CFC_025
-| Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the
+| Trusted self-hosted debug may be enabled at runtime (after measuring) of the
 affected component, to an application specific governance process.
+| SR_DBG_008
 
 |===
 

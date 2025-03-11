@@ -1,5 +1,5 @@
 [[header]]
-:description: RISC-V Security Model (non-normative)
+:description: RISC-V Security Model 
 :company: RISC-V.org
 :revdate: 05/2024
 :revnumber: 0.3
@@ -37,7 +37,7 @@ endif::[]
 :footnote:
 :xrefstyle: short
 
-= RISC-V Security Model (non-normative)
+= RISC-V Security Model 
 RISC-V Security Model Task Group
 
 // Preamble
