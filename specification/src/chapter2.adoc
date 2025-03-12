@@ -553,7 +553,7 @@ a| * Using NVDIMM, interposers, or physical probing to read, record, or replay
 physical memory.
 a| * Implement robust memory error detection, cryptographic memory protection,
 or physical tamper resistance.
-* Supervisor domain ID, privilege level, or MTT attributes, may be used to
+* Supervisor domain ID, privilege level, or MPT attributes, may be used to
 derive memory encryption contexts at domain or workload granularity
 * Provide a degree of tamper resistance.
 
