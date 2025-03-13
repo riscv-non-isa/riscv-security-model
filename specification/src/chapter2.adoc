@@ -546,20 +546,22 @@ Physical or remote
 a| * Implement robust power management and radiation control
 * Data Independent Execution Latency (Zkt, Zvkt)
 
+
 | T_PHY_002
 | Physical memory manipulation
 | Direct +
 Logical or physical
-a| * Row-hammer type software attacks to manipulate nearby memory cells
-* Using NVDIMM, interposers, or physical probing to read, record, or replay
-physical memory
-* Physical attacks on hardware shielded locations to extract hardware
-provisioned assets
+a| * Using NVDIMM, interposers, or physical probing to read, record, or replay
+physical memory.
 a| * Implement robust memory error detection, cryptographic memory protection,
-or physical tamper resistance
-* Supervisor domain ID, privilege level, or MTT attributes, may be used to
+or physical tamper resistance.
+* Supervisor domain ID, privilege level, or MPT attributes, may be used to
 derive memory encryption contexts at domain or workload granularity
-* Provide a degree of tamper resistance
+* Provide a degree of tamper resistance.
+
+// * Physical attacks on hardware shielded locations to extract hardware
+// provisioned assets
+
 
 | T_PHY_003
 | Boot attacks
@@ -582,6 +584,18 @@ processes, development processes (for example, unfused development hardware or
 debug authorizations)
 | Deploy appropriate governance, accreditation, and certification processes for
 an ecosystem.
+
+| T_PHY_005
+| Fault Injection
+| Direct or remote +
+Logical or physical
+a| * Rowhammer-type software attacks to manipulate nearby memory cells.
+* Fault injection attacks (glitching, laser, electromagnetic, etc.) to extract hardware-provisioned assets, modify the control flow, circumvent countermeasures, etc.
+a| * Implement robust memory error detection, cryptographic memory protection, or physical tamper resistance. 
+* Provide a level of tamper resistance, e.g., through RoT attestation, redundancy during execution, etc.
+* Enforce proper access control for the DVFS configuration.
+* Employ lockstep processors for security-critical devices.
+* Employ physical sensors to detect attack
 
 |===
 
