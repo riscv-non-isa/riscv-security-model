@@ -43,6 +43,19 @@ Isolation of guests is enforced using two-stage address translation and
 protection.  Two-stage address translation and protection is in effect in VS
 and VU modes.
 
+[#cat_sr_sub_hyp]
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| SR_HYP_001
+| For virtualised environments, Hypervisor extension MUST be supported
+
+|===
+
+
 Alternatively sPMP can be used instead of MMU to support static partitionining
 hypervisors, for example on systems with hard and deterministic real time
 requirements [Note -The sPMP for Hypervisor extension has not been specified
@@ -81,10 +94,13 @@ memory for supervisor and U modes (with or without H-extension).
 
 | SR_PMP_001
 | PMP configurations MUST only be directly accessible to machine mode
+| SR_PMP_002
+| PMP/smepmp MUST be used to isolate M-mode from lower privilege levels
 |===
 
-Individual access controlled regions can be locked until the next system reset
+NOTE: Individual access controlled regions can be locked until the next system reset
 to create temporal isolation boundaries, such as protecting immutable boot code.
+Depending on the use case, MPT may be an acceptable additional or alternative mechanism to the PMP/smepmp
 
 ==== Smepmp
 
@@ -100,7 +116,7 @@ used to mitigate against privilege escalation attacks.
 | ID#
 | Requirement
 
-| SR_PMP_002
+| SR_PMP_003
 | If PMP is supported then Smepmp MUST be supported.
 |===
 
@@ -125,9 +141,23 @@ memory allocations to its workloads.
 | ID#
 | Requirement
 
-| SR_PMP_003
-| If MMU is not supported, sPMP SHOULD be used to protect S-mode from lower privilege levels.
+| SR_PMP_004
+| sPMP MUST be used to protect S-mode from lower privilege levels.
+
+| SR_PMP_005
+| sPMP MUST be used to protect resources assigned to one workload from other workloads
+
+| SR_PMP_006
+| sPMP configurations MUST only be directly accessible to machine mode and supervisor mode
 |===
+
+NOTE: Dependent on the use case, it may be recommended or mandatory to protect supervisor mode from lower privilege levels (with or without the H-extension). Trusted execution environments may require the use of sPMP to isolate trusted applications from each other. The MMU may be an additional or alternative mechanism.
+
+
+
+
+
+
 
 ==== MMU
 
@@ -136,7 +166,7 @@ ISA] specification.*
 
 _Memory management unit (MMU)_ enables address translation and protection for:
 
-* Isolating an OS from workloads on a system without H-extension (one-stage
+* Isolating an OS from workloads, and workloads from each other on a system without H-extension (one-stage
 translation)
 * Isolating a hypervisor from a guest, on a system with H-extension (two-stage
 translation)
@@ -149,53 +179,20 @@ translation)
 | Requirement
 
 | SR_MMU_001
-| Either PMP/Smepmp or MTT MUST be used to protect M-mode from lower privilege
-levels.
-
-| SR_MMU_002
 | if the Sv extension is supported then 1st-stage page tables MUST used to protect
 the S-Mode Supervisor domain from accesses made by U-Mode.
 
-| SR_MMU_003
+| SR_MMU_002
 | if the H extension is supported 1st-stage and/or G-stage page tables MUST used to protect
 Supervisor domain H/S-mode from lower privilege levels.
+
+| SR_MMU_003
+| MMU MUST be used to protect resources assigned to one workload from other workloads
 |===
 
-==== MTT
+NOTE: Dependent on the use case, it may be recommended or mandatory to protect supervisor mode from lower privilege levels (with or without the H-extension). Trusted execution environments may require the use of MMU to isolate trusted applications from each other. The sPMP may be an additional or alternative mechanism.
 
-*See the https://github.com/riscv/riscv-smmtt[RISC-V Supervisor Domains Access
-Protection] specification.*
-
-The _memory tracking table (MTT)_ is a memory structure managed by machine
-mode that is used to track memory ownership across supervisor domains. It is designed to
-enable fine grained dynamic memory management across supervisor domain
-boundaries, with policy typically set by a hypervisor in a hosting domain
-responsible for resource management.
-
-[#cat_sr_sub_mtt]
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_MTT_001
-| Either PMP/Smepmp or MTT MUST be used to protect M-mode from lower privilege
-levels
-
-| SR_MTT_002
-| MTT configurations MUST only be directly accessible to machine mode
-|===
-
-NOTE: The M-Mode resident software responsible for managing context switches and communication between supervisor
-domains is called the Root Domain. An MTT can be sufficient for protecting the Root Domain by enabling M-mode
-to ensure that its own resources are never assigned to any another domain.
-The use of PMP/Smepmp will add yet further protections for M-mode, such as the ability to
-implement temporal isolation boundaries within M-mode (to protect
-early boot code, for example), or to prevent itself from accessing or executing from memory
-assigned to lower privilege levels (privilege escalation).
-
-==== Supervisor domains
+==== Supervisor domains and MPT
 
 *See the https://github.com/riscv/riscv-smmtt[RISC-V Supervisor Domains Access
 Protection] specification.*
@@ -210,6 +207,38 @@ This isolation of supervisor domains and the context switching between them is m
 A supervisor domain is identified at an architecture level by a _supervisor domain
 id (SDID)_ CSR, managed by M-mode firmware.
 
+The _memory protection table (MPT)_ is a memory structure managed by machine
+mode that is used to track memory ownership across supervisor domains. It is designed to
+enable fine grained dynamic memory management across supervisor domain
+boundaries, with policy typically set by a hypervisor in a hosting domain
+responsible for resource management.
+
+[#cat_sr_sub_mtt]
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| SR_MPT_001
+| MPT MUST be used to protect M-mode from lower privilege
+levels
+
+| SR_MPT_002
+| MPT configurations MUST only be directly accessible to machine mode
+
+|===
+
+
+
+NOTE: The M-Mode resident software responsible for managing context switches and communication between supervisor
+domains is called the Root Domain. Depending on the use case, MTT can be sufficient for protecting the Root Domain by enabling M-mode
+to ensure that its own resources are never assigned to any another domain.
+PMP/Smepmp may be an additional or alternative protection for M-mode, enabling the ability to
+implement temporal isolation boundaries within M-mode (to protect
+early boot code, for example), or to prevent itself from accessing or executing from memory
+assigned to lower privilege levels (privilege escalation).
+
 [cat_sr_sub_sud]
 [width=100%]
 [%header, cols="5,20"]
@@ -218,16 +247,37 @@ id (SDID)_ CSR, managed by M-mode firmware.
 | Requirement
 
 | SR_SUD_001
-| PMP/Smepmp or MTT MUST be used to enforce physical memory isolation
+| PMP/Smepmp or MPT MUST be used to enforce physical memory isolation
 boundaries for supervisor domains, and to protect machine mode from any
 supervisor domain.
 
 |===
 
 PMP can be used for more static and deterministic use cases.
-
-MTT can be used where more fine grained dynamic resource management across
+MPT can be used where more fine grained dynamic resource management across
 supervisor domain boundaries is required.
+
+===== Supervisor Domain Resource Access and Sharing
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| SR_SUD_002
+| MPT MUST be used to protect resources assigned to one supervisor domain from other supervisor domains
+
+| SR_SUD_003
+| Resources assigned to a trusted supervisor domain MUST be inaccessible to an untrusted supervisor domain
+
+| SR_SUD_004
+| Resources assigned to an untrusted supervisor domain MUST be accessible to a trusted supervisor domain 
+|===
+
+Supervisor domains allow resource isolation and sharing between domains under the control of M-mode firmware. Trusted Execution environments can require asymmetric sharing models, where one trusted domain has R/W access to other domain's resources.
+
+===== Supervisor Domain Debug
 
 [width=100%]
 [%header, cols="5,20"]
@@ -236,36 +286,86 @@ supervisor domain boundaries is required.
 | ID#
 | Requirement
 
-| SR_SUD_002
+| SR_SUD_005
 | A system supporting supervisor domains MUST support supervisor domain
 extensions for interrupts (Smsdia) and SHOULD support supervisor domain
 extensions for external debug (TBD).
 
 |===
 
-===== Supervisor domains: Interrupts, External debug and Performance counters
-
 *See chapter 6 (Smsdia) of the https://github.com/riscv/riscv-smmtt[RISC-V Supervisor
 Domains Access Protection] specification.*
+
+==== External debug and Performance counters
 
 *See the https://github.com/riscv-non-isa/riscv-external-debug-security[RISC-V External Debug Security Extension]
 specification.*
 
-*Browse the https://lists.riscv.org/g/tech-privileged[tech-privileged mailing list] for relevant background on performance
-counters.*
+[cat_sr_sub_dbg]
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| SR_DBG_001
+| External debug MUST only be enabled by HW RoT (M-mode external debug) or by FW
+RoT (non M-mode external debug).
+
+| SR_DBG_002
+| External debug SHOULD be enabled separately for M-mode & non-M-mode software.
+
+| SR_DBG_003
+| Self-hosted debug MAY be used for debug of non M-mode software.
+
+| SR_DBG_004
+| Self-hosted debug MUST only be enabled by a higher privileged component.
+
+|===
+
+For example, external debug can be enabled for non-M-mode software without affecting M-mode (recoverable debug). And an S-mode OS can enable self-hosted debug for a user application without affecting other applications or S-mode itself.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| SR_DBG_005
+| FW RoT MAY disable self-hosted debug for all non M-mode software.
+
+|===
+
+For example, disable self-hosted debug in a production system for certification
+reasons.
+
+[width=100%]
+[%header, cols="5,20"]
+|===
+| ID#
+| Requirement
+
+| SR_DBG_006
+| External debug MUST only be enabled following system reset (part of measuring)
+of the affected component, moderated by a RoT.
+
+| SR_DBG_007
+| Revealing self-hosted debug MUST only be enabled following reboot (part of
+measuring) of the affected component.
+
+| SR_DBG_008
+| Trusted self-hosted debug MAY be enabled at runtime (after measuring) of the
+affected component, to an application specific governance process.
+
+|===
+
+Guarantees the system remains attestable.
+
+*See chapters 7 and 9 of the https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged
+ISA] specification on performance counters.*
 
 These extensions enable management of interrupts, external debug, and
-performance counters across supervisor domain boundaries. M-mode firmware
-should context switch hart HPM event/counters to manage isolation of
-performance counters:
-
-* External debug can be enabled for one supervisor domain without affecting
-other supervisor domains
-* M-mode firmware manage interrupt routing and preemption across supervisor
-domain boundaries
-* M-mode firmware can ensure that performance counters cannot be used by
-software in one supervisor domain to measure operations in other supervisor
-domains
+performance counters across supervisor domain boundaries.
 
 ==== IOPMP
 
@@ -285,22 +385,29 @@ device-initiated transactions, complementing PMP and sPMP rules.
 | A system which supports PMP/Smepmp, or sPMP, MUST implement IOPMP for device
 access control unless the system supports IOMTT.
 
-Depending in system design, IOMTT can enforce the same access control policies as IOPMP.
+Depending on system design, IOMTT can enforce the same access control policies as IOPMP.
 
 | SR_IOP_002
 | IOPMP configurations MUST only be directly accessible to machine mode.
+
+| SR_IOP_003
+| IOPMP MUST be used to guarantee that devices assigned to lower privilege levels cannot access resources assigned to M-mode.
+
+| SR_IOP_004
+| IOPMP MUST be used to guarantee that devices assigned to a domain cannot be accessed by other domains.
+
 |===
 
 NOTE: IOPMP defines multiple "models" for different system configurations.
 Unless specified differently in the use cases in this specification, system
-designers are free to choose any IOPMP model.
+designers are free to choose any IOPMP model. Depending on the use case, IOMPT may be an alternative or addition to IOPMP
 
-==== IOMTT
+==== IOMPT
 
 *See the https://github.com/riscv/riscv-smmtt[RISC-V Supervisor Domains Access
 Protection] specification.*
 
-IOMTT is a system level component providing physical memory access control for
+IOMPT is a system level component providing physical memory access control for
 device-initiated transactions, complementing MTT rules.
 
 [width=100%]
@@ -310,23 +417,27 @@ device-initiated transactions, complementing MTT rules.
 | Requirement
 
 | SR_IOM_001
-| A system which supports MTT MUST implement IOMTT for access-control for
+| A system which supports MPT MUST implement IOMPT for access-control for
 device-initiated memory accesses.
 
 | SR_IOM_002
-| IOMTT configurations MUST only be directly accessible to machine mode.
+| IOMPT configurations MUST only be directly accessible to machine mode.
 
 | SR_IOM_003
-| A system which implements IOMTT MAY also implement IOPMP to access-control
+| IOMPT MUST be used to guarantee that devices assigned to lower privilege levels cannot access resources assigned to M-mode.
+
+| SR_IOM_004
+| IOMPT MUST be used to guarantee that devices assigned to a domain cannot be accessed by other domains.
+
+| SR_IOM_005
+| A system which implements IOMPT MAY also implement IOPMP to access-control
 device-initiated access to M-mode memory.
 
 |===
 
-NOTE: IOMTT can also be sufficient for protecting Root devices in the sense that
-M-mode can enforce that its own resources are never assigned to another domain.
-Use of IOPMP or similar still adds further protections. For example, a system
-may require that Root devices are not able to access memory assigned to TEE
-domain.
+NOTE: IOMPT can be sufficient for protecting Root devices as M-mode can enforce that its own resources are never assigned to another domain.
+Depending on use case, IOPMP may be used an addition or alternative. For example, a system
+may require that Root devices are not able to access memory assigned to TEE domain.
 
 ==== IOMMU
 
@@ -342,12 +453,12 @@ locations. It complements the MMU.
 | ID#
 | Requirement
 
-| SR_IOM_004
+| SR_IOM_006
 | Systems supporting MMU SHOULD also support IOMMU
 
-| SR_IOM_005
+| SR_IOM_007
 | Systems supporting IOMMU MUST also enforce physical memory access control for
-M-mode memory against device-initiated transactions (IOMTT or IOPMP).
+M-mode memory against device-initiated transactions using IOMTT or IOPMP
 
 |===
 
@@ -440,7 +551,7 @@ operation can be viewed as a vector of size 1.
 
 The _RISC-V Post Quantum Cryptography_ initiative aims to specify ISA extensions that enhance performance and
 implementation efficiency for contemporary public-key cryptography, with a focus on standard Post-Quantum Cryptography
-algorithms like Kyber, Dilithium, and others. The ISA design and evaluation prioritize the requirements of real-world
+algorithms like ML-KEM (FIPS-203), and ML-DSA (FIPS-204), and others. The ISA design and evaluation prioritize the requirements of real-world
 networked devices, ensuring that the Post-Quantum Cryptography (PQC) extensions effectively complement existing scalar
 and vector cryptography extensions.
 
