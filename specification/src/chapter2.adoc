@@ -5,8 +5,8 @@
 ==  RISC-V security model overview
 
 The aim of this chapter is to define common taxonomies and principles for
-secure RISC-V systems as used in the rest of this specification as well as other RISC-V specifications. It
-is divided into the following sections:
+secure RISC-V systems as used in the rest of this specification as well as
+other RISC-V specifications. It is divided into the following sections:
 
 * Reference model +
 Defines a set of generic hardware and software subsystems used in examples and
@@ -26,20 +26,27 @@ trustworthy devices in an ecosystem.
 [title= "Generic security reference model"]
 image::img_ch2_reference-model.png[]
 
-The figure above outlines a generic security reference model and taxonomy. This specification 
-is oriented around this reference model. The model is not tied to any particular implementation.
+The figure above outlines a generic security reference model and taxonomy.
+This specification is oriented around this reference model. The model is not
+tied to any particular implementation.
 
 Most systems are built with multiple software components each managing _assets_
 that need to be protected. These components are often sourced from multiple
 different supply chains. The security reference model uses the generic term
-_domain_ to identify a logically isolated region, with at least some private 
-resources and execution state not accessible to at least some other domain(s).
+_domain_ to identify a logically isolated execution context, with at least some
+private resources and execution state not accessible to at least some other
+domain(s).
 The figure above uses two domains for illustrative purposes but some
-use-cases can require more. This specification does not imply or limit the number
-of domains or the type of use cases a RISC-V system can support. See
-xref:chapter4.adoc[Use case examples] for more comprehensive and specific examples.
+use-cases may require more. This specification does not imply or limit the
+number of domains or the type of use cases a RISC-V system can support. See
+xref:chapter4.adoc[Use case examples] for more comprehensive and specific
+examples.
 
-Logically isolated domains at the software level are typically reflected in logically isolated domains at the system hardware level, where hardware resources can be assigned or restricted to specific software domains. For example, device DMA transfers can be restricted to memory assigned to a particular domain.
+Logically isolated domains at the software level are typically reflected in
+logically isolated domains at the system hardware level, where hardware
+resources can be assigned or restricted to specific software domains. For
+example, device DMA transfers can be restricted to memory assigned to a
+particular domain.
 
 ==== Assets
 
@@ -62,8 +69,10 @@ protection mechanisms within a computer system, including hardware,
 firmware, and software - the combination responsible for enforcing a security
 policy.
 
-The following are examples of software components that can be a part of some function's TCB:
+The following are examples of software components that can be a part of some
+function's TCB:
 
+* Firmware
 * An operating system
 * A hypervisor and a guest operating system
 * A TEE security manager
@@ -71,13 +80,16 @@ The following are examples of software components that can be a part of some fun
 
 ==== Root of trust
 
-A _root of trust (RoT)_ is the foundation on which all secure operations of a system depend. A RoT is typically a combination of a minimal amount of hardware and software that has to be implicitly trusted by all system components.
+A _root of trust (RoT)_ is the foundation on which all secure operations of a
+system depend. A RoT is typically a combination of a minimal amount of
+hardware and software that has to be implicitly trusted by all system
+components.
 
 A RoT supports fundamental security services, for example:
 
 * Boot and attestation
 * Security life cycle management
-* Key derivations and sealing (sealing is defined in a later section)
+* Key derivations and sealing
 * Security provisioning
 
 Depending on use case and ecosystem requirements, a RISC-V RoT can be:
@@ -85,8 +97,9 @@ Depending on use case and ecosystem requirements, a RISC-V RoT can be:
 * Hart firmware (FW RoT)
 * A dedicated trusted subsystem (HW RoT) supporting a FW RoT
 
-Using a HW RoT moves critical functions and assets off a Hart to a dedicated and possibly isolated trusted subsystem, which can
-provide stronger protection against physical and logical attacks.
+Using a HW RoT moves critical functions and assets off a Hart to a dedicated
+and possibly isolated trusted subsystem, which can provide stronger protection
+against physical and logical attacks.
 
 The HW RoT acts as a _primary root of trust_ on the system.
 
@@ -98,7 +111,8 @@ user identity management. +
 For the purpose of this document, these should be treated as _secondary roots of
 trust_. +
  +
-The HW RoT can manage the security life cycle of a secondary root of trust (booting etc).
+The HW RoT can manage the security life cycle of a secondary root of trust
+(booting etc).
 
 [#cat_sr_sub_rot]
 [width=100%]
@@ -115,9 +129,11 @@ The HW RoT can manage the security life cycle of a secondary root of trust (boot
 
 |===
 
-An example of a complex system is one with multiple, out-of-order, cache-coherent harts.
+An example of a complex system is one with multiple, out-of-order,
+cache-coherent harts.
 
-An example of a simpler system is one with a single, in-order, hart such as in a microcontroller.
+An example of a simpler system is one with a single, in-order, hart such as in
+a microcontroller.
 
 NOTE: In this document, the terms "FW RoT" and "HW RoT" will be used as defined
 above. The term "RoT" on its own can be used where a rule or a rationale applies
@@ -167,20 +183,21 @@ management, payment clients, DRM clients
 
 RISC-V has a range of isolation mechanisms available and in development.
 
-[#cat_sr_sub_iso]
+[#cat_sr_sub_iso_priv]
 [width=100%]
 [%header, cols="10,25,5,5,5,10"]
 |===
 | Technololgy
 | Use Case
 | Privilege level
-| Memory 
+| Memory
 | Granularity
 | Limitations
 
 | PMP, ePMP
-| Boot code isolation,  code and data isolation by privilege level. +
- Building block for simple trusted execution isolation using high privilege security monitor
+| Boot code isolation, code and data isolation by privilege level. +
+  Building block for simple trusted execution isolation using M-mode privilege
+  security monitor
 | M
 | Physical
 | Fine Grained
@@ -188,7 +205,7 @@ RISC-V has a range of isolation mechanisms available and in development.
 
 | SPMP
 | OS managed code and data isolation by privilege level. +
- Building block to allow multiple OS to manage U mode isolation
+  Building block to allow OS to manage U mode isolation
 | S
 | Physical
 | Fine Grained
@@ -197,8 +214,8 @@ RISC-V has a range of isolation mechanisms available and in development.
 | Virtual Memory
 MMU
 | S - U,  U - U isolation +
-Guest – Guest isolation (VS–VS) +
-Host – Guest isolation (HS-VS)
+  Guest – Guest isolation (VS–VS) +
+  Host – Guest isolation (HS-VS)
 | S +
 HS/VS
 | Virtual
@@ -220,28 +237,32 @@ HS/VS
 |
 
 | Smmpt, SDID
-| Supervisor domains and memory proteciton tables, building block for confidential computing, trusted execution. +
-S-S isolation
+| Supervisor domains and memory protection tables, building block for isolation
+  for physical memory at architectural page-sizes granularity e.g. usages
+  confidential computing, trusted execution. +
+  S-S isolation
 | S
 | Physical
 | Page or larger
-| 
+|
 
 | Hardware Fault Isolation
-| Simple memory range based task isolation. Accelerates isolation of containers for webasm etc. 
+| Simple virtual-addressed memory range based task isolation. Accelerates
+  isolation of containers e.g. WASM, V8 and other intra-address space software
+  sandboxes.
 | U
 | Virtual
 | Fine Grained
-| 
+|
 
 | Memory Tagging
-| Faults on access to an incorrect TAG. 
-used for debug, garbage collection, security isolation 
+| Faults on access to an incorrect TAG.
+  Used for debug, garbage collection, security isolation
 | S U
 | Virtual
-| tbd
-| Probabilistic, performance impact, +
-tag storage overhead
+| Fine Grained
+| Probabilistic (security isolation), performance impact, +
+  tag storage overhead
 
 | CHERI
 | Full Capability based access for memory safety and isolation
@@ -283,8 +304,8 @@ break security guarantees, either directly or indirectly. For example:
 | Invasive subsystems MUST be controlled, or moderated, by a RoT.
 
 | SR_INV_002
-| Invasive subsystems SHOULD be enabled separately for M-mode &
-non-M-mode software.
+| Invasive subsystems SHOULD be enabled separately for M-mode & non-M-mode
+  software.
 
 | SR_INV_003
 | Invasive subsystems SHOULD be enabled separately for individual domains
@@ -296,9 +317,10 @@ non-M-mode software.
 Event counters are commonly used for performance management and resource
 allocation on systems.
 
-However, they can pose a security risk. For example, a workload can maliciously attempt to infer another workload's
-secrets by monitoring that other workload's operation. The victim workload can be at the same, lower, or higher
-privilege than the malicious workload.
+However, they can pose a security risk. For example, a workload can maliciously
+attempt to infer another workload's secrets by monitoring that other workload's
+operation. The victim workload can be at the same, lower, or higher privilege
+than the malicious workload.
 
 [#cat_sr_sub_pmu]
 [width=100%]
@@ -309,18 +331,21 @@ privilege than the malicious workload.
 
 | SR_PMU_001
 | Lower privileged software MUST NOT be able to monitor higher privileged
-software.
+  software.
 
 | SR_PMU_002
 | Software in one domain MUST NOT be able to monitor software in a different
-domain, without consent.
+  domain, without consent.
 
 |===
 
 ==== Platform quality of service
 
-More complex systems, such as server platforms, can provide _platform quality of service (QoS)_ features beyond the capabilities of basic event counters. Platform QoS features include any Hart and system hardware and firmware aimed at managing access to
-shared physical resources across workloads while minimizing contention.
+More complex systems, such as server platforms, can provide _platform quality
+of service (QoS)_ features beyond the capabilities of basic event counters.
+Platform QoS features include any Hart and system hardware and firmware aimed
+at managing access to shared physical resources across workloads while
+minimizing contention.
 
 For example:
 
@@ -328,8 +353,9 @@ For example:
 * Cache allocation policies across workloads, including workload prioritization
 * Hart allocation policies across workloads
 
-These types of features rely on monitoring the resource utilization of workloads,
-similar to event counters, and on the optimization of resource allocation policies.
+These types of features rely on monitoring the resource utilization of
+workloads, similar to event counters, and on the optimization of resource
+allocation policies.
 
 [#cat_sr_sub_qos]
 [width=100%]
@@ -339,22 +365,23 @@ similar to event counters, and on the optimization of resource allocation polici
 | Requirement
 
 | SR_QOS_001
-| Lower privileged software MUST NOT be able to observe QoS events or attributes concerning higher privileged
-software.
+| Lower privileged software MUST NOT be able to observe QoS events or
+  attributes concerning higher privileged software.
 
 | SR_QOS_002
-| Software in one domain MUST NOT be able to observe QoS events or attributes concerning a different
-domain, without consent.
+| Software in one domain MUST NOT be able to observe QoS events or attributes
+  concerning a different domain, without consent.
 
 |===
 
 ==== Denial of service
 
-The RISC-V security model is primarily concerned with protection of assets. It is not concerned with providing service
-guarantees.
+The RISC-V security model is primarily concerned with protection of assets. It
+is not concerned with providing service guarantees.
 
-For example, a hosting environment is free to apply its own resource allocation policy to relevant workloads. This can
-include denying service to some workloads. 
+For example, a higher-privilege hosting environment is free to apply its
+resource allocation policy to relevant lower-privilege workloads. This can
+include denying service to some workloads.
 
 [#cat_sr_sub_dos]
 [width=100%]
@@ -365,10 +392,11 @@ include denying service to some workloads.
 
 | SR_DOS_001
 | Lower privileged software MUST NOT be able to deny service to higher
-privileged software, or other isolated workloads at the same privilege level.
+  privileged software, or other isolated workloads at the same privilege level.
 
 | SR_DOS_002
-| Software in one domain SHOULD NOT be able to deny service to software in a different domain
+| Software in one domain SHOULD NOT be able to deny service to software in a
+  different domain.
 
 |===
 
@@ -376,7 +404,10 @@ Higher privileged software must always be able to enforce its own resource
 management policy without interference, including scheduling, resource
 assignment and revocation policies.
 
-Similarly, a hosting domain owning resource allocation and host management across a system normally has to be able to enforce its own policies across domains. Including denying service. But other domains should not be able to deny service to the hosting domain, or to other domains.
+Similarly, a hosting domain owning resource allocation and host management
+across a system normally has to be able to enforce its own policies across
+domains, including denying service. Other domains should not be able to deny
+service to the hosting domain, or to other domains.
 
 === Adversarial model
 
@@ -400,7 +431,10 @@ The victim is a process on a system, and the attacker does not have physical or
 logical access to the system. For example, radiation or power fluctuations, or
 protocol level attacks on connected services.
 
-At an implementation level there can be further distinctions, for example the degree of proximity required to execute a remote or a physical attack as defined above. However, this document does not make any finer grained distinctions other than logical, physical and remote.
+At an implementation level there can be further distinctions, for example the
+degree of proximity required to execute a remote or a physical attack as
+defined above. However, this document does not make any finer-grained
+distinctions other than logical, physical and remote.
 
 Attacks can be direct, indirect or chained:
 
@@ -410,23 +444,35 @@ example: direct access to the victim's memory or execution state, or direct
 control of the victim's control flow.
 
 * Indirect +
-An adversary can use a side channel to access or modify the content of a resource owned by the victim.
+An adversary can use a side channel to access or modify the content of a
+resource owned by the victim.
 For example: by analyzing timing patterns of an operation by a victim to reveal
 information about data used in that operation, or launching row-hammer style
 memory attacks to affect the contents of memory owned by the victim.
 
 * Chained +
 An adversary is able to chain together multiple direct and indirect attacks to
-achieve a goal. For example, using a software interface exploit to affect the call
-stack such that control flow is redirected to the adversary's code.
+achieve a goal. For example, using a software interface exploit to affect the
+call stack such that control flow is redirected to the adversary's code.
 
-The threats considered in-scope and the required level of protection will vary depending on use case. For example, a HW RoT would likely have a large set of threats that are considered applicable. Mitigating these threats may require protection against complex or advanced physical attacks. A Software based TEE may limit the threats considered applicable, and therefore the required mitigations. 
+The threats considered in-scope and the required level of protection will vary
+depending on the use case. For example, a HW RoT would likely have a large set
+of threats that are considered applicable. Mitigating these threats may require
+protection against complex or advanced physical attacks. A Software-based TEE
+may limit the threats considered applicable, and therefore the required
+mitigations.
 
-This specification is primarily concerned with ISA level mitigations against logical attacks.
+This specification is primarily concerned with ISA and non-ISA mitigations
+against logical attacks.
 
-Physical or remote attacks in general need to be addressed at system, protocol or governance level, and can require additional non-ISA mitigations. However, some ISA level mitigations can also help provide some mitigation against physical or remote attacks and this is indicated in the tables below.
+Physical or remote attacks in general need to be addressed at system, protocol
+or governance level, and can require additional non-ISA mitigations. However,
+some ISA level mitigations can also provide mitigation against physical or
+remote attacks and this is indicated in the tables below.
 
-Finally, this specification does not attempt to rate attacks by severity, or by adversary skill level. Ratings tend to depend on use case specific threat models and requirements.
+Finally, this specification does not attempt to rate attacks by severity, or by
+adversary skill level. Ratings tend to depend on use-case-specific threat models
+and requirements.
 
 
 ==== Logical
@@ -445,17 +491,17 @@ Finally, this specification does not attempt to rate attacks by severity, or by 
 | T_LGC_001
 | Unrestricted access
 | Direct +
-Logical
+  Logical
 | Unauthorized direct access to resources in normal operation.
 a| * RISC-V privilege levels
-* RISC-V isolation (for example: PMP/ePMP, sPMP, MTT, supervisor domains)
+* RISC-V isolation (for example: PMP/ePMP, sPMP, Sv, SmMPT, Supervisor domains)
 * RISC-V hardware enforced virtualization (H extension, MMU)
 | CHERI
 
 | T_LGC_002
 | Transient execution attacks
 | Chained +
-Logical
+  Logical
 | Attacks on speculative execution implementations.
 | Known (documented) attacks, except Spectre v1, are specific to particular
 micro-architectures. Micro-architecture for RISC-V systems is implementation
@@ -465,11 +511,12 @@ This is an evolving area of research. +
  +
  For example: +
 https://meltdownattack.com/[Spectre and meltdown papers] +
-https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html[Intel
-security guidance] +
-https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20Security%20Center,Speculative%20Processor%20Vulnerability[Arm speculative
-vulnerability]
-| Fence.t, or similar future extensions, may at least partially mitigate against Spectre v1.
+ +
+https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html[Intel security guidance] +
+ +
+https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20Security%20Center,Speculative%20Processor%20Vulnerability[Arm speculative vulnerability]
+| Fence.t, or similar future extensions (speculation barrier instructions), may
+  partially mitigate against Spectre v1.
 
 | T_LGC_003
 | Interface abuse
@@ -506,7 +553,9 @@ a| * Shadow stacks (Zicfiss)
 | T_LGC_006
 | Memory safety
 | Logical
-| Unauthorized access to resources within an isolated component. For example, pointer or allocation errors (temporal memory safety), or buffer overflows (spatial memory safety).
+| Unauthorized access to resources within an isolated component. For example,
+  pointer or allocation errors (temporal memory safety), or buffer overflows
+  (spatial memory safety).
 a| * RISC-V pointer masking (J-extension) +
 * Shadow stacks (Zicfiss) +
 * Landing pads (Zicfilp) +
@@ -519,7 +568,9 @@ Capability based architecture, such as CHERI.
 | T_LGC_007
 | Architectural Covert Channel
 | Logical
-| Execution environment is unaware of, or doesnt swap/sanitize CSRs on context switch, creating covert communication channel between user threads or guest OSs
+| Execution environment is unaware of, or doesnt swap/sanitize CSRs on context
+  switch, creating covert communication channel between user threads or guest
+  OSes
 a| * Smstateen +
 * Ssstateen
 |
@@ -569,9 +620,14 @@ a| * Glitching to bypass secure boot
 * Retrieving residual confidential memory after a system reset
 a| Implement robust power management, and adopt glitch-safe software techniques. +
  +
-Industry best practice should be followed. For example: ensuring un-initialized variables are not used; implementing integrity checking of critical data and hardware provisioned parameters; implementing redundancy in encoding, verification, branching, and critical logic. +
+Industry best practice should be followed. For example: ensuring un-initialized
+variables are not used; implementing integrity checking of critical data and
+hardware provisioned parameters; implementing redundancy in encoding,
+verification, branching, and critical logic. +
  +
-Adopt randomization techniques between boot sessions. For example: cryptographic memory protection with at least boot freshness; register randomization. 
+Adopt randomization techniques between boot sessions. For example:
+cryptographic memory protection with at least boot freshness;
+register randomization.
 
 | T_PHY_004
 | Subverting supply chains
@@ -612,14 +668,16 @@ This is discussed more in use case examples later in this specification.
 
 Identifies the immutable part of the secure platform - immutable hardware,
 configurations, and firmware. Immutable components cannot change after
-the completion of security provisioning (see also security life cycle management).
+the completion of security provisioning (see also security life cycle
+management).
 
-A _secure identity_ is an element capable of generating a cryptographic signature
-which can be verified by a remote party. This is usually an asymmetric key pair, but
-symmetric signing schemes can also be used. Secure identities are typically used as part
-of an attestation process.
+A _secure identity_ is an element capable of generating a cryptographic
+signature which can be verified by a remote party. This is usually an
+asymmetric key pair, but symmetric signing schemes can also be used. Secure
+identities are typically used as part of an attestation process.
 
-A secure identity's scope and uniqueness is use case dependent. For example, a secure identity can be:
+A secure identity's scope and uniqueness is use case dependent. For example, a
+secure identity can be:
 
 * Unique to a system
 * Shared among multiple systems with the same immutable security properties
@@ -627,8 +685,8 @@ A secure identity's scope and uniqueness is use case dependent. For example, a s
 * Anonymized using an attestation protocol supporting a third party
 anonymization service
 
-A secure identity can be directly hardware provisioned, or derived from other hardware
-provisioned assets.
+A secure identity can be directly hardware provisioned, or derived from other
+hardware provisioned assets.
 
 ==== Security life cycle
 
@@ -652,9 +710,9 @@ A security life cycle reflects the trustworthiness of a system during its
 lifetime and reflects the life cycle state of hardware provisioned assets.
 
 It can be extended as indicated below to cover additional security provisioning
-steps such as device onboarding, device activation, user management, and RMA (Return Merchandize Authorization)
-processes. These are use case or ecosystem specific and out of scope of this
-specification.
+steps such as device onboarding, device activation, user management, and RMA
+(Return Merchandize Authorization) processes. These are use case or ecosystem
+specific and out of scope of this specification.
 
 For the purpose of this specification, _revealing debug_ includes any HW or FW
 debug capability which:
@@ -670,7 +728,8 @@ self-hosted debug for a component.
 
 Depending on use case, an attested software component can include debug
 capabilities managed through an ecosystem defined governance process
-- _trusted debug_. For example, self-hosted debug or external debug enabled following an ecosystem
+- _trusted debug_. For example, self-hosted debug or external debug enabled
+following an ecosystem
 specific authorization process. In this case the debug capability, and the
 associated governance, is part of the trust contract with a relying party.
 
@@ -722,7 +781,11 @@ attestation evidence).
 | Derived assets MUST only be available if a component is in secured state.
 |===
 
-For example, returning garbage or some known test and debug value when attempting to read a hardware provisioned asset, unless the system is in a secured state, or a recoverable debug state. Derived assets would then also become unavailable in these states, though test and debug versions may be available.
+For example, returning garbage or some known test and debug value when
+attempting to read a hardware provisioned asset, unless the system is in a
+secured state, or a recoverable debug state. Derived assets would then also
+become unavailable in these states, though test and debug versions may be
+available.
 
 A derived asset in this context is any asset derived from hardware provisioned
 assets. For example attestation keys, or sealing keys for a supervisor domain.
@@ -749,9 +812,10 @@ In other states the system is not able to generate a valid attestation key. It
 is still _indirectly attestable_ as any generated attestation will not be signed
 correctly and can be rejected by a relying party.
 
-Trusted debug is part of a trust contract with a relying party and is application
-specific. The presence of trusted debug can be determined indirectly by a
-relying party through other attested properties, for example measurements.
+Trusted debug is part of a trust contract with a relying party and is
+application specific. The presence of trusted debug can be determined
+indirectly by a relying party through other attested properties, for example
+measurements.
 
 ==== Attestable services
 
@@ -782,8 +846,8 @@ depends on
 Attestation can be direct or layered:
 
 * Direct +
-The whole system can be defined by a single security platform attestation. Eg : vertically integrated connected IoT
-devices and edge devices.
+The whole system can be defined by a single security platform attestation. Eg :
+vertically integrated connected IoT devices and edge devices.
 * Layered +
 Enables parts of the attestation process to be delegated to lower privileged
 components.
@@ -844,12 +908,19 @@ software.
 Two complementary processes can be used to authorize software:
 
 * Measurement +
-In the context of this document, a measurement is a record of a present state of the system, which can be used by a remote party to verify the security state of the system. It is typically a cryptographic fingerprint, such as a running hash of memory combined with security lifecycle state and other attributes. Although depending on use case other kinds of measurements can be used.
+In the context of this document, a measurement is a record of a present state
+of the system, which can be used by a remote party to verify the security
+state of the system. It is typically a cryptographic fingerprint, such as a
+running hash of memory combined with security lifecycle state and other
+attributes. Although depending on use case other kinds of measurements can be
+used.
 * Verification +
 Verification is a process of establishing that a measurement is correct
 (expected)
 
-When a system in a security provisioning state doesnt restrict loading to only authorized software, other protection measures such as physical access protection, or device registration would be required.
+When a system in a security provisioning state doesnt restrict loading to only
+authorized software, other protection measures such as physical access
+protection, or device registration would be required.
 
 A boot process is typically layered, allowing software to be measured and
 verified in stages. Different measurement and verification policies can be
@@ -1011,8 +1082,8 @@ or not, as well as affect any derived assets such as sealing keys.
 | System updates SHOULD be robust against update failures
 |===
 
-Earlier versions could be carrying known vulnerabilities, or could be able to affect the safe
-operation of a system in other ways.
+Earlier versions could be carrying known vulnerabilities, or could be able to
+affect the safe operation of a system in other ways.
 
 For example, using derived anti-rollback counters (counter tree) rooted in a
 hardware monotonic counter.
@@ -1076,7 +1147,7 @@ accessible to other components.
 | Requirement
 
 | SR_ISO_002
-| Devices MUST not access memory belonging to an isolated component without
+| Devices MUST NOT access memory belonging to an isolated component without
 permission
 |===
 
@@ -1154,3 +1225,4 @@ authorized update.
 See <<_system_updates, system updates>>
 
 Sealing is discussed further in use cases examples later in this document.
+
