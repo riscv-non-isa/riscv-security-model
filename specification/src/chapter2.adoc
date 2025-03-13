@@ -593,7 +593,7 @@ a| * Implement robust memory error detection, cryptographic memory protection, o
 * Provide a level of tamper resistance, e.g., through RoT attestation, redundancy during execution, etc.
 * Enforce proper access control for the DVFS configuration.
 * Employ lockstep processors for security-critical devices.
-
+* Employ physical sensors to detect attack
 
 |===
 
