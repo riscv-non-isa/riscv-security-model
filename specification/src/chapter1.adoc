@@ -22,7 +22,7 @@ their specific use cases.
 The examples may be extended over time as required.
 
 RISC-V is currently not intending to create a security certification programme.
-This specification is provided as non-normative guidance for developing secure
+This specification is provided as guidance for developing secure
 RISC-V systems which are certifiable within existing third party security
 certification programmes.
 
