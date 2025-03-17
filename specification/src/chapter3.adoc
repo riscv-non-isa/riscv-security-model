@@ -458,7 +458,7 @@ locations. It complements the MMU.
 
 | SR_IOM_007
 | Systems supporting IOMMU MUST also enforce physical memory access control for
-M-mode memory against device-initiated transactions using IOMTT or IOPMP
+M-mode memory against device-initiated transactions using IOMPT or IOPMP
 
 |===
 
