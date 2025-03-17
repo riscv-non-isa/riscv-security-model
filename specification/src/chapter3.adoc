@@ -385,7 +385,7 @@ device-initiated transactions, complementing PMP and sPMP rules.
 | A system which supports PMP/Smepmp, or sPMP, MUST implement IOPMP for device
 access control unless the system supports IOMTT.
 
-Depending on system design, IOMTT can enforce the same access control policies as IOPMP.
+Depending on system design, IOMPT can enforce the same access control policies as IOPMP.
 
 | SR_IOP_002
 | IOPMP configurations MUST only be directly accessible to machine mode.
