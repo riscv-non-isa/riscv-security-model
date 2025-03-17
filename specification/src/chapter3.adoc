@@ -551,7 +551,7 @@ operation can be viewed as a vector of size 1.
 
 The _RISC-V Post Quantum Cryptography_ initiative aims to specify ISA extensions that enhance performance and
 implementation efficiency for contemporary public-key cryptography, with a focus on standard Post-Quantum Cryptography
-algorithms like ML-KEM (FIPS-203), and ML-DSA (FIPS-204), and others. The ISA design and evaluation prioritize the requirements of real-world
+algorithms like ML-KEM (FIPS-203), ML-DSA (FIPS-204), SLH-DSA (FIPS-205) and others. The ISA design and evaluation prioritize the requirements of real-world
 networked devices, ensuring that the Post-Quantum Cryptography (PQC) extensions effectively complement existing scalar
 and vector cryptography extensions.
 
