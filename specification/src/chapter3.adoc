@@ -408,7 +408,7 @@ designers are free to choose any IOPMP model. Depending on the use case, IOMPT m
 Protection] specification.*
 
 IOMPT is a system level component providing physical memory access control for
-device-initiated transactions, complementing MTT rules.
+device-initiated transactions, by mapping transactions to IOMMU translation and MPT permissions.
 
 [width=100%]
 [%header, cols="5,20"]
