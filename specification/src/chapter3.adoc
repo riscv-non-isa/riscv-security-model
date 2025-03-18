@@ -4,7 +4,9 @@
 
 This chapter outlines brief descriptions of RISC-V security building blocks
 discussed in this specification, together with general guidelines and links to
-technical specifications.
+technical specifications. The requirement to use a specific mechanism is
+use case dependent. Risc V has multiple mechanisms that can be used to achieve the
+same goal, the notes associated with SRs indicate where this is the case. 
 
 See also the reference use cases chapter of this specification for common
 examples of how RISC-V security building blocks can be combined.
@@ -142,21 +144,19 @@ memory allocations to its workloads.
 | Requirement
 
 | SR_PMP_004
-sPMP or MMU (Sv) MUST be used to protect S-mode from lower privilege levels. Even with MMU (Sv) implemented, sPMP MAY still be used in addition.
+| sPMP MUST be used to protect S-mode from lower privilege levels. 
 
 | SR_PMP_005
-| sPMP or MMU (Sv) MUST be used to protect U-mode workloads from other U-mode workloads. Even with MMU (Sv) implemented, sPMP MAY still be used in addition for U-mode inter-workload isolation.
+| sPMP MUST be used to protect U-mode workloads from other U-mode workloads. 
 
 | SR_PMP_006
 | sPMP configurations MUST only be directly accessible to machine mode and supervisor mode
 |===
 
-NOTE: Dependent on the use case, it may be recommended or mandatory to protect supervisor mode from lower privilege levels (with or without the H-extension). Trusted execution environments may require the use of sPMP to isolate trusted applications from each other. The MMU may be an additional or alternative mechanism.
+NOTE: Dependent on the use case, it may be recommended or mandatory to use sPMP to protect supervisor mode from lower privilege levels (with or without the H-extension). The MMU may be an additional or alternative mechanism.
 
-
-
-
-
+NOTE: Dependent on the use case, Trusted execution environments may require or recommend the use of sPMP to isolate trusted applications from each other.
+The MMU may be an additional or alternative mechanism
 
 
 ==== MMU
@@ -190,7 +190,9 @@ Supervisor domain H/S-mode from lower privilege levels.
 | MMU MUST be used to protect resources assigned to one workload from other workloads
 |===
 
-NOTE: Dependent on the use case, it may be recommended or mandatory to protect supervisor mode from lower privilege levels (with or without the H-extension). Trusted execution environments may require the use of MMU to isolate trusted applications from each other. The sPMP and PMP may be an additional or alternative mechanism.
+NOTE: Dependent on the use case, it may be recommended or mandatory to use MMU to protect supervisor mode from lower privilege levels (with or without the H-extension). The sPMP and PMP may be an additional or alternative mechanism.
+
+Note: Dependent on the use case, i Trusted execution environments may require or recommend the use of MMU to isolate trusted applications from each other. The sPMP and PMP may be an additional or alternative mechanism.
 
 ==== Supervisor domains and MPT
 
@@ -363,7 +365,7 @@ affected component, to an application specific governance process.
 
 |===
 
-Guarantees the system remains attestable.
+Enabling debug after measurement ensures the system remains attestable.
 
 *See chapters 7 and 9 of the https://github.com/riscv/riscv-isa-manual/releases/tag/Priv-v1.12[Privileged
 ISA] specification on performance counters.*
