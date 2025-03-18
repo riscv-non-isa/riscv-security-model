@@ -271,7 +271,9 @@ supervisor domain boundaries is required.
 | MPT MUST be used to protect resources assigned to one supervisor domain from other supervisor domains
 
 | SR_SUD_003
-| Resources assigned to a trusted supervisor domain MUST be inaccessible to an untrusted supervisor domain
+| Resources assigned to a higher trust level supervisor domain MUST NOT be accessible
+to an lower trust level supervisor domain. The trust levels/policies are specified by the
+security system designer.
 
 | SR_SUD_004
 | Resources assigned to an untrusted supervisor domain MUST be accessible to a trusted supervisor domain 
