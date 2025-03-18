@@ -145,7 +145,7 @@ memory allocations to its workloads.
 sPMP or MMU (Sv) MUST be used to protect S-mode from lower privilege levels. Even with MMU (Sv) implemented, sPMP MAY still be used in addition.
 
 | SR_PMP_005
-| sPMP MUST be used to protect resources assigned to one workload from other workloads
+| sPMP or MMU (Sv) MUST be used to protect U-mode workloads from other U-mode workloads. Even with MMU (Sv) implemented, sPMP MAY still be used in addition for U-mode inter-workload isolation.
 
 | SR_PMP_006
 | sPMP configurations MUST only be directly accessible to machine mode and supervisor mode
