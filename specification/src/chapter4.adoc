@@ -832,7 +832,7 @@ DMA and interrupts.
 | Requirement
 | Reference
 
-| IOMTT and IOMMU are used to enforce access rules for devices assigned to
+| IOMPT and IOMMU are used to enforce access rules for devices assigned to
 Normal or Confidential domains, and IOPMP is used to enforce access rules
 for Root devices.
 |SR_IOM_001, SR_IOM_002, SR_IOM_003, SR_IOM_004, SR_IOM_005
