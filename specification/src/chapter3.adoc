@@ -209,9 +209,9 @@ id (SDID)_ held in the _mmpt_ CSR, managed by M-mode firmware. In addition to
 the SDID, the mmpt CSR may specify a root PPN for a Memory Protection Table (MPT).
 
 The _memory protection table (MPT)_ is a memory structure managed by machine
-mode that is used to track memory ownership across supervisor domains. It is designed to
-enable fine grained dynamic memory management across supervisor domain
-boundaries, with policy typically set by a hypervisor in a hosting domain
+mode that is used to manage physical memory permissions across supervisor domains.
+It is designed to enable page-based dynamic memory management across supervisor
+domain boundaries.
 responsible for resource management.
 
 [#cat_sr_sub_mtt]
