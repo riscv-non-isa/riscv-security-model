@@ -192,7 +192,7 @@ Supervisor domain H/S-mode from lower privilege levels.
 
 NOTE: Dependent on the use case, it may be recommended or mandatory to use MMU to protect supervisor mode from lower privilege levels (with or without the H-extension). The sPMP and PMP may be an additional or alternative mechanism.
 
-Note: Dependent on the use case, i Trusted execution environments may require or recommend the use of MMU to isolate trusted applications from each other. The sPMP and PMP may be an additional or alternative mechanism.
+NOTE: Dependent on the use case, Trusted execution environments may require or recommend the use of MMU to isolate trusted applications from each other. The sPMP and PMP may be an additional or alternative mechanism.
 
 ==== Supervisor domains and MPT
 
