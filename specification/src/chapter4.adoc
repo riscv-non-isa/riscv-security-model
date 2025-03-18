@@ -482,7 +482,7 @@ and interrupts.
 | A static partition TEE must use IOPMP to enforce access rules for devices.
 | SR_IOP_004
 
-| A virtualized TEE must use IOMTT and IOMMU to enforce access rules for devices
+| A virtualized TEE must use IOMPT and IOMMU to enforce access rules for devices
 assigned to Normal or TEE domains, and should use IOPMP to enforce access rules
 for Root devices.
 | SR_IOM_001, SR_IOM_002, SR_IOM_003, SR_IOM_004, SR_IOM_005
