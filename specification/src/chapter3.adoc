@@ -256,7 +256,7 @@ supervisor domain.
 |===
 
 PMP can be used for more static and deterministic use cases.
-MPT can be used where more fine grained dynamic resource management across
+MPT can be used where more fine grained (page-based) dynamic resource management across
 supervisor domain boundaries is required.
 
 ===== Supervisor Domain Resource Access and Sharing
