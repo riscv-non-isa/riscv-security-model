@@ -337,7 +337,7 @@ See xref:chapter3.adoc#_mtt[MTT]
 | Use Supervisor domains to enforce isolation between Normal and TEE domains, and to protect machine mode from other domains
 | SR_SUD_001, SR_MPT_001, SR_MPT_002
 
-| For a static partition TEE, use sPMP or MMU to enforce isolation
+| For a static partition TEE, use PMP, sPMP, MMU or MPT to enforce isolation
 between TA in TEE domain.
 | SR_PMP_005 OR SR_MMU_003
 
@@ -482,7 +482,7 @@ and interrupts.
 | A static partition TEE must use IOPMP to enforce access rules for devices.
 | SR_IOP_004
 
-| A virtualized TEE must use IOMTT and IOMMU to enforce access rules for devices
+| A virtualized TEE must use IOMPT and IOMMU to enforce access rules for devices
 assigned to Normal or TEE domains, and should use IOPMP to enforce access rules
 for Root devices.
 | SR_IOM_001, SR_IOM_002, SR_IOM_003, SR_IOM_004, SR_IOM_005
@@ -832,12 +832,12 @@ DMA and interrupts.
 | Requirement
 | Reference
 
-| IOMTT and IOMMU are used to enforce access rules for devices assigned to
+| IOMPT and IOMMU are used to enforce access rules for devices assigned to
 Normal or Confidential domains, and IOPMP is used to enforce access rules
 for Root devices.
 |SR_IOM_001, SR_IOM_002, SR_IOM_003, SR_IOM_004, SR_IOM_005
 
-| IOPMP and IOMTT configurations are only directly accessible by
+| IOPMP and IOMPT configurations are only directly accessible by
 Root domain.
 | SR_PMP_001, SR_IOM_002
 
