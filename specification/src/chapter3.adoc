@@ -205,7 +205,8 @@ execution state and devices belonging to a supervisor domains are isolated from 
 This isolation of supervisor domains and the context switching between them is managed by M-mode firmware.
 
 A supervisor domain is identified at an architecture level by a _supervisor domain
-id (SDID)_ CSR, managed by M-mode firmware.
+id (SDID)_ held in the _mmpt_ CSR, managed by M-mode firmware. In addition to
+the SDID, the mmpt CSR may specify a root PPN for a Memory Protection Table (MPT).
 
 The _memory protection table (MPT)_ is a memory structure managed by machine
 mode that is used to track memory ownership across supervisor domains. It is designed to
