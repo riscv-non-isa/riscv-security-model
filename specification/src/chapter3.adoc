@@ -279,7 +279,7 @@ security system designer.
 | Resources assigned to an untrusted supervisor domain MUST be accessible to a trusted supervisor domain 
 |===
 
-Supervisor domains allow resource isolation and sharing between domains under the control of M-mode firmware. Trusted Execution environments can require asymmetric sharing models, where one trusted domain has R/W access to other domain's resources.
+Supervisor domains allow resource isolation and sharing between domains under the control of M-mode firmware. Trusted Execution environments can require asymmetric sharing models, where one trusted domain has X/W/R access to other domain's resources.
 
 ===== Supervisor Domain Debug
 
