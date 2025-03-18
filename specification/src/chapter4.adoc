@@ -837,7 +837,7 @@ Normal or Confidential domains, and IOPMP is used to enforce access rules
 for Root devices.
 |SR_IOM_001, SR_IOM_002, SR_IOM_003, SR_IOM_004, SR_IOM_005
 
-| IOPMP and IOMTT configurations are only directly accessible by
+| IOPMP and IOMPT configurations are only directly accessible by
 Root domain.
 | SR_PMP_001, SR_IOM_002
 
