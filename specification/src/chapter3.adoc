@@ -95,7 +95,7 @@ memory for supervisor and U modes (with or without H-extension).
 | SR_PMP_001
 | PMP configurations MUST only be directly accessible to machine mode
 | SR_PMP_002
-| PMP/smepmp MUST be used to isolate M-mode from lower privilege levels
+| PMP/smepmp OR MPT MUST be used to isolate M-mode from lower privilege levels
 |===
 
 NOTE: Individual access controlled regions can be locked until the next system reset
