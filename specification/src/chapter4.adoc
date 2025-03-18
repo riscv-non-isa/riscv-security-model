@@ -337,7 +337,7 @@ See xref:chapter3.adoc#_mtt[MTT]
 | Use Supervisor domains to enforce isolation between Normal and TEE domains, and to protect machine mode from other domains
 | SR_SUD_001, SR_MPT_001, SR_MPT_002
 
-| For a static partition TEE, use sPMP or MMU to enforce isolation
+| For a static partition TEE, use PMP, sPMP, MMU or MPT to enforce isolation
 between TA in TEE domain.
 | SR_PMP_005 OR SR_MMU_003
 
