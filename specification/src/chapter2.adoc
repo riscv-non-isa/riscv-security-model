@@ -111,7 +111,7 @@ The HW RoT can manage the security life cycle of a secondary root of trust (boot
 | A complex secure system MUST implement a HW RoT
 
 | SR_ROT_002
-| A simpler system MAY not require a HW RoT but one is still recommended
+| A simpler system SHOULD implement a HW RoT
 
 |===
 
@@ -150,7 +150,7 @@ Virtualization creates and manages _virtual resources_ - compute, memory,
 devices - independent of actual physical hardware. A system, or individual
 domains, can be virtualized.
 
-On complex systems the TCB can grow large and get difficult to certify and
+On complex systems the TCB can grow large and become difficult to certify and
 attest.
 
 Domain isolation enables confidential workloads to be separated from complex
@@ -167,7 +167,7 @@ management, payment clients, DRM clients
 
 RISC-V has a range of isolation mechanisms available and in development.
 
-[#cat_sr_sub_iso]
+[#cat_sr_sub_ism]
 [width=100%]
 [%header, cols="10,25,5,5,5,10"]
 |===
@@ -219,8 +219,8 @@ HS/VS
 | Coarse
 |
 
-| Smmtt, SDID
-| Building block for confidential computing, trusted execution. +
+| Smmpt, SDID
+| Supervisor domains and memory proteciton tables, building block for confidential computing, trusted execution. +
 S-S isolation
 | S
 | Physical
@@ -420,21 +420,14 @@ An adversary is able to chain together multiple direct and indirect attacks to
 achieve a goal. For example, using a software interface exploit to affect the call
 stack such that control flow is redirected to the adversary's code.
 
-This specification is primarily concerned with ISA level mitigations against
-logical attacks.
+The threats considered in-scope and the required level of protection will vary depending on use case. For example, a HW RoT would likely have a large set of threats that are considered applicable. Mitigating these threats may require protection against complex or advanced physical attacks. A Software based TEE may limit the threats considered applicable, and therefore the required mitigations. 
 
-Physical or remote attacks in general need to be addressed at system, protocol
-or governance level, and can require additional non-ISA mitigations. However,
-some ISA level mitigations can also help provide some mitigation against
-physical or remote attacks and this is indicated in the tables below.
+This specification is primarily concerned with ISA level mitigations against logical attacks.
 
-The required level of protection can vary depending on use case. For example, a
-HW RoT could have stronger requirements on physical resistance than other parts
-of an SoC.
+Physical or remote attacks in general need to be addressed at system, protocol or governance level, and can require additional non-ISA mitigations. However, some ISA level mitigations can also help provide some mitigation against physical or remote attacks and this is indicated in the tables below.
 
-Finally, this specification does not attempt to rate attacks by severity, or by
-adversary skill level. Ratings tend to depend on use case specific threat
-models and requirements.
+Finally, this specification does not attempt to rate attacks by severity, or by adversary skill level. Ratings tend to depend on use case specific threat models and requirements.
+
 
 ==== Logical
 
@@ -443,13 +436,13 @@ models and requirements.
 [%header, cols="5,5,5,10,15,10"]
 |===
 | ID#
-| Attack
+| Threat
 | Type
 | Description
 | Current RISC-V mitigations
 | Planned RISC-V mitigations
 
-| SR_LGC_001
+| T_LGC_001
 | Unrestricted access
 | Direct +
 Logical
@@ -459,7 +452,7 @@ a| * RISC-V privilege levels
 * RISC-V hardware enforced virtualization (H extension, MMU)
 | CHERI
 
-| SR_LGC_002
+| T_LGC_002
 | Transient execution attacks
 | Chained +
 Logical
@@ -478,7 +471,7 @@ https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20
 vulnerability]
 | Fence.t, or similar future extensions, may at least partially mitigate against Spectre v1.
 
-| SR_LGC_003
+| T_LGC_003
 | Interface abuse
 | Chained +
 Logical
@@ -488,7 +481,7 @@ a| * RISC-V privilege levels
 * RISC-V isolation
 | High assurance cryptography
 
-| SR_LGC_004
+| T_LGC_004
 | Event counting
 | Direct +
 Logical
@@ -499,7 +492,7 @@ a| * Data-independent timing instructions
 (sscofpmf, smcntrpmf)
 |
 
-| SR_LGC_005
+| T_LGC_005
 | Redirect control flow
 | Chained +
 Logical
@@ -507,20 +500,29 @@ Logical
 control flow to code controlled by an attacker.
 a| * Shadow stacks (Zicfiss)
 * Landing pads (Zicfilp)
-| CHERI
+| CHERI, +
+  Memory Tagging
 
-| SR_LGC_006
+| T_LGC_006
 | Memory safety
 | Logical
 | Unauthorized access to resources within an isolated component. For example, pointer or allocation errors (temporal memory safety), or buffer overflows (spatial memory safety).
-| RISC-V pointer masking (J-extension) +
-Shadow stacks (Zicfiss) +
-Landing pads (Zicfilp) +
+a| * RISC-V pointer masking (J-extension) +
+* Shadow stacks (Zicfiss) +
+* Landing pads (Zicfilp) +
  +
 Memory safe programming, for example: +
 https:/www.cisa.gov/sites/default/files/2023-12/CSAC_TAC_Recommendations-Memory-Safety_Final_20231205_508.pdf +
 | Architectural sandboxing, such as HFI. +
 Capability based architecture, such as CHERI.
+
+| T_LGC_007
+| Architectural Covert Channel
+| Logical
+| Execution environment is unaware of, or doesnt swap/sanitize CSRs on context switch, creating covert communication channel between user threads or guest OSs
+a| * Smstateen +
+* Ssstateen
+|
 
 |===
 
@@ -531,12 +533,12 @@ Capability based architecture, such as CHERI.
 [%header, cols="5,10,10,15,15"]
 |===
 | ID#
-| Attack
+| Threat
 | Type
 | Description
 | RISC-V recommendations
 
-| SR_PHY_001
+| T_PHY_001
 | Analysis of physical leakage
 | Direct or indirect +
 Physical or remote
@@ -544,22 +546,24 @@ Physical or remote
 a| * Implement robust power management and radiation control
 * Data Independent Execution Latency (Zkt, Zvkt)
 
-| SR_PHY_002
+
+| T_PHY_002
 | Physical memory manipulation
 | Direct +
 Logical or physical
-a| * Row-hammer type software attacks to manipulate nearby memory cells
-* Using NVDIMM, interposers, or physical probing to read, record, or replay
-physical memory
-* Physical attacks on hardware shielded locations to extract hardware
-provisioned assets
+a| * Using NVDIMM, interposers, or physical probing to read, record, or replay
+physical memory.
 a| * Implement robust memory error detection, cryptographic memory protection,
-or physical tamper resistance
-* Supervisor domain ID, privilege level, or MTT attributes, may be used to
+or physical tamper resistance.
+* Supervisor domain ID, privilege level, or MPT attributes, may be used to
 derive memory encryption contexts at domain or workload granularity
-* Provide a degree of tamper resistance
+* Provide a degree of tamper resistance.
 
-| SR_PHY_003
+// * Physical attacks on hardware shielded locations to extract hardware
+// provisioned assets
+
+
+| T_PHY_003
 | Boot attacks
 | Chained +
 Logical or physical
@@ -571,7 +575,7 @@ Industry best practice should be followed. For example: ensuring un-initialized 
  +
 Adopt randomization techniques between boot sessions. For example: cryptographic memory protection with at least boot freshness; register randomization. 
 
-| SR_PHY_004
+| T_PHY_004
 | Subverting supply chains
 | Remote
 | Infiltration or collusion to subvert security provisioning chains, software
@@ -580,6 +584,18 @@ processes, development processes (for example, unfused development hardware or
 debug authorizations)
 | Deploy appropriate governance, accreditation, and certification processes for
 an ecosystem.
+
+| T_PHY_005
+| Fault Injection
+| Direct or remote +
+Logical or physical
+a| * Rowhammer-type software attacks to manipulate nearby memory cells.
+* Fault injection attacks (glitching, laser, electromagnetic, etc.) to extract hardware-provisioned assets, modify the control flow, circumvent countermeasures, etc.
+a| * Implement robust memory error detection, cryptographic memory protection, or physical tamper resistance. 
+* Provide a level of tamper resistance, e.g., through RoT attestation, redundancy during execution, etc.
+* Enforce proper access control for the DVFS configuration.
+* Employ lockstep processors for security-critical devices.
+* Employ physical sensors to detect attack
 
 |===
 
@@ -664,9 +680,11 @@ Examples of revealing debug include revealing logging, external debug or
 boundary scans, dedicated debug builds of software components, or enabling
 self-hosted debug for a component.
 
+
+
 Depending on use case, an attested software component can include debug
 capabilities managed through an ecosystem defined governance process
-- _trusted debug_. For example, self-hosted debug enabled following an ecosystem
+- _trusted debug_. For example, self-hosted debug or external debug enabled following an ecosystem
 specific authorization process. In this case the debug capability, and the
 associated governance, is part of the trust contract with a relying party.
 
@@ -711,28 +729,14 @@ identifier.
 
 | SR_LFC_002
 | Hardware provisioned assets MUST only be accessible while the system is in
-secured state, or a recoverable debug state.
+secured state, or a recoverable debug state.(with the recoverable debug state in
+attestation evidence).
 
 | SR_LFC_003
 | Derived assets MUST only be available if a component is in secured state.
 |===
 
 For example, returning garbage or some known test and debug value when attempting to read a hardware provisioned asset, unless the system is in a secured state, or a recoverable debug state. Derived assets would then also become unavailable in these states, though test and debug versions may be available.
-
-[width=100%]
-[%header, cols="5,20"]
-|===
-| ID#
-| Requirement
-
-| SR_LFC_004
-| Hardware provisioned assets MUST only be accessible while the system is in
-a secured state, or a recoverable debug state (with the recoverable debug state in
-attestation evidence).
-
-| SR_LFC_005
-| Derived assets MUST only be available if a component is in secured state.
-|===
 
 A derived asset in this context is any asset derived from hardware provisioned
 assets. For example attestation keys, or sealing keys for a supervisor domain.
@@ -743,7 +747,7 @@ assets. For example attestation keys, or sealing keys for a supervisor domain.
 | ID#
 | Requirement
 
-| SR_LFC_006
+| SR_LFC_004
 | Revealing debug MUST be reflected in attestation.
 
 |===
@@ -858,6 +862,8 @@ In the context of this document, a measurement is a record of a present state of
 * Verification +
 Verification is a process of establishing that a measurement is correct
 (expected)
+
+When a system in a security provisioning state doesnt restrict loading to only authorized software, other protection measures such as physical access protection, or device registration would be required.
 
 A boot process is typically layered, allowing software to be measured and
 verified in stages. Different measurement and verification policies can be

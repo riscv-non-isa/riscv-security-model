@@ -1,6 +1,6 @@
 = RISC-V Specification
 
-This document describes the RISC-V Security Model (non-normative) specification.
+This document describes the RISC-V Security Model specification.
 
 = License
 
