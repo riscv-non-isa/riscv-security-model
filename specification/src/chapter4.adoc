@@ -6,7 +6,11 @@
 
 This chapter provides a selection of non-exhaustive example security usecases based on commonly used
 deployment security models. The examples may be extended over time as required. This section is non normative
-guidance only, detailing the recommended combination of security requirements for the associated use case. 
+guidance only, detailing the recommended combination of security requirements for the associated use case.
+
+For ease of reference, for each usecase, <<R2>> lists the mapping of the RISC-V
+ISA and non-ISA building blocks used along with links to the building block
+specification, POCs, and code repositories available.
 
 === Generic system without supervisor domains
 
@@ -79,7 +83,7 @@ See xref:chapter2.adoc#_reference_model[reference model].
 | Reference
 
 | A system level HW RoT is recommended
-| SR_ROT_001, 
+| SR_ROT_001,
 SR_ROT_002
 
 |===
@@ -120,19 +124,19 @@ transaction.
 |===
 | Requirement | Reference
 
-| Guarantee that devices assigned to lower 
-  privilege levels cannot access resources 
+| Guarantee that devices assigned to lower
+  privilege levels cannot access resources
   assigned to M-mode.
 |  SR_IOM_005, +
   (SR_IOP_001, SR_IOP_002, SR_IOP_003) +
   OR +
   (SR_IOM_001, SR_IOM_002, SR_IOM_003) +
- 
- 
-| Enforce access rules for devices assigned 
-  to user applications or guests on a virtualized 
+
+
+| Enforce access rules for devices assigned
+  to user applications or guests on a virtualized
   system.
-| SR_IOP_004 OR SR_IOM_004 
+| SR_IOP_004 OR SR_IOM_004
 
 |===
 
@@ -341,7 +345,7 @@ See xref:chapter3.adoc#_mtt[MTT]
 between TA in TEE domain.
 | SR_PMP_005 OR SR_MMU_003
 
-| For a virtualized TEE, use hypervisor extension 
+| For a virtualized TEE, use hypervisor extension
 | SR_HYP_001,SR_MMU_001, SR_MMU_002,
 
 | For a virtualized TEE, sPMP or MMU MUST be used to enforce isolation between guest
@@ -657,7 +661,7 @@ https://github.com/riscv-non-isa/riscv-ap-tee/tree/main/specification[specificat
 The information below adds cross references to the security model normative security requirements.
 
 The underlying isolation mechanisms may be used in other deployment models, such
-as some mobile clients or edge devices whose design may might be constrained by real 
+as some mobile clients or edge devices whose design may might be constrained by real
 time and formal verification requirements. The TSM and secure monitor function are
 then combined into a single TEE security manager in Root domain.
 
@@ -691,7 +695,7 @@ itself from unintended access to resources assigned to a different domain
 | Block resources assigned to Confidential domains from access by Normal domain
 | SR_SUD_001, SR_SUD_002, SR_SUD_003, SR_MMU_001, SR_MMU_002
 
-| Block resources assigned to Normal domain from access by Confidential domain 
+| Block resources assigned to Normal domain from access by Confidential domain
 | SR_SUD_001, SR_SUD_002, SR_SUD_003, SR_MMU_001, SR_MMU_002
 
 | Allow resources to be assigned to both Normal domain and Confidential domain (sharing by consent)
