@@ -60,6 +60,9 @@ Security is an evolving area where new use cases and new threats can emerge at
 any time. This specification represents the RISC-V security model and best
 practice as of the date of publication of this document.
 
+Terms not explicitely defined in this specification are to be interpreted according
+to the NIST Computer Security Resource Centre Glossary (https://csrc.nist.gov/glossary)
+
 New versions of this document may be developed and released as and when
 required.
 
