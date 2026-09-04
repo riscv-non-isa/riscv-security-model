@@ -315,11 +315,11 @@ supervisor domain boundaries is required.
 
 | SR_SUD_004
 | Resources assigned to a higher trust level supervisor domain MUST NOT be accessible
-to a lower trust level supervisor domain. The trust levels/policies are specified by the
+to a less trusted level supervisor domain. The trust levels/policies are specified by the
 security system designer.
 
 | SR_SUD_005
-| Resources assigned to a lower trust level supervisor domain MUST be accessible to a higher trust level supervisor domain
+| Resources assigned to a less trusted level supervisor domain MUST be accessible to a higher trust level supervisor domain
 |===
 
 Supervisor domains allow resource isolation and sharing between domains under the control of M-Mode firmware. Trusted Execution Environments can require asymmetric sharing models, 
@@ -787,11 +787,14 @@ To address memory safety issues, the Memory Tagging task group will define a mec
 
 The fence.time instruction is a proposed RISC-V ISA extension designed to mitigate timing covert channels by managing shared microarchitectural states. Timing covert channels exploit the timing of events to leak sensitive information across security boundaries, such as between privilege levels or processes. This working group will propose a mechanism for software to signal hardware to prevent the sharing of microarchitectural state during security domain switches
 
-==== Speculation Barriers
+==== Transient Execution Barriers
 
-*See https://github.com/riscv/riscv-spec-barrier[Speculation Barriers].*
+*See https://github.com/riscv/riscv-isa-manual/blob/3ce933494a287e2c762ce4cbc498fad0bf155f26/src/unpriv/ziteb.adoc[Transient Execution Barriers].*
 
-Speculative execution attacks exploit vulnerabilities in modern processors that use speculative execution to improve performance. These attacks, such as Spectre and Meltdown, manipulate the CPU's speculative behavior to access sensitive data that should be inaccessible. Although the speculative operations are eventually discarded, the changes they make to system state can be measured and used to infer confidential information. This task group will propose a mechanism for software to signal hardware when not to speculate.
+Speculative execution attacks exploit vulnerabilities in modern processors that use speculative execution to improve performance. These attacks, such as Spectre and Meltdown, manipulate the CPU's speculative behavior to access sensitive data that should be inaccessible. 
+Although the speculative operations are eventually discarded, the changes they make to system state can be measured and used to infer confidential information. 
+The transient-execution barrier instructions are a proposed RISC-V ISA extension designed to mitigate these vulnerabilities. Informally, certain instructions that follow a transient-execution barrier in program order cannot be speculatively executed before certain instructions (or parts of instructions) 
+preceding the barrier in program order have executed.
 
 
 === Capability based architecture

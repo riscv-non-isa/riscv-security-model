@@ -79,7 +79,7 @@ A RoT supports fundamental security services, for example:
 * Security life cycle management
 * Key derivations and sealing (sealing is defined in a later section)
 * Security provisioning
-* Debug authorisation
+* Debug authorization
 
 Depending on use case and ecosystem requirements, a RISC-V RoT can be:
 
@@ -198,7 +198,7 @@ level
 
 | RISC-V Worlds
 | Hardware World Identifiers for System level isolation
-| HW RoT, M, S
+| M, S
 | Physical
 | Fine Grained
 | Static boot configuration
@@ -507,8 +507,7 @@ Logical
 | Unauthorized manipulation of call stacks and jump targets to redirect a
 control flow to code controlled by an attacker.
 | Shadow stacks (Zicfiss) +
-Landing pads (Zicfilp) +
-Pointer Masking 
+Landing pads (Zicfilp) 
 | Capability based architecture, such as CHERI, +
   Memory Tagging
 
@@ -518,15 +517,15 @@ Pointer Masking
 | Unauthorized access to resources within an isolated component. For example, pointer or allocation errors (temporal memory safety), or buffer overflows (spatial memory safety).
 | RISC-V pointer masking (Sspm, Supm) +
 Shadow stacks (Zicfiss) +
-Landing pads (Zicfilp) +
-Memory Tagging
+Landing pads (Zicfilp) 
  +
 Memory safe programming +
 +
 For example: +
 https://www.cisa.gov/sites/default/files/2023-12/CSAC_TAC_Recommendations-Memory-Safety_Final_20231205_508.pdf[Memory Safety] +
-| Architectural sandboxing, such as HFI. +
-Capability based architecture, such as CHERI.
+| Architectural sandboxing, such as HFI +
+Capability based architecture, such as CHERI +
+Memory Tagging
 
 | T_LGC_007
 | Architectural Covert Channel
@@ -537,6 +536,11 @@ Ssstateen
 |
 
 |===
+
+NOTE: The 'Potential RISC-V mitigations' column is informative only and identifies examples of architectural mechanisms that could 
+address the corresponding threat. Some entries may correspond to extensions currently under development or under discussion, 
+while others are illustrative examples only. Inclusion in this column does not imply an intention or commitment to develop or
+standardize any specific extension.  
 
 NOTE: Entropy obtained through a RISC-V Zkr-compliant entropy source can be used to improve the effectiveness of several attack mitigations. 
 Examples include address-space randomization, timing randomization, data masking, and noise-injection techniques. 
@@ -559,10 +563,10 @@ These mechanisms rely on high-quality, unpredictable random values to hinder att
 | Direct or indirect +
 Physical or remote
 | For example, observing electromagnetic emissions, power consumption patterns, or temperature variations.
-|  Implement power analysis mitigations such as cryptographic masking, constant time code, noise injection, timing decorrelation/randomisation, constant power logic designs. +
+|  Implement power analysis mitigations such as cryptographic masking, constant time code, noise injection, timing decorrelation/randomization, constant power logic designs. +
 
 Implement Data Independent Execution Latency (Zkt, Zvkt) +
-Utilise entropy source in randomisation (Zkr)
+Utilize entropy source in randomization (Zkr)
 
 
 | T_PHY_002

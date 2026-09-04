@@ -42,7 +42,7 @@ meet security requirements of commonly used third party protection profiles.
 Mapping documentation or protection profiles may also directly reference this
 document.
 
-This specification does not contain threat modelling or security assessment of
+This specification does not contain threat modeling or security assessment of
 the RISC-V ISA specifications, non-ISA specifications, profile specifications or
 extensions (RISC-V technical specifications). RISC-V technical specifications
 are expected to use the Security Model as a guide to develop their own specific
@@ -96,7 +96,7 @@ their normal English meanings.
 
 | T_CAT_NNN
 | The `T_CAT` is a "Threat CATegory" prefix that logically groups
-the threats considered in scope (e.g. T_LGC denotes threats categorised by
+the threats considered in scope (e.g. T_LGC denotes threats categorized by
 logical attacks) and is followed
 by 3 digits - `NNN` - assigning a numeric ID to the threat.
 
