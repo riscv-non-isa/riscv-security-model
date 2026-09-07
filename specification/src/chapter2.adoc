@@ -446,7 +446,7 @@ Finally, this specification does not attempt to rate attacks by severity, or by 
 | Type
 | Description
 | Current RISC-V mitigations
-| Potential RISC-V mitigations
+| Future RISC-V mitigations
 
 | T_LGC_001
 | Unrestricted access
@@ -477,7 +477,8 @@ https://developer.arm.com/documentation/#cf-navigationhierarchiesproducts=Arm%20
 vulnerability] +
 CBQRI and Ssqosid may help isolate cache entries. +
 Zicfilp and Zicfiss can mitigate against ROP/COP/JOP, limiting some compound attacks.
-| Fence.time, Speculation barriers or similar future extensions, may at least partially mitigate against In-domain attacks (such as Spectre V1 , V4).
+| Fence.time, speculation barriers, transient execution barriers or similar future extensions, can mitigate 
+against in-domain attacks (such as Spectre V1 , V4).
 
 | T_LGC_003
 | Interface abuse
@@ -537,10 +538,8 @@ Ssstateen
 
 |===
 
-NOTE: The 'Potential RISC-V mitigations' column is informative only and identifies examples of architectural mechanisms that could 
-address the corresponding threat. Some entries may correspond to extensions currently under development or under discussion, 
-while others are illustrative examples only. Inclusion in this column does not imply an intention or commitment to develop or
-standardize any specific extension.  
+NOTE: The 'Future RISC-V mitigations' column identifies examples of architectural mechanisms that are currently under 
+development or under discussion, and may become standard extensions. 
 
 NOTE: Entropy obtained through a RISC-V Zkr-compliant entropy source can be used to improve the effectiveness of several attack mitigations. 
 Examples include address-space randomization, timing randomization, data masking, and noise-injection techniques. 
